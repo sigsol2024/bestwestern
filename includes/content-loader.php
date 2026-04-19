@@ -128,6 +128,13 @@ function site_enforce_maintenance_mode(): void {
         return;
     }
 
+    // Admin area never loads this file today, but keep a hard bypass so maintenance
+    // cannot redirect /admin/* if content-loader is ever included there.
+    $scriptPath = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? ''));
+    if (strpos($scriptPath, '/admin/') !== false) {
+        return;
+    }
+
     $script = basename((string) ($_SERVER['SCRIPT_NAME'] ?? ''));
     if ($script === 'maintenance.php') {
         return;
@@ -137,6 +144,27 @@ function site_enforce_maintenance_mode(): void {
         ob_end_clean();
     }
     header('Location: ' . site_url('maintenance'));
+    exit;
+}
+
+/**
+ * If maintenance mode is off, do not serve the maintenance page — send visitors to the homepage.
+ * (Otherwise bookmarks / open tabs to /maintenance.php would show the maintenance screen after the site is live again.)
+ */
+function site_redirect_if_maintenance_disabled(): void {
+    if (PHP_SAPI === 'cli' || site_maintenance_mode_enabled()) {
+        return;
+    }
+
+    $script = basename((string) ($_SERVER['SCRIPT_NAME'] ?? ''));
+    if ($script !== 'maintenance.php') {
+        return;
+    }
+
+    while (ob_get_level()) {
+        ob_end_clean();
+    }
+    header('Location: ' . site_url('index'));
     exit;
 }
 
@@ -160,6 +188,7 @@ function site_enforce_page_availability(): void {
 }
 
 site_enforce_maintenance_mode();
+site_redirect_if_maintenance_disabled();
 site_enforce_page_availability();
 
 /**
