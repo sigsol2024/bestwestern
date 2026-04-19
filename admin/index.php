@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/../includes/url.php';
 
 if (isLoggedIn()) {
     redirect(ADMIN_URL . 'dashboard.php');
@@ -38,6 +39,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+$siteName = (string) getSetting('site_name', cms_default_setting('site_name'));
+$siteLogoPath = site_brand_logo_path((string) getSetting('site_logo', ''), 'assets/images/logo/logo-dark.png');
+$siteLogoUrl = $siteLogoPath !== '' ? site_media_url($siteLogoPath) : '';
 $csrfToken = generateCSRFToken();
 ?>
 <!DOCTYPE html>
@@ -53,7 +57,13 @@ $csrfToken = generateCSRFToken();
   <div class="login-container">
     <div class="login-card">
       <div class="login-header">
-        <div class="login-logo">L</div>
+        <div class="login-logo">
+          <?php if ($siteLogoUrl !== ''): ?>
+            <img src="<?= sanitize($siteLogoUrl) ?>" alt="<?= sanitize($siteName) ?>">
+          <?php else: ?>
+            L
+          <?php endif; ?>
+        </div>
         <h1>Admin Portal</h1>
         <p class="login-subtitle">Sign in to access the dashboard</p>
       </div>
@@ -86,9 +96,6 @@ $csrfToken = generateCSRFToken();
 
         <button type="submit" class="btn-login"><span>Sign In</span></button>
       </form>
-      <p style="text-align:center;margin-top:16px;font-size:13px;">
-        <a href="register-temp.php" style="color:#6b7280;">Temporary: create admin account</a>
-      </p>
     </div>
   </div>
   <script>

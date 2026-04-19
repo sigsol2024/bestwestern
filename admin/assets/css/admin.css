@@ -25,12 +25,13 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; background: var(--bg-color); color: var(--text-color); line-height: 1.6; }
 
-.login-page { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #efe8d6; padding: 20px; position: relative; overflow: hidden; }
+.login-page { display: flex; align-items: flex-start; justify-content: center; min-height: 100vh; background: #efe8d6; padding: 20px; padding-top: 48px; padding-bottom: 48px; position: relative; overflow-x: hidden; overflow-y: auto; }
 .login-page::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #411d13 0%, #5a2a1f 50%, #411d13 100%); z-index: 1; }
-.login-container { width: 100%; max-width: 440px; position: relative; z-index: 2; }
+.login-container { width: 100%; max-width: 440px; position: relative; z-index: 2; margin: auto 0; }
 .login-card { background: #ffffff; padding: 48px 40px; border-radius: 16px; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05); border: 1px solid rgba(0, 0, 0, 0.06); }
 .login-header { text-align: center; margin-bottom: 32px; }
 .login-logo { display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: var(--primary-color); border-radius: 12px; color: white; margin: 0 auto 20px; box-shadow: 0 4px 12px rgba(65, 29, 19, 0.25); }
+.login-logo img { max-width: calc(100% - 12px); max-height: calc(100% - 12px); object-fit: contain; display: block; }
 .login-card h1 { margin: 0 0 8px 0; text-align: center; color: #1a1a1a; font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
 .login-subtitle { text-align: center; color: #6b7280; margin: 0; font-size: 15px; font-weight: 400; }
 .login-form .form-group { margin-bottom: 24px; }
@@ -70,6 +71,13 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxyge
 .btn-login:hover { background: var(--primary-hover); transform: translateY(-1px); }
 .login-footer { margin-top: 32px; padding-top: 24px; border-top: 1px solid #e5e7eb; text-align: center; }
 .security-note { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 12px; color: #6b7280; }
+
+@media (max-height: 820px) {
+  .login-page {
+    padding-top: 24px;
+    padding-bottom: 24px;
+  }
+}
 
 .admin-wrapper { display: flex; min-height: 100vh; }
 .sidebar {
