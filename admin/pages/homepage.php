@@ -1,0 +1,428 @@
+<?php
+$pageTitle = 'Homepage Editor';
+require_once __DIR__ . '/../includes/config.php';
+require_once __DIR__ . '/../includes/auth.php';
+requireLogin();
+require_once __DIR__ . '/../includes/header.php';
+
+$sectionsArray = [];
+try {
+    $stmt = $pdo->prepare("SELECT * FROM page_sections WHERE page = 'index' ORDER BY section_key");
+    $stmt->execute();
+    foreach ($stmt->fetchAll() as $section) {
+        $sectionsArray[$section['section_key']] = $section['content'];
+    }
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+}
+
+$heroBgSlidesJson = trim($sectionsArray['hero_bg_slides'] ?? '');
+if ($heroBgSlidesJson === '' && !empty($sectionsArray['hero_bg'])) {
+    $heroBgSlidesJson = json_encode([$sectionsArray['hero_bg']]);
+} elseif ($heroBgSlidesJson === '') {
+    $heroBgSlidesJson = '[]';
+}
+
+function hsec($sectionsArray, $key, $default = '') {
+    return sanitize($sectionsArray[$key] ?? $default);
+}
+
+/** Prefer new section_key; fall back to legacy key (e.g. home_news_* → home_amenity_grid_*). */
+function home_editor_val($sectionsArray, $primaryKey, $legacyKey = '') {
+    $v = $sectionsArray[$primaryKey] ?? null;
+    if ($v !== null && trim((string)$v) !== '') {
+        return sanitize($v);
+    }
+    if ($legacyKey !== '' && isset($sectionsArray[$legacyKey])) {
+        return sanitize($sectionsArray[$legacyKey]);
+    }
+    return '';
+}
+?>
+
+<form id="homepageForm">
+  <div class="card">
+    <div class="card-header"><h2>Hero</h2></div>
+    <div style="padding:20px;">
+      <div class="form-group">
+        <label for="hero_kicker">Kicker</label>
+        <input id="hero_kicker" name="hero_kicker" type="text" value="<?= hsec($sectionsArray, 'hero_kicker', 'Lorem Ipsum') ?>">
+      </div>
+      <div class="form-group">
+        <label for="hero_title">Title (HTML allowed)</label>
+        <textarea id="hero_title" name="hero_title" rows="3"><?= htmlspecialchars($sectionsArray['hero_title'] ?? 'Lorem Ipsum <br/><span class="italic text-primary site-hero-accent-text">Dolor Sit</span>', ENT_QUOTES, 'UTF-8') ?></textarea>
+      </div>
+      <div class="form-group">
+        <label for="hero_subtitle">Subtitle</label>
+        <textarea id="hero_subtitle" name="hero_subtitle" rows="2"><?= hsec($sectionsArray, 'hero_subtitle', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.') ?></textarea>
+      </div>
+      <div class="form-group">
+        <label>Hero Background</label>
+        <div style="margin-bottom:10px;">
+          <button type="button" class="btn btn-outline" onclick="openMediaModal('hero_bg','hero_bg_preview')">Select Image</button>
+        </div>
+        <input type="hidden" id="hero_bg" name="hero_bg" value="<?= hsec($sectionsArray, 'hero_bg') ?>">
+        <div id="hero_bg_preview" class="image-preview" style="<?= !empty($sectionsArray['hero_bg']) ? 'display:block;' : 'display:none;' ?>">
+          <?php if (!empty($sectionsArray['hero_bg'])): ?>
+            <img src="<?= SITE_URL . ltrim($sectionsArray['hero_bg'], '/') ?>" style="max-width:500px;max-height:300px;">
+          <?php endif; ?>
+        </div>
+        <p class="form-help" style="margin-top:12px;">Used as fallback if the slide list below is empty.</p>
+      </div>
+      <div class="form-group">
+        <label>Hero background slides (rotating)</label>
+        <p class="form-help">Add multiple images; only the background cross-fades (about every 7s). The first slide uses <strong>Hero Background</strong> above if this list is empty.</p>
+        <input type="hidden" id="hero_bg_slides" name="hero_bg_slides" value="<?= htmlspecialchars($heroBgSlidesJson, ENT_QUOTES, 'UTF-8') ?>">
+        <div style="margin-bottom:10px;">
+          <button type="button" class="btn btn-outline" onclick="openMediaModal('hero_bg_slides_pick','hero_slides_strip')"><i class="fas fa-images"></i> Add slide from library</button>
+        </div>
+        <div id="hero_slides_strip" class="image-preview" style="display:block;margin-top:10px;"></div>
+      </div>
+      <div class="form-group">
+        <label for="hero_youtube_url">Hero YouTube video URL (optional)</label>
+        <input id="hero_youtube_url" name="hero_youtube_url" type="text" value="<?= hsec($sectionsArray, 'hero_youtube_url', '') ?>" placeholder="https://www.youtube.com/watch?v=VIDEO_ID or https://youtu.be/VIDEO_ID">
+        <p class="form-help">If set, the YouTube video plays as the hero background. If empty, the hero uses the slide gallery above; if that is empty, it falls back to <strong>Hero Background</strong>.</p>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="hero_cta_text">CTA Text</label>
+          <input id="hero_cta_text" name="hero_cta_text" type="text" value="<?= hsec($sectionsArray, 'hero_cta_text', 'Explore Rooms') ?>">
+        </div>
+        <div class="form-group">
+          <label for="hero_cta_href">CTA Link</label>
+          <input id="hero_cta_href" name="hero_cta_href" type="text" value="<?= hsec($sectionsArray, 'hero_cta_href', '/rooms') ?>">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Booking widget (bridge)</h2></div>
+    <div style="padding:20px;">
+      <div class="form-group">
+        <label for="booking_widget_html">Widget HTML</label>
+        <textarea id="booking_widget_html" name="booking_widget_html" rows="10" style="font-family:monospace;font-size:12px;"><?= htmlspecialchars($sectionsArray['booking_widget_html'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
+        <p class="form-help">Paste the booking engine embed HTML here. It appears between the hero and the next section (floating over the hero edge on desktop), inside a styled card.</p>
+        <p class="form-help">If your provider needs a script tag, add it under <strong>Admin → Settings → Header scripts</strong> or <strong>Body scripts</strong>. The wrapper id can be changed in <strong>Admin → Settings → Theme</strong>, and the bridge styles also target <code>#booking-form</code> directly for simpler embeds.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Philosophy block</h2></div>
+    <div style="padding:20px;">
+      <div class="form-group">
+        <label for="home_philosophy_kicker">Kicker</label>
+        <input id="home_philosophy_kicker" name="home_philosophy_kicker" type="text" value="<?= hsec($sectionsArray, 'home_philosophy_kicker', 'Lorem Ipsum') ?>">
+      </div>
+      <div class="form-group">
+        <label for="home_philosophy_title_html">Title (HTML)</label>
+        <textarea id="home_philosophy_title_html" name="home_philosophy_title_html" rows="2"><?= htmlspecialchars($sectionsArray['home_philosophy_title_html'] ?? 'Lorem Ipsum <br/> Dolor Sit', ENT_QUOTES, 'UTF-8') ?></textarea>
+      </div>
+      <div class="form-group">
+        <label for="home_philosophy_body">Body</label>
+        <textarea id="home_philosophy_body" name="home_philosophy_body" rows="4"><?= hsec($sectionsArray, 'home_philosophy_body') ?></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="home_philosophy_link_text">Link text</label>
+          <input id="home_philosophy_link_text" name="home_philosophy_link_text" type="text" value="<?= hsec($sectionsArray, 'home_philosophy_link_text', 'Read Our Story') ?>">
+        </div>
+        <div class="form-group">
+          <label for="home_philosophy_link_href">Link URL</label>
+          <input id="home_philosophy_link_href" name="home_philosophy_link_href" type="text" value="<?= hsec($sectionsArray, 'home_philosophy_link_href', '/about') ?>">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Main image</label>
+          <button type="button" class="btn btn-outline" onclick="openMediaModal('home_philosophy_main_img','home_philosophy_main_preview')">Select</button>
+          <input type="hidden" id="home_philosophy_main_img" name="home_philosophy_main_img" value="<?= hsec($sectionsArray, 'home_philosophy_main_img') ?>">
+          <div id="home_philosophy_main_preview" class="image-preview" style="<?= !empty($sectionsArray['home_philosophy_main_img']) ? 'display:block;' : 'display:none;' ?>">
+            <?php if (!empty($sectionsArray['home_philosophy_main_img'])): ?>
+              <img src="<?= SITE_URL . ltrim($sectionsArray['home_philosophy_main_img'], '/') ?>" style="max-width:400px;max-height:260px;">
+            <?php endif; ?>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Secondary (floating) image</label>
+          <button type="button" class="btn btn-outline" onclick="openMediaModal('home_philosophy_secondary_img','home_philosophy_secondary_preview')">Select</button>
+          <input type="hidden" id="home_philosophy_secondary_img" name="home_philosophy_secondary_img" value="<?= hsec($sectionsArray, 'home_philosophy_secondary_img') ?>">
+          <div id="home_philosophy_secondary_preview" class="image-preview" style="<?= !empty($sectionsArray['home_philosophy_secondary_img']) ? 'display:block;' : 'display:none;' ?>">
+            <?php if (!empty($sectionsArray['home_philosophy_secondary_img'])): ?>
+              <img src="<?= SITE_URL . ltrim($sectionsArray['home_philosophy_secondary_img'], '/') ?>" style="max-width:400px;max-height:260px;">
+            <?php endif; ?>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Architecture block</h2></div>
+    <div style="padding:20px;">
+      <div class="form-group">
+        <label>Wide image</label>
+        <button type="button" class="btn btn-outline" onclick="openMediaModal('home_arch_image','home_arch_preview')">Select</button>
+        <input type="hidden" id="home_arch_image" name="home_arch_image" value="<?= hsec($sectionsArray, 'home_arch_image') ?>">
+        <div id="home_arch_preview" class="image-preview" style="<?= !empty($sectionsArray['home_arch_image']) ? 'display:block;' : 'display:none;' ?>">
+          <?php if (!empty($sectionsArray['home_arch_image'])): ?>
+            <img src="<?= SITE_URL . ltrim($sectionsArray['home_arch_image'], '/') ?>" style="max-width:500px;max-height:280px;">
+          <?php endif; ?>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="home_arch_badge_title">Badge title</label>
+          <input id="home_arch_badge_title" name="home_arch_badge_title" type="text" value="<?= hsec($sectionsArray, 'home_arch_badge_title', '5 Star') ?>">
+        </div>
+        <div class="form-group">
+          <label for="home_arch_badge_sub">Badge subtitle</label>
+          <input id="home_arch_badge_sub" name="home_arch_badge_sub" type="text" value="<?= hsec($sectionsArray, 'home_arch_badge_sub', 'Diamond Award') ?>">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="home_arch_title">Heading</label>
+        <input id="home_arch_title" name="home_arch_title" type="text" value="<?= hsec($sectionsArray, 'home_arch_title', 'Architectural Marvel') ?>">
+      </div>
+      <div class="form-group">
+        <label for="home_arch_body">Body</label>
+        <textarea id="home_arch_body" name="home_arch_body" rows="3"><?= hsec($sectionsArray, 'home_arch_body') ?></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="home_arch_list_1">Bullet 1</label>
+          <input id="home_arch_list_1" name="home_arch_list_1" type="text" value="<?= hsec($sectionsArray, 'home_arch_list_1', 'Bespoke Art Installations') ?>">
+        </div>
+        <div class="form-group">
+          <label for="home_arch_list_2">Bullet 2</label>
+          <input id="home_arch_list_2" name="home_arch_list_2" type="text" value="<?= hsec($sectionsArray, 'home_arch_list_2', 'Panoramic City Views') ?>">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Amenities highlight (3 cards)</h2></div>
+    <div style="padding:20px;">
+      <p class="form-help" style="margin-top:0;">Dark band on the homepage showcasing hotel amenities (pool, dining, wellness, etc.). Uses background <code>#282828</code> and white text. Legacy keys <code>home_news_*</code> are still read if the fields below are empty.</p>
+      <div class="form-group">
+        <label for="home_amenity_grid_kicker">Kicker</label>
+        <input id="home_amenity_grid_kicker" name="home_amenity_grid_kicker" type="text" value="<?= home_editor_val($sectionsArray, 'home_amenity_grid_kicker', 'home_news_kicker') ?>" placeholder="e.g. Amenities">
+      </div>
+      <div class="form-group">
+        <label for="home_amenity_grid_title">Section title</label>
+        <input id="home_amenity_grid_title" name="home_amenity_grid_title" type="text" value="<?= home_editor_val($sectionsArray, 'home_amenity_grid_title', 'home_news_title') ?>" placeholder="e.g. Spaces crafted for your stay">
+      </div>
+      <div class="form-group">
+        <label for="home_amenity_grid_intro">Section description</label>
+        <textarea id="home_amenity_grid_intro" name="home_amenity_grid_intro" rows="3" placeholder="Short intro under the title"><?= htmlspecialchars($sectionsArray['home_amenity_grid_intro'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
+      </div>
+      <?php for ($ai = 1; $ai <= 3; $ai++):
+          $imgKey = 'home_amenity_grid_' . $ai . '_image';
+          $legImg = 'home_news_' . $ai . '_image';
+          $imgVal = home_editor_val($sectionsArray, $imgKey, $legImg);
+          $titleVal = home_editor_val($sectionsArray, 'home_amenity_grid_' . $ai . '_title', 'home_news_' . $ai . '_title');
+          $descVal = $sectionsArray['home_amenity_grid_' . $ai . '_description'] ?? '';
+          if (trim((string)$descVal) === '' && isset($sectionsArray['home_news_' . $ai . '_description'])) {
+              $descVal = $sectionsArray['home_news_' . $ai . '_description'];
+          }
+          ?>
+      <div class="card card--nested" style="margin-top:16px;">
+        <div class="card-header"><h3>Card <?= (int)$ai ?></h3></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label>Image</label>
+            <button type="button" class="btn btn-outline" onclick="openMediaModal('<?= $imgKey ?>','<?= $imgKey ?>_preview')">Select</button>
+            <input type="hidden" id="<?= $imgKey ?>" name="<?= $imgKey ?>" value="<?= htmlspecialchars($imgVal, ENT_QUOTES, 'UTF-8') ?>">
+            <div id="<?= $imgKey ?>_preview" class="image-preview" style="<?= $imgVal !== '' ? 'display:block;' : 'display:none;' ?>">
+              <?php if ($imgVal !== ''): ?>
+                <img src="<?= SITE_URL . ltrim($imgVal, '/') ?>" style="max-width:400px;max-height:220px;" alt="">
+              <?php endif; ?>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="home_amenity_grid_<?= $ai ?>_title">Title</label>
+            <input id="home_amenity_grid_<?= $ai ?>_title" name="home_amenity_grid_<?= $ai ?>_title" type="text" value="<?= htmlspecialchars($titleVal, ENT_QUOTES, 'UTF-8') ?>">
+          </div>
+          <div class="form-group">
+            <label for="home_amenity_grid_<?= $ai ?>_description">Description</label>
+            <textarea id="home_amenity_grid_<?= $ai ?>_description" name="home_amenity_grid_<?= $ai ?>_description" rows="3"><?= htmlspecialchars((string)$descVal, ENT_QUOTES, 'UTF-8') ?></textarea>
+          </div>
+        </div>
+      </div>
+      <?php endfor; ?>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Featured rooms strip</h2></div>
+    <div style="padding:20px;">
+      <p class="form-help">Cards are loaded from <strong>Rooms</strong> where <strong>Featured</strong> is checked. If none are featured, active rooms are shown instead.</p>
+      <div class="form-group">
+        <label for="home_rooms_kicker">Kicker</label>
+        <input id="home_rooms_kicker" name="home_rooms_kicker" type="text" value="<?= hsec($sectionsArray, 'home_rooms_kicker', 'Accommodations') ?>">
+      </div>
+      <div class="form-group">
+        <label for="home_rooms_title">Title</label>
+        <input id="home_rooms_title" name="home_rooms_title" type="text" value="<?= hsec($sectionsArray, 'home_rooms_title', 'Stay in Style') ?>">
+      </div>
+      <div class="form-group">
+        <label for="home_rooms_view_all_href">View all link</label>
+        <input id="home_rooms_view_all_href" name="home_rooms_view_all_href" type="text" value="<?= hsec($sectionsArray, 'home_rooms_view_all_href', '/rooms') ?>">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Dining teaser</h2></div>
+    <div style="padding:20px;">
+      <div class="form-group">
+        <label>Image</label>
+        <button type="button" class="btn btn-outline" onclick="openMediaModal('home_dining_image','home_dining_preview')">Select</button>
+        <input type="hidden" id="home_dining_image" name="home_dining_image" value="<?= hsec($sectionsArray, 'home_dining_image') ?>">
+        <div id="home_dining_preview" class="image-preview" style="<?= !empty($sectionsArray['home_dining_image']) ? 'display:block;' : 'display:none;' ?>">
+          <?php if (!empty($sectionsArray['home_dining_image'])): ?>
+            <img src="<?= SITE_URL . ltrim($sectionsArray['home_dining_image'], '/') ?>" style="max-width:500px;max-height:280px;">
+          <?php endif; ?>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="home_dining_kicker">Kicker</label>
+          <input id="home_dining_kicker" name="home_dining_kicker" type="text" value="<?= hsec($sectionsArray, 'home_dining_kicker', 'Dining') ?>">
+        </div>
+        <div class="form-group">
+          <label for="home_dining_title">Title</label>
+          <input id="home_dining_title" name="home_dining_title" type="text" value="<?= hsec($sectionsArray, 'home_dining_title', 'Culinary Excellence') ?>">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="home_dining_body_html">Body (HTML allowed)</label>
+        <textarea id="home_dining_body_html" name="home_dining_body_html" rows="3"><?= htmlspecialchars($sectionsArray['home_dining_body_html'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="home_dining_cta1">Button 1</label>
+          <input id="home_dining_cta1" name="home_dining_cta1" type="text" value="<?= hsec($sectionsArray, 'home_dining_cta1', 'Reserve a Table') ?>">
+        </div>
+        <div class="form-group">
+          <label for="home_dining_cta1_href">Button 1 URL</label>
+          <input id="home_dining_cta1_href" name="home_dining_cta1_href" type="text" value="<?= hsec($sectionsArray, 'home_dining_cta1_href', '/dining') ?>">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="home_dining_cta2">Button 2</label>
+          <input id="home_dining_cta2" name="home_dining_cta2" type="text" value="<?= hsec($sectionsArray, 'home_dining_cta2', 'View Menu') ?>">
+        </div>
+        <div class="form-group">
+          <label for="home_dining_cta2_href">Button 2 URL</label>
+          <input id="home_dining_cta2_href" name="home_dining_cta2_href" type="text" value="<?= hsec($sectionsArray, 'home_dining_cta2_href', '/dining') ?>">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Save all</button>
+</form>
+
+<script>
+(function () {
+  var map = {
+    hero_bg: 'hero_bg_preview',
+    home_philosophy_main_img: 'home_philosophy_main_preview',
+    home_philosophy_secondary_img: 'home_philosophy_secondary_preview',
+    home_arch_image: 'home_arch_preview',
+    home_dining_image: 'home_dining_preview',
+    home_amenity_grid_1_image: 'home_amenity_grid_1_image_preview',
+    home_amenity_grid_2_image: 'home_amenity_grid_2_image_preview',
+    home_amenity_grid_3_image: 'home_amenity_grid_3_image_preview'
+  };
+  function renderHeroSlidesStrip() {
+    var input = document.getElementById('hero_bg_slides');
+    var strip = document.getElementById('hero_slides_strip');
+    if (!input || !strip) return;
+    var arr = [];
+    try { arr = JSON.parse(input.value || '[]'); } catch (e) { arr = []; }
+    if (!Array.isArray(arr) || arr.length === 0) {
+      strip.innerHTML = '<p class="form-help" style="margin:0;">No extra slides — the single Hero Background image is used.</p>';
+      return;
+    }
+    var base = '<?= rtrim(SITE_URL, '/') ?>/';
+    var html = '<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;">';
+    arr.forEach(function (path, idx) {
+      var p = (path || '').replace(/^\/+/, '');
+      html += '<div style="position:relative;border:1px solid var(--border-color);border-radius:6px;padding:4px;background:var(--surface-elevated);">';
+      html += '<img src="' + base + p + '" alt="" style="width:100px;height:70px;object-fit:cover;display:block;border-radius:4px;">';
+      html += '<button type="button" class="btn btn-sm btn-outline" style="margin-top:6px;width:100%;" data-slide-idx="' + idx + '">Remove</button></div>';
+    });
+    html += '</div>';
+    strip.innerHTML = html;
+    strip.querySelectorAll('[data-slide-idx]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var i = parseInt(btn.getAttribute('data-slide-idx'), 10);
+        var a = [];
+        try { a = JSON.parse(input.value || '[]'); } catch (e2) { a = []; }
+        if (!Array.isArray(a)) a = [];
+        a.splice(i, 1);
+        input.value = JSON.stringify(a);
+        renderHeroSlidesStrip();
+      });
+    });
+  }
+  window.renderHeroSlidesStrip = renderHeroSlidesStrip;
+  window.insertSelectedMediaOverride = function () {
+    var list = mediaModalState.allowMultiple
+      ? mediaModalState.selectedMediaMultiple
+      : (mediaModalState.selectedMedia ? [mediaModalState.selectedMedia] : []);
+    if (!list.length) return false;
+    var tid = mediaModalState.targetInputId;
+    if (tid === 'hero_bg_slides_pick') {
+      var input = document.getElementById('hero_bg_slides');
+      var arr = [];
+      try { arr = JSON.parse(input.value || '[]'); } catch (e) { arr = []; }
+      if (!Array.isArray(arr)) arr = [];
+      var seen = {};
+      arr.forEach(function (p) { if (p) seen[p] = true; });
+      list.forEach(function (s) {
+        var p = s.path || '';
+        if (p && !seen[p]) { arr.push(p); seen[p] = true; }
+      });
+      input.value = JSON.stringify(arr);
+      renderHeroSlidesStrip();
+      closeMediaModal();
+      var n = list.length;
+      if (typeof showToast === 'function') {
+        showToast(n === 1 ? 'Slide added' : (n + ' slides added'), 'success');
+      }
+      return true;
+    }
+    var selected = list[0];
+    var prevId = map[tid];
+    if (!prevId) return false;
+    var input = document.getElementById(tid);
+    var preview = document.getElementById(prevId);
+    if (input) input.value = selected.path;
+    if (preview) {
+      preview.style.display = 'block';
+      preview.innerHTML = '<img src="<?= SITE_URL ?>' + selected.path.replace(/^\/+/, '') + '" style="max-width:500px;max-height:300px;">';
+    }
+    closeMediaModal();
+    if (typeof showToast === 'function') showToast('Image selected', 'success');
+    return true;
+  };
+  document.addEventListener('DOMContentLoaded', function () { renderHeroSlidesStrip(); });
+})();
+
+document.getElementById('homepageForm').addEventListener('submit', function (e) {
+  e.preventDefault();
+  var form = this;
+  var typeOverrides = { hero_title: 'html', hero_bg_slides: 'json', home_dining_body_html: 'html' };
+  savePageForm(form, 'index', typeOverrides)
+    .then(function () { showToast('Saved', 'success'); })
+    .catch(function (err) { showToast(err.message || 'Save failed', 'error'); });
+});
+</script>
+
+<?php require_once __DIR__ . '/../includes/footer.php'; ?>

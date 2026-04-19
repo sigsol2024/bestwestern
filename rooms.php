@@ -1,0 +1,202 @@
+<?php
+require_once __DIR__ . '/includes/content-loader.php';
+
+$heroPlaceholder = cms_default_setting('placeholder_hero_image');
+
+$pageTitle = getPageSection('rooms', 'page_title', 'Rooms & Suites');
+$heroTitle = getPageSection('rooms', 'hero_title', 'Lorem Spaces <br/><span class="font-bold italic font-serif">Dolor Sit</span>');
+$heroSubtitle = getPageSection('rooms', 'hero_subtitle', "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.");
+$heroBg = getPageSection('rooms', 'hero_bg', $heroPlaceholder);
+
+$currency = getSiteSetting('currency_symbol', '$');
+$rooms = getRooms(['is_active' => 1]);
+?>
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title><?= e($pageTitle) ?></title>
+  <?php require_once __DIR__ . '/includes/head-header.php'; ?>
+  <style>
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #efe8d6; }
+    ::-webkit-scrollbar-thumb { background: #c9bfab; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #411d13; }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-main antialiased overflow-x-hidden relative">
+<?php require_once __DIR__ . '/includes/header.php'; ?>
+
+<!-- Hero Section -->
+<section class="relative min-h-[90vh] flex items-center justify-center pt-20 overflow-hidden">
+  <div class="absolute inset-0 z-0">
+    <!-- Hero overlay: match About page pattern (no fading gradient) -->
+    <div class="absolute inset-0 z-10" style="background: rgba(107, 51, 39, 0.72);"></div>
+    <div class="w-full h-full bg-cover bg-center bg-no-repeat bg-fixed scale-105"
+         data-alt="Wide angle view of a dimly lit, ultra-luxury hotel bedroom with floor-to-ceiling windows"
+         style="background-image: url('<?= e($heroBg) ?>');">
+    </div>
+  </div>
+  <div class="relative z-20 container mx-auto px-6 text-center max-w-4xl mt-12">
+    <h2 class="text-white/90 text-sm md:text-base uppercase tracking-[0.3em] font-bold mb-4">Accommodations</h2>
+    <h1 class="text-white text-5xl md:text-7xl font-light leading-tight mb-8 drop-shadow-lg">
+      <?= $heroTitle ?>
+    </h1>
+    <p class="text-gray-200 text-lg md:text-xl font-light max-w-2xl mx-auto leading-relaxed drop-shadow-md">
+      <?= e($heroSubtitle) ?>
+    </p>
+    <div class="mt-12 flex justify-center">
+      <span class="material-symbols-outlined text-white/50 animate-bounce text-4xl">keyboard_arrow_down</span>
+    </div>
+  </div>
+</section>
+
+<!-- Listings -->
+<main class="relative z-10 bg-background-light dark:bg-background-dark bg-subtle-pattern pb-[30px]">
+  <div class="max-w-[1280px] mx-auto px-6 lg:px-12 py-[25px] flex flex-col gap-16 lg:gap-24">
+    <?php if (empty($rooms)): ?>
+      <div class="text-center text-text-muted">No rooms available yet.</div>
+    <?php else: ?>
+      <?php
+      $i = 0;
+      foreach ($rooms as $room):
+        $i++;
+        $reverse = ($i % 2 === 0);
+        $title = $room['title'] ?? '';
+        $slug = $room['slug'] ?? '';
+        $price = is_numeric($room['price'] ?? null) ? number_format((float)$room['price'], 0) : '';
+        $desc = $room['short_description'] ?: ($room['description'] ?? '');
+        $mainImage = $room['main_image'] ?? '';
+        $gallery = is_array($room['gallery_images'] ?? null) ? $room['gallery_images'] : [];
+        $size = $room['size'] ?? '';
+        $bed = '';
+        $view = '';
+        $wifi = 'Hi-Speed Wifi';
+
+        $featuresRaw = $room['features'] ?? [];
+        $features = [];
+        if (is_array($featuresRaw)) {
+          foreach ($featuresRaw as $f) {
+            if (is_string($f) && trim($f) !== '') $features[] = trim($f);
+            if (is_array($f) && !empty($f['title'])) $features[] = (string)$f['title'];
+          }
+        }
+        $features = array_values(array_unique(array_values(array_filter(array_map(static function ($s) {
+          return is_string($s) ? trim($s) : '';
+        }, $features), static fn ($x) => $x !== ''))));
+
+        $includedItemsRaw = $room['included_items'] ?? [];
+        $includedItems = [];
+        if (is_array($includedItemsRaw)) {
+          foreach ($includedItemsRaw as $it) {
+            if (is_string($it) && trim($it) !== '') $includedItems[] = trim($it);
+            if (is_array($it) && !empty($it['title'])) $includedItems[] = (string)$it['title'];
+          }
+        }
+        $includedItems = array_values(array_unique(array_values(array_filter(array_map(static function ($s) {
+          return is_string($s) ? trim($s) : '';
+        }, $includedItems), static fn ($x) => $x !== ''))));
+
+        $amenitiesRaw = $room['amenities'] ?? [];
+        $amenityTitles = [];
+        if (is_array($amenitiesRaw)) {
+          foreach ($amenitiesRaw as $am) {
+            if (is_string($am) && trim($am) !== '') $amenityTitles[] = trim($am);
+            if (is_array($am) && !empty($am['title'])) $amenityTitles[] = (string)$am['title'];
+          }
+        }
+        $amenityTitles = array_values(array_unique(array_values(array_filter(array_map(static function ($s) {
+          return is_string($s) ? trim($s) : '';
+        }, $amenityTitles), static fn ($x) => $x !== ''))));
+
+        foreach ($features as $f) {
+          $lf = strtolower($f);
+          if (!$bed && (str_contains($lf, 'bed') || str_contains($lf, 'king'))) $bed = $f;
+          if (!$view && str_contains($lf, 'view')) $view = $f;
+          if (!$size && (str_contains($lf, 'sqm') || str_contains($lf, 'sqft') || str_contains($lf, 'm²'))) $size = $f;
+        }
+
+        // Prefer editor-provided labels (amenities / included items) over hardcoded defaults.
+        if (!$view) {
+          foreach ($includedItems as $it) {
+            if (str_contains(strtolower($it), 'view')) { $view = $it; break; }
+          }
+        }
+        foreach (array_merge($amenityTitles, $includedItems, $features) as $cand) {
+          $lc = strtolower((string)$cand);
+          if (str_contains($lc, 'wifi') || str_contains($lc, 'wi-fi')) { $wifi = (string)$cand; break; }
+        }
+        ?>
+
+      <article class="group relative flex flex-col <?= $reverse ? 'lg:flex-row-reverse' : 'lg:flex-row' ?> items-stretch lg:items-center gap-12 lg:gap-24">
+        <div class="w-full lg:w-3/5 flex flex-col items-center gap-6 min-w-0">
+          <div class="relative w-full aspect-[4/3] overflow-hidden rounded-lg shadow-2xl">
+            <div class="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-700 group-hover:scale-105"
+                 data-alt="<?= e($title) ?>"
+                 style="background-image: url('<?= e($mainImage) ?>');"></div>
+          </div>
+        </div>
+
+        <div class="w-full lg:w-2/5 flex flex-col justify-center min-w-0 items-start text-left <?= $reverse ? 'lg:items-end lg:text-right' : '' ?>">
+          <span class="text-primary text-xs font-bold tracking-[0.2em] uppercase mb-3">Starting at <?= e($currency) ?><?= e($price) ?></span>
+          <h2 class="text-4xl md:text-5xl font-light text-text-main mb-6"><?= e($title) ?></h2>
+          <p class="text-text-muted text-base leading-relaxed mb-8"><?= e($desc) ?></p>
+
+          <div class="grid grid-cols-2 gap-4 mb-8 opacity-60 group-hover:opacity-100 transition-opacity duration-300 <?= $reverse ? 'w-full lg:w-auto' : '' ?>">
+            <div class="flex items-center gap-3 <?= $reverse ? 'lg:flex-row-reverse' : '' ?>">
+              <span class="material-symbols-outlined text-primary">square_foot</span>
+              <span class="text-sm font-medium uppercase tracking-wider text-text-main"><?= e($size ?: '—') ?></span>
+            </div>
+            <div class="flex items-center gap-3 <?= $reverse ? 'lg:flex-row-reverse' : '' ?>">
+              <span class="material-symbols-outlined text-primary">king_bed</span>
+              <span class="text-sm font-medium uppercase tracking-wider text-text-main"><?= e($bed ?: '—') ?></span>
+            </div>
+            <div class="flex items-center gap-3 <?= $reverse ? 'lg:flex-row-reverse' : '' ?>">
+              <span class="material-symbols-outlined text-primary">location_city</span>
+              <span class="text-sm font-medium uppercase tracking-wider text-text-main"><?= e($view ?: '—') ?></span>
+            </div>
+            <div class="flex items-center gap-3 <?= $reverse ? 'lg:flex-row-reverse' : '' ?>">
+              <span class="material-symbols-outlined text-primary">wifi</span>
+              <span class="text-sm font-medium uppercase tracking-wider text-text-main"><?= e($wifi) ?></span>
+            </div>
+          </div>
+
+          <?php if (!empty($features)): ?>
+          <div class="flex flex-wrap gap-2 mb-8 <?= $reverse ? 'lg:justify-end' : '' ?>">
+            <?php
+            $norm = static function ($s) {
+              $s = strtolower(trim((string)$s));
+              $s = preg_replace('/\s+/', ' ', $s);
+              return $s;
+            };
+            $bedNorm = $norm($bed);
+            $wifiNorm = $norm($wifi);
+            $viewNorm = $norm($view);
+            $chipCount = 0;
+            foreach ($features as $chip) {
+              if ($chipCount >= 6) break;
+              $chipNorm = $norm($chip);
+              if ($bedNorm !== '' && $chipNorm === $bedNorm) continue;
+              if ($wifiNorm !== '' && $chipNorm === $wifiNorm) continue;
+              if ($viewNorm !== '' && $chipNorm === $viewNorm) continue;
+              $chipCount++;
+              ?>
+              <span class="text-[11px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-primary/20 text-text-main bg-white/60"><?= e($chip) ?></span>
+            <?php } ?>
+          </div>
+          <?php endif; ?>
+
+          <a class="inline-flex items-center justify-center px-8 py-3 border border-primary/50 text-primary font-bold uppercase text-xs tracking-widest rounded-lg hover:bg-primary hover:text-white transition-all duration-300 w-fit"
+             href="<?= e(site_url('room-details', ['slug' => $slug])) ?>">
+            View Room Details
+          </a>
+        </div>
+      </article>
+      <?php endforeach; ?>
+    <?php endif; ?>
+  </div>
+</main>
+
+<?php require_once __DIR__ . '/includes/footer.php'; ?>
+
