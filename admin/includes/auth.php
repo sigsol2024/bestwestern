@@ -6,7 +6,102 @@
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/functions.php';
 
+function adminAuthCookieName() {
+    return 'cms_admin_auth';
+}
+
+function adminAuthCookieOptions($expires) {
+    return [
+        'expires' => (int) $expires,
+        'path' => '/',
+        'domain' => '',
+        'secure' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ];
+}
+
+function clearAdminAuthCookie() {
+    setcookie(adminAuthCookieName(), '', adminAuthCookieOptions(time() - 3600));
+    unset($_COOKIE[adminAuthCookieName()]);
+}
+
+function buildAdminAuthCookieValue($adminId, $username, $expires) {
+    $adminId = (int) $adminId;
+    $username = trim((string) $username);
+    $expires = (int) $expires;
+    $payload = $adminId . '|' . $username . '|' . $expires;
+    $sig = hash_hmac('sha256', $payload, cms_admin_auth_cookie_secret());
+    return $payload . '|' . $sig;
+}
+
+function setAdminAuthCookie($adminId, $username) {
+    $expires = time() + SESSION_TIMEOUT;
+    $value = buildAdminAuthCookieValue($adminId, $username, $expires);
+    setcookie(adminAuthCookieName(), $value, adminAuthCookieOptions($expires));
+    $_COOKIE[adminAuthCookieName()] = $value;
+}
+
+function restoreAdminSessionFromCookie() {
+    global $pdo;
+
+    $raw = $_COOKIE[adminAuthCookieName()] ?? '';
+    if (!is_string($raw) || $raw === '') {
+        return false;
+    }
+
+    $parts = explode('|', $raw);
+    if (count($parts) !== 4) {
+        clearAdminAuthCookie();
+        return false;
+    }
+
+    [$adminIdRaw, $usernameRaw, $expiresRaw, $sig] = $parts;
+    $payload = $adminIdRaw . '|' . $usernameRaw . '|' . $expiresRaw;
+    $expectedSig = hash_hmac('sha256', $payload, cms_admin_auth_cookie_secret());
+    if (!hash_equals($expectedSig, (string) $sig)) {
+        clearAdminAuthCookie();
+        return false;
+    }
+
+    $adminId = (int) $adminIdRaw;
+    $username = trim((string) $usernameRaw);
+    $expires = (int) $expiresRaw;
+    if ($adminId < 1 || $username === '' || $expires < time()) {
+        clearAdminAuthCookie();
+        return false;
+    }
+
+    if (!$pdo instanceof PDO) {
+        return false;
+    }
+
+    try {
+        $stmt = $pdo->prepare("SELECT id, username, email FROM admin_users WHERE id = ? AND username = ? AND is_active = 1 LIMIT 1");
+        $stmt->execute([$adminId, $username]);
+        $user = $stmt->fetch();
+        if (!$user) {
+            clearAdminAuthCookie();
+            return false;
+        }
+
+        session_regenerate_id(true);
+        $_SESSION['admin_id'] = $user['id'];
+        $_SESSION['admin_username'] = $user['username'];
+        $_SESSION['admin_email'] = $user['email'];
+        $_SESSION['last_activity'] = time();
+        setAdminAuthCookie($user['id'], $user['username']);
+        return true;
+    } catch (PDOException $e) {
+        error_log("Cookie auth restore error: " . $e->getMessage());
+        return false;
+    }
+}
+
 function isLoggedIn() {
+    if ((!isset($_SESSION['admin_id']) || !isset($_SESSION['admin_username'])) && !restoreAdminSessionFromCookie()) {
+        return false;
+    }
     if (!isset($_SESSION['admin_id']) || !isset($_SESSION['admin_username'])) {
         return false;
     }
@@ -14,10 +109,12 @@ function isLoggedIn() {
         if (time() - $_SESSION['last_activity'] > SESSION_TIMEOUT) {
             session_unset();
             session_destroy();
+            clearAdminAuthCookie();
             return false;
         }
     }
     $_SESSION['last_activity'] = time();
+    setAdminAuthCookie($_SESSION['admin_id'], $_SESSION['admin_username']);
     return true;
 }
 
@@ -69,6 +166,7 @@ function login($username, $password) {
             $_SESSION['admin_username'] = $user['username'];
             $_SESSION['admin_email'] = $user['email'];
             $_SESSION['last_activity'] = time();
+            setAdminAuthCookie($user['id'], $user['username']);
 
             $stmt = $pdo->prepare("UPDATE admin_users SET last_login = NOW() WHERE id = ?");
             $stmt->execute([$user['id']]);
@@ -89,6 +187,7 @@ function login($username, $password) {
 }
 
 function logout() {
+    clearAdminAuthCookie();
     session_unset();
     session_destroy();
     redirect(ADMIN_URL . 'index.php');
