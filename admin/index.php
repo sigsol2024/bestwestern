@@ -17,19 +17,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($username) || empty($password)) {
         $error = 'Please enter both username and password.';
     } else {
-        if (!checkLoginRateLimit($username)) {
-            $error = 'Too many login attempts. Please wait before trying again.';
-            $rateLimitWarning = true;
+        $result = login($username, $password);
+        if ($result['success']) {
+            $redirect = $_SESSION['redirect_after_login'] ?? ADMIN_URL . 'dashboard.php';
+            unset($_SESSION['redirect_after_login']);
+            redirect($redirect);
         } else {
-            $result = login($username, $password);
-            if ($result['success']) {
-                $redirect = $_SESSION['redirect_after_login'] ?? ADMIN_URL . 'dashboard.php';
-                unset($_SESSION['redirect_after_login']);
-                redirect($redirect);
-            } else {
-                $error = $result['message'];
-                $rateLimitWarning = true;
-            }
+            $error = $result['message'];
+            $rateLimitWarning = true;
         }
     }
 }

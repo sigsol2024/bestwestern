@@ -6,6 +6,7 @@
 $pageTitle = 'Settings';
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/auth.php';
+requireLogin();
 require_once __DIR__ . '/../includes/header.php';
 
 // Get all settings
@@ -23,6 +24,7 @@ try {
 
 $csrfToken = generateCSRFToken();
 $defaultSettings = cms_system_defaults();
+$maintenanceBgValue = $settings['maintenance_background'] ?? $defaultSettings['maintenance_background'];
 ?>
 
 <div class="page-intro">
@@ -114,6 +116,47 @@ $defaultSettings = cms_system_defaults();
                     <?php endif; ?>
                 </div>
                 <p class="form-help">Select an image from the media library or upload a new one</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Maintenance Mode</h2>
+        </div>
+        <div class="card-body card-body--stack">
+            <div class="form-group">
+                <input type="hidden" name="maintenance_mode" value="0">
+                <label style="display:flex;align-items:center;gap:10px;margin-bottom:0;">
+                    <input type="checkbox" id="maintenance_mode" name="maintenance_mode" value="1" <?= ($settings['maintenance_mode'] ?? $defaultSettings['maintenance_mode']) === '1' ? 'checked' : '' ?>>
+                    <span>Enable maintenance mode</span>
+                </label>
+                <p class="form-help">When enabled, all public pages redirect to the maintenance screen. The admin area remains accessible.</p>
+            </div>
+
+            <div class="form-group">
+                <label for="maintenance_title">Maintenance title</label>
+                <input type="text" id="maintenance_title" name="maintenance_title" value="<?= sanitize($settings['maintenance_title'] ?? $defaultSettings['maintenance_title']) ?>" placeholder="<?= sanitize($defaultSettings['maintenance_title']) ?>">
+            </div>
+
+            <div class="form-group">
+                <label for="maintenance_message">Maintenance message</label>
+                <textarea id="maintenance_message" name="maintenance_message" rows="4"><?= htmlspecialchars($settings['maintenance_message'] ?? $defaultSettings['maintenance_message'], ENT_QUOTES, 'UTF-8') ?></textarea>
+                <p class="form-help">This text is shown on the public maintenance page while the site is unavailable.</p>
+            </div>
+
+            <div class="form-group">
+                <label>Maintenance background image</label>
+                <div style="margin-bottom: 10px;">
+                    <button type="button" class="btn btn-outline" onclick="openMediaModal('maintenance_background', 'maintenance_background_preview')">
+                        <i class="fas fa-image"></i> Select background image
+                    </button>
+                </div>
+                <input type="hidden" id="maintenance_background" name="maintenance_background" value="<?= sanitize($maintenanceBgValue) ?>">
+                <div id="maintenance_background_preview" class="image-preview" style="margin-top: 10px; <?= !empty($maintenanceBgValue) ? 'display: block;' : 'display: none;' ?>">
+                    <img id="maintenance_background_img" src="<?= SITE_URL . ltrim($maintenanceBgValue, '/') ?>" alt="" style="max-width: 260px; max-height: 160px; object-fit: cover;">
+                </div>
+                <p class="form-help">Optional full-screen image shown behind the maintenance message.</p>
             </div>
         </div>
     </div>

@@ -9,6 +9,8 @@ require_once __DIR__ . '/auth.php';
 $currentPage = basename($_SERVER['PHP_SELF'], '.php');
 $currentPath = $_SERVER['REQUEST_URI'] ?? '';
 $isPagesEditor = (strpos($currentPath, '/pages/') !== false && strpos($currentPath, 'pages/rooms/') === false && strpos($currentPath, 'pages/media') === false && strpos($currentPath, 'pages/settings') === false && strpos($currentPath, 'pages/profile') === false);
+$maintenanceRaw = trim((string) getSetting('maintenance_mode', cms_default_setting('maintenance_mode')));
+$maintenanceEnabled = in_array(strtolower($maintenanceRaw), ['1', 'true', 'yes', 'on'], true);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -57,6 +59,12 @@ $isPagesEditor = (strpos($currentPath, '/pages/') !== false && strpos($currentPa
           <h1><?= sanitize($pageTitle) ?></h1>
         </div>
         <div class="header-right">
+          <?php if ($maintenanceEnabled): ?>
+            <a href="<?= ADMIN_URL ?>pages/settings.php" class="maintenance-badge" title="Public site is currently in maintenance mode">
+              <i class="fas fa-tools"></i>
+              <span>Maintenance On</span>
+            </a>
+          <?php endif; ?>
           <span class="user-info">Welcome, <strong><?= sanitize(getCurrentUsername()) ?></strong></span>
           <a href="<?= SITE_URL ?>" target="_blank" class="btn btn-sm btn-outline"><i class="fas fa-external-link-alt"></i> View Site</a>
         </div>

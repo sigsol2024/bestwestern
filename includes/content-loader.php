@@ -81,6 +81,87 @@ function getSiteSetting($key, $default = '') {
     }
 }
 
+function site_maintenance_mode_enabled(): bool {
+    $raw = trim((string) getSiteSetting('maintenance_mode', cms_default_setting('maintenance_mode')));
+    return in_array(strtolower($raw), ['1', 'true', 'yes', 'on'], true);
+}
+
+function site_current_public_page_slug(): ?string {
+    $script = basename((string) ($_SERVER['SCRIPT_NAME'] ?? ''), '.php');
+    if ($script === '') {
+        return null;
+    }
+    if ($script === 'index') {
+        return 'index';
+    }
+
+    $allowed = [
+        'about',
+        'rooms',
+        'room-details',
+        'contact',
+        'gallery',
+        'dining',
+        'amenities',
+        'hotel-policy',
+        'privacy-policy',
+        'terms-and-conditions',
+    ];
+
+    return in_array($script, $allowed, true) ? $script : null;
+}
+
+function site_page_is_publicly_active(string $pageSlug): bool {
+    if ($pageSlug === 'index') {
+        return true;
+    }
+    if ($pageSlug === 'room-details') {
+        $pageSlug = 'rooms';
+    }
+    $settingKey = 'page_active_' . $pageSlug;
+    $raw = trim((string) getSiteSetting($settingKey, cms_default_setting($settingKey, '1')));
+    return in_array(strtolower($raw), ['1', 'true', 'yes', 'on'], true);
+}
+
+function site_enforce_maintenance_mode(): void {
+    if (PHP_SAPI === 'cli' || !site_maintenance_mode_enabled()) {
+        return;
+    }
+
+    $script = basename((string) ($_SERVER['SCRIPT_NAME'] ?? ''));
+    if ($script === 'maintenance.php') {
+        return;
+    }
+
+    while (ob_get_level()) {
+        ob_end_clean();
+    }
+    header('Location: ' . site_url('maintenance'));
+    exit;
+}
+
+function site_enforce_page_availability(): void {
+    if (PHP_SAPI === 'cli') {
+        return;
+    }
+
+    $pageSlug = site_current_public_page_slug();
+    if ($pageSlug === null || $pageSlug === 'index') {
+        return;
+    }
+
+    if (!site_page_is_publicly_active($pageSlug)) {
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+        header('Location: ' . site_url('index'));
+        exit;
+    }
+}
+
+site_enforce_maintenance_mode();
+site_enforce_page_availability();
+
 /**
  * Get all rooms (with optional filters)
  */
