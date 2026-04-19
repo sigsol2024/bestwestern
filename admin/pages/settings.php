@@ -656,9 +656,16 @@ document.getElementById('settingsForm').addEventListener('submit', function(e) {
     document.getElementById('social_media_json').value = JSON.stringify(socialMediaList);
     
     const formData = new FormData(this);
+    const debugSiteName = String(formData.get('site_name') || '').slice(0, 80);
+    const debugHasCsrf = !!formData.get('csrf_token');
+    const debugHasSmtpSecret = formData.has('smtp_secret');
     
     const submitBtn = this.querySelector('button[type="submit"]');
     if (typeof setSaveButtonSavingState === 'function') setSaveButtonSavingState(submitBtn, true);
+
+    // #region agent log
+    fetch('http://127.0.0.1:7262/ingest/0395f273-d6cc-4a5a-a50c-e33b0e3ee23d',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'2bd4ec'},body:JSON.stringify({sessionId:'2bd4ec',runId:'initial',hypothesisId:'H5',location:'admin/pages/settings.php:666',message:'settings submit started',data:{hasCsrf:debugHasCsrf,hasSmtpSecret:debugHasSmtpSecret,siteNamePreview:debugSiteName,formKeyCount:Array.from(formData.keys()).length},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
 
     fetch('<?= ADMIN_URL ?>api/settings.php', {
         method: 'POST',
@@ -666,6 +673,9 @@ document.getElementById('settingsForm').addEventListener('submit', function(e) {
         body: formData
     })
     .then(response => {
+        // #region agent log
+        fetch('http://127.0.0.1:7262/ingest/0395f273-d6cc-4a5a-a50c-e33b0e3ee23d',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'2bd4ec'},body:JSON.stringify({sessionId:'2bd4ec',runId:'initial',hypothesisId:'H5',location:'admin/pages/settings.php:675',message:'settings response received',data:{status:response.status,ok:response.ok,statusText:response.statusText},timestamp:Date.now()})}).catch(()=>{});
+        // #endregion
         if (!response.ok) {
             throw new Error('HTTP ' + response.status + ': ' + response.statusText);
         }

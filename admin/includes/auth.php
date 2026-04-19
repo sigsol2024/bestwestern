@@ -123,6 +123,18 @@ function requireLogin() {
     $callingFile = $backtrace[1]['file'] ?? '';
     $isApiFile = strpos($callingFile, '/api/') !== false || strpos($callingFile, '\\api\\') !== false;
 
+    // #region agent log
+    if (function_exists('cmsDebugLog') && $isApiFile) {
+        cmsDebugLog('H2', 'admin/includes/auth.php:125', 'requireLogin api check', [
+            'callingFile' => basename((string) $callingFile),
+            'hasSessionAdminId' => isset($_SESSION['admin_id']),
+            'hasSessionAdminUsername' => isset($_SESSION['admin_username']),
+            'hasAuthCookie' => isset($_COOKIE[adminAuthCookieName()]),
+            'requestUri' => $_SERVER['REQUEST_URI'] ?? '',
+        ]);
+    }
+    // #endregion
+
     if (!isLoggedIn()) {
         $requestUri = $_SERVER['REQUEST_URI'] ?? '';
         $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
@@ -134,6 +146,18 @@ function requireLogin() {
             || (isset($httpAccept) && strpos($httpAccept, 'application/json') !== false);
 
         if ($isApiRequest) {
+            // #region agent log
+            if (function_exists('cmsDebugLog')) {
+                cmsDebugLog('H2', 'admin/includes/auth.php:140', 'requireLogin rejected api request', [
+                    'requestUri' => $requestUri,
+                    'scriptName' => $scriptName,
+                    'httpAccept' => $httpAccept,
+                    'hasSessionAdminId' => isset($_SESSION['admin_id']),
+                    'hasSessionAdminUsername' => isset($_SESSION['admin_username']),
+                    'hasAuthCookie' => isset($_COOKIE[adminAuthCookieName()]),
+                ]);
+            }
+            // #endregion
             while (ob_get_level()) {
                 ob_end_clean();
             }
