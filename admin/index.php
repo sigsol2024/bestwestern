@@ -11,29 +11,24 @@ $error = '';
 $rateLimitWarning = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $csrfToken = $_POST['csrf_token'] ?? '';
-    if (!verifyCSRFToken($csrfToken)) {
-        $error = 'Invalid security token. Please try again.';
-    } else {
-        $username = trim($_POST['username'] ?? '');
-        $password = $_POST['password'] ?? '';
+    $username = trim($_POST['username'] ?? '');
+    $password = $_POST['password'] ?? '';
 
-        if (empty($username) || empty($password)) {
-            $error = 'Please enter both username and password.';
+    if (empty($username) || empty($password)) {
+        $error = 'Please enter both username and password.';
+    } else {
+        if (!checkLoginRateLimit($username)) {
+            $error = 'Too many login attempts. Please wait before trying again.';
+            $rateLimitWarning = true;
         } else {
-            if (!checkLoginRateLimit($username)) {
-                $error = 'Too many login attempts. Please wait before trying again.';
-                $rateLimitWarning = true;
+            $result = login($username, $password);
+            if ($result['success']) {
+                $redirect = $_SESSION['redirect_after_login'] ?? ADMIN_URL . 'dashboard.php';
+                unset($_SESSION['redirect_after_login']);
+                redirect($redirect);
             } else {
-                $result = login($username, $password);
-                if ($result['success']) {
-                    $redirect = $_SESSION['redirect_after_login'] ?? ADMIN_URL . 'dashboard.php';
-                    unset($_SESSION['redirect_after_login']);
-                    redirect($redirect);
-                } else {
-                    $error = $result['message'];
-                    $rateLimitWarning = true;
-                }
+                $error = $result['message'];
+                $rateLimitWarning = true;
             }
         }
     }
@@ -42,7 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $siteName = (string) getSetting('site_name', cms_default_setting('site_name'));
 $siteLogoPath = site_brand_logo_path((string) getSetting('site_logo', ''), 'assets/images/logo/logo-dark.png');
 $siteLogoUrl = $siteLogoPath !== '' ? site_media_url($siteLogoPath) : '';
-$csrfToken = generateCSRFToken();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -75,8 +69,6 @@ $csrfToken = generateCSRFToken();
       <?php endif; ?>
 
       <form method="POST" action="" class="login-form">
-        <input type="hidden" name="csrf_token" value="<?= $csrfToken ?>">
-
         <div class="form-group">
           <label for="username">Username</label>
           <div class="input-wrapper">
