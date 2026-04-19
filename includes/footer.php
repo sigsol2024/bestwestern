@@ -144,7 +144,7 @@ $footerTermsLink = $footerTermsHref !== '' ? site_href($footerTermsHref) : site_
           foreach ($footerExplore as $fe):
               [$href, $lbl] = $fe;
               $resolvedHref = site_href((string)$href);
-              if (!site_is_valid_nav_href($resolvedHref)) {
+              if (!site_is_valid_nav_href($resolvedHref) || !site_nav_link_visible($resolvedHref)) {
                   continue;
               }
               ?>

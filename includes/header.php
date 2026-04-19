@@ -51,10 +51,11 @@ $headerNavLinks = [
     ['Contact Us', $navContactHref],
 ];
 $headerNavLinks = array_values(array_filter($headerNavLinks, static function ($row) {
-    return site_is_valid_nav_href((string)$row[1]);
+    $href = (string) $row[1];
+    return site_is_valid_nav_href($href) && site_nav_link_visible($href);
 }));
 
-$showNavCta = site_is_valid_nav_href($ctaHref);
+$showNavCta = site_is_valid_nav_href($ctaHref) && site_nav_link_visible($ctaHref);
 ?>
 
 <!-- Sticky Navigation — light background: use dark logo variant (brand guidelines) -->

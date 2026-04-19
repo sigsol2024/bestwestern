@@ -179,3 +179,22 @@ if (!function_exists('site_absolute_href')) {
     }
 }
 
+if (!function_exists('site_nav_link_visible')) {
+    /**
+     * False when the href targets a public page that is draft in site_settings (`page_active_{slug}`).
+     * Applies to every internal route with a matching setting: about, contact, dining, gallery,
+     * amenities, rooms, hotel-policy, privacy-policy, terms-and-conditions, etc.—not only rooms.
+     * Home (`/`) stays visible. External http(s) URLs stay visible (no page_active check).
+     */
+    function site_nav_link_visible(string $href): bool {
+        if (!function_exists('site_internal_nav_slug') || !function_exists('site_page_is_publicly_active')) {
+            return true;
+        }
+        $slug = site_internal_nav_slug($href);
+        if ($slug === null) {
+            return true;
+        }
+        return site_page_is_publicly_active($slug);
+    }
+}
+
