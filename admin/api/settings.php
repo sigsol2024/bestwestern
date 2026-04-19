@@ -40,10 +40,9 @@ try {
                 jsonResponse(['success' => false, 'message' => 'Invalid security token'], 403);
             }
 
-            $input = file_get_contents('php://input');
-            $data = json_decode($input, true);
+            $data = getJsonRequestBody();
 
-            if (json_last_error() !== JSON_ERROR_NONE) {
+            if (getJsonRequestError() !== JSON_ERROR_NONE) {
                 jsonResponse(['success' => false, 'message' => 'Invalid JSON data'], 400);
             }
 

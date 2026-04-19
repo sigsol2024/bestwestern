@@ -33,9 +33,8 @@ try {
             if (!verifyCSRFToken($csrfToken)) {
                 jsonResponse(['success' => false, 'message' => 'Invalid security token'], 403);
             }
-            $input = file_get_contents('php://input');
-            $data = json_decode($input, true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
+            $data = getJsonRequestBody();
+            if (getJsonRequestError() !== JSON_ERROR_NONE) {
                 jsonResponse(['success' => false, 'message' => 'Invalid JSON data'], 400);
             }
             if (!isset($data['page']) || !isset($data['section_key'])) {

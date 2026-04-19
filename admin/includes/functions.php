@@ -55,6 +55,32 @@ function verifyCSRFToken($token) {
     return is_string($cookieToken) && $cookieToken !== '' && hash_equals($cookieToken, $token);
 }
 
+function getRawRequestBody() {
+    if (!array_key_exists('__cms_raw_request_body', $GLOBALS)) {
+        $GLOBALS['__cms_raw_request_body'] = (string) file_get_contents('php://input');
+    }
+    return $GLOBALS['__cms_raw_request_body'];
+}
+
+function getJsonRequestBody() {
+    if (!array_key_exists('__cms_json_request_body', $GLOBALS)) {
+        $rawBody = trim(getRawRequestBody());
+        if ($rawBody === '') {
+            $GLOBALS['__cms_json_request_body'] = [];
+            $GLOBALS['__cms_json_request_error'] = JSON_ERROR_NONE;
+        } else {
+            $GLOBALS['__cms_json_request_body'] = json_decode($rawBody, true);
+            $GLOBALS['__cms_json_request_error'] = json_last_error();
+        }
+    }
+    return $GLOBALS['__cms_json_request_body'];
+}
+
+function getJsonRequestError() {
+    getJsonRequestBody();
+    return (int) ($GLOBALS['__cms_json_request_error'] ?? JSON_ERROR_NONE);
+}
+
 function getRequestCSRFToken() {
     $headers = getAllHeaders();
     foreach ($headers as $name => $value) {
@@ -62,7 +88,19 @@ function getRequestCSRFToken() {
             return is_string($value) ? $value : '';
         }
     }
-    return $_POST['csrf_token'] ?? '';
+    if (!empty($_POST['csrf_token'])) {
+        return (string) $_POST['csrf_token'];
+    }
+    $jsonBody = getJsonRequestBody();
+    if (is_array($jsonBody)) {
+        if (!empty($jsonBody['csrf_token'])) {
+            return (string) $jsonBody['csrf_token'];
+        }
+        if (!empty($jsonBody['csrfToken'])) {
+            return (string) $jsonBody['csrfToken'];
+        }
+    }
+    return '';
 }
 
 if (!function_exists('getAllHeaders')) {

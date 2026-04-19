@@ -113,8 +113,8 @@ try {
             if (!verifyCSRFToken($csrfToken)) {
                 jsonResponse(['success' => false, 'message' => 'Invalid security token'], 403);
             }
-            $data = json_decode(file_get_contents('php://input'), true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
+            $data = getJsonRequestBody();
+            if (getJsonRequestError() !== JSON_ERROR_NONE) {
                 jsonResponse(['success' => false, 'message' => 'Invalid JSON'], 400);
             }
 
@@ -252,8 +252,8 @@ try {
             }
             $id = (int)($_GET['id'] ?? 0);
             if (!$id) jsonResponse(['success' => false, 'message' => 'Invalid room ID'], 400);
-            $data = json_decode(file_get_contents('php://input'), true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
+            $data = getJsonRequestBody();
+            if (getJsonRequestError() !== JSON_ERROR_NONE) {
                 jsonResponse(['success' => false, 'message' => 'Invalid JSON'], 400);
             }
 

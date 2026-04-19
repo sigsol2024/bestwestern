@@ -662,6 +662,7 @@ document.getElementById('settingsForm').addEventListener('submit', function(e) {
             data[key] = value;
         }
     });
+    data.csrf_token = formData.get('csrf_token') || '';
     
     const submitBtn = this.querySelector('button[type="submit"]');
     if (typeof setSaveButtonSavingState === 'function') setSaveButtonSavingState(submitBtn, true);
