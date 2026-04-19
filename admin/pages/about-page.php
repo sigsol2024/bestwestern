@@ -20,6 +20,8 @@ $timelineDef = json_encode($d['about_timeline'], JSON_PRETTY_PRINT | JSON_UNESCA
 $teamDef = json_encode($d['about_team'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 $timelineRaw = trim($sections['timeline_json'] ?? '') !== '' ? $sections['timeline_json'] : $timelineDef;
 $teamRaw = trim($sections['team_json'] ?? '') !== '' ? $sections['team_json'] : $teamDef;
+$pageActiveSettingKey = 'page_active_about';
+$pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting($pageActiveSettingKey, '1'))) === '1';
 ?>
 
 <form id="aboutPageForm">
@@ -177,6 +179,13 @@ $teamRaw = trim($sections['team_json'] ?? '') !== '' ? $sections['team_json'] : 
       <div class="form-group"><label for="cta_btn2">Button 2</label><input type="text" id="cta_btn2" name="cta_btn2" value="<?= sanitize($sections['cta_btn2'] ?? 'Contact Us') ?>"></div>
       <div class="form-group"><label for="cta_btn2_href">URL</label><input type="text" id="cta_btn2_href" name="cta_btn2_href" value="<?= sanitize($sections['cta_btn2_href'] ?? 'contact.php') ?>"></div>
     </div>
+  </div></div>
+
+  <div class="card"><div class="card-header"><h2>Page visibility</h2></div><div style="padding:20px;">
+    <label style="display:flex;align-items:center;gap:8px;">
+      <input type="checkbox" name="__page_active" value="1" <?= $pageIsActive ? 'checked' : '' ?>>
+      <span>Active</span>
+    </label>
   </div></div>
 
   <button type="submit" class="btn btn-primary">Save all</button>
@@ -426,7 +435,7 @@ $teamRaw = trim($sections['team_json'] ?? '') !== '' ? $sections['team_json'] : 
 })();
 document.getElementById('aboutPageForm').addEventListener('submit', function (e) {
   e.preventDefault();
-  savePageForm(this, 'about')
+  savePageForm(this, 'about', {}, { pageActiveSettingKey: 'page_active_about' })
     .then(function () { showToast('Saved', 'success'); })
     .catch(function (err) { showToast(err.message || 'Save failed', 'error'); });
 });

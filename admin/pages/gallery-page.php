@@ -21,6 +21,8 @@ $itemsRaw = $sections['items_json'] ?? '';
 if (trim($itemsRaw) === '') {
     $itemsRaw = $itemsDefault;
 }
+$pageActiveSettingKey = 'page_active_gallery';
+$pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting($pageActiveSettingKey, '1'))) === '1';
 // Force new format only: JSON array of image paths.
 // If old object-array is found (e.g. [{src: "..."}]), normalize it to ["...","..."] so the admin UI stays clean.
 $decodedItems = json_decode($itemsRaw, true);
@@ -88,6 +90,16 @@ if (is_array($decodedItems) && count($decodedItems) > 0) {
         </div>
         <div id="galleryPreview" class="image-preview" style="display:block; margin-top:12px;"></div>
       </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Page visibility</h2></div>
+    <div style="padding:20px;">
+      <label style="display:flex;align-items:center;gap:8px;">
+        <input type="checkbox" name="__page_active" value="1" <?= $pageIsActive ? 'checked' : '' ?>>
+        <span>Active</span>
+      </label>
     </div>
   </div>
 
@@ -190,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 document.getElementById('galleryPageForm').addEventListener('submit', function (e) {
   e.preventDefault();
-  savePageForm(this, 'gallery')
+  savePageForm(this, 'gallery', {}, { pageActiveSettingKey: 'page_active_gallery' })
     .then(function () { showToast('Saved', 'success'); })
     .catch(function (err) { showToast(err.message || 'Save failed', 'error'); });
 });

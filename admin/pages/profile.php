@@ -193,6 +193,7 @@ document.getElementById('emailForm').addEventListener('submit', function(e) {
             'Content-Type': 'application/json',
             'X-CSRF-Token': csrfToken
         },
+        credentials: 'same-origin',
         body: JSON.stringify({ action: 'update_email', ...data })
     })
     .then(response => {
@@ -265,6 +266,7 @@ document.getElementById('passwordForm').addEventListener('submit', function(e) {
             'Content-Type': 'application/json',
             'X-CSRF-Token': csrfToken
         },
+        credentials: 'same-origin',
         body: JSON.stringify({ action: 'change_password', ...data })
     })
     .then(response => {

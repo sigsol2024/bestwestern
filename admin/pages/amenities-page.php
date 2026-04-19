@@ -21,6 +21,8 @@ $raw = $sections['sections_json'] ?? '';
 if (trim($raw) === '') {
     $raw = $defaultJson;
 }
+$pageActiveSettingKey = 'page_active_amenities';
+$pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting($pageActiveSettingKey, '1'))) === '1';
 ?>
 
 <form id="amenitiesPageForm">
@@ -52,6 +54,16 @@ if (trim($raw) === '') {
           <button type="button" class="btn btn-outline btn-sm" id="amenitiesApplyJsonBtn">Apply JSON</button>
         </div>
       </details>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Page visibility</h2></div>
+    <div style="padding:20px;">
+      <label style="display:flex;align-items:center;gap:8px;">
+        <input type="checkbox" name="__page_active" value="1" <?= $pageIsActive ? 'checked' : '' ?>>
+        <span>Active</span>
+      </label>
     </div>
   </div>
 
@@ -284,7 +296,7 @@ function amenitiesRender(items) {
 
 document.getElementById('amenitiesPageForm').addEventListener('submit', function (e) {
   e.preventDefault();
-  savePageForm(this, 'amenities')
+  savePageForm(this, 'amenities', {}, { pageActiveSettingKey: 'page_active_amenities' })
     .then(function () { showToast('Saved', 'success'); })
     .catch(function (err) { showToast(err.message || 'Save failed', 'error'); });
 });

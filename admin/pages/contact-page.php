@@ -15,6 +15,8 @@ try {
 } catch (PDOException $e) {
     error_log($e->getMessage());
 }
+$pageActiveSettingKey = 'page_active_contact';
+$pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting($pageActiveSettingKey, '1'))) === '1';
 ?>
 
 <form id="contactPageForm">
@@ -74,6 +76,16 @@ try {
     </div>
   </div>
 
+  <div class="card">
+    <div class="card-header"><h2>Page visibility</h2></div>
+    <div style="padding:20px;">
+      <label style="display:flex;align-items:center;gap:8px;">
+        <input type="checkbox" name="__page_active" value="1" <?= $pageIsActive ? 'checked' : '' ?>>
+        <span>Active</span>
+      </label>
+    </div>
+  </div>
+
   <button type="submit" class="btn btn-primary">Save</button>
 </form>
 
@@ -83,7 +95,7 @@ window.insertSelectedMediaOverride = function () {
 };
 document.getElementById('contactPageForm').addEventListener('submit', function (e) {
   e.preventDefault();
-  savePageForm(this, 'contact')
+  savePageForm(this, 'contact', {}, { pageActiveSettingKey: 'page_active_contact' })
     .then(function () { showToast('Saved', 'success'); })
     .catch(function (err) { showToast(err.message || 'Save failed', 'error'); });
 });

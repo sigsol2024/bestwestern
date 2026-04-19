@@ -70,6 +70,7 @@ document.getElementById('normalizeOrderBtn')?.addEventListener('click', function
   fetch('<?= ADMIN_URL ?>api/rooms.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+    credentials: 'same-origin',
     body: JSON.stringify({ normalize_display_order: 1 })
   }).then(function (r) { return r.json(); }).then(function (data) {
     if (data.success) {
@@ -90,6 +91,7 @@ document.querySelectorAll('.js-duplicate-room').forEach(function (btn) {
     fetch('<?= ADMIN_URL ?>api/rooms.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+      credentials: 'same-origin',
       body: JSON.stringify({ duplicate_from_id: parseInt(id, 10) })
     }).then(function (r) { return r.json(); }).then(function (data) {
       if (data.success && data.room_id) {
@@ -109,7 +111,8 @@ document.querySelectorAll('.danger-delete-room').forEach(function (btn) {
     var csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
     fetch('<?= ADMIN_URL ?>api/rooms.php?id=' + encodeURIComponent(id), {
       method: 'DELETE',
-      headers: { 'X-CSRF-Token': csrfToken }
+      headers: { 'X-CSRF-Token': csrfToken },
+      credentials: 'same-origin'
     }).then(function (r) { return r.json(); }).then(function (data) {
       if (data.success) {
         showToast('Room deleted', 'success');

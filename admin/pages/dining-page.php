@@ -20,6 +20,8 @@ $menuDef = json_encode($cmsDefaults['dining_menu'], JSON_PRETTY_PRINT | JSON_UNE
 $masonryDef = json_encode($cmsDefaults['dining_masonry'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 $menuRaw = trim($sections['menu_json'] ?? '') !== '' ? $sections['menu_json'] : $menuDef;
 $masonryRaw = trim($sections['masonry_json'] ?? '') !== '' ? $sections['masonry_json'] : $masonryDef;
+$pageActiveSettingKey = 'page_active_dining';
+$pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting($pageActiveSettingKey, '1'))) === '1';
 ?>
 
 <form id="diningPageForm">
@@ -187,6 +189,13 @@ $masonryRaw = trim($sections['masonry_json'] ?? '') !== '' ? $sections['masonry_
     </div>
   </div></div>
 
+  <div class="card"><div class="card-header"><h2>Page visibility</h2></div><div style="padding:20px;">
+    <label style="display:flex;align-items:center;gap:8px;">
+      <input type="checkbox" name="__page_active" value="1" <?= $pageIsActive ? 'checked' : '' ?>>
+      <span>Active</span>
+    </label>
+  </div></div>
+
   <button type="submit" class="btn btn-primary">Save all</button>
 </form>
 
@@ -333,7 +342,7 @@ $masonryRaw = trim($sections['masonry_json'] ?? '') !== '' ? $sections['masonry_
 })();
 document.getElementById('diningPageForm').addEventListener('submit', function (e) {
   e.preventDefault();
-  savePageForm(this, 'dining')
+  savePageForm(this, 'dining', {}, { pageActiveSettingKey: 'page_active_dining' })
     .then(function () { showToast('Saved', 'success'); })
     .catch(function (err) { showToast(err.message || 'Save failed', 'error'); });
 });

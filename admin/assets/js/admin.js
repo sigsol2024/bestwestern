@@ -7,6 +7,21 @@ function adminApiBase() {
   return String(base).replace(/\/?$/, '/');
 }
 
+function parseAdminJsonResponse(response) {
+  return response.text().then(function (text) {
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      throw new Error('Server returned invalid JSON (HTTP ' + response.status + '). Try logging in again.');
+    }
+    if (!data.success) {
+      throw new Error(data.message || ('Request failed (HTTP ' + response.status + ')'));
+    }
+    return data;
+  });
+}
+
 /**
  * Infer page_sections content_type from field name (with optional per-form overrides).
  */
@@ -30,21 +45,23 @@ function savePageSection(payload) {
   return fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
+    credentials: 'same-origin',
     body: JSON.stringify(payload)
-  }).then(function (r) {
-    return r.text().then(function (text) {
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (e) {
-        throw new Error('Server returned invalid JSON (HTTP ' + r.status + '). Try logging in again.');
-      }
-      if (!data.success) {
-        throw new Error(data.message || ('Save failed (HTTP ' + r.status + ')'));
-      }
-      return data;
-    });
-  });
+  }).then(parseAdminJsonResponse);
+}
+
+function saveSettingsPayload(payload) {
+  const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+  if (!csrf) {
+    return Promise.reject(new Error('Security token missing. Refresh the page and try again.'));
+  }
+  const url = adminApiBase() + 'api/settings.php';
+  return fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
+    credentials: 'same-origin',
+    body: JSON.stringify(payload)
+  }).then(parseAdminJsonResponse);
 }
 
 /**
@@ -100,10 +117,11 @@ function savePageForm(formEl, pageSlug, typeOverrides, options) {
   const formData = new FormData(formEl);
   const keys = [];
   formData.forEach(function (_, k) {
+    if (String(k).indexOf('__') === 0) return;
     if (keys.indexOf(k) === -1) keys.push(k);
   });
 
-  const promise = Promise.all(
+  let promise = Promise.all(
     keys.map(function (key) {
       const ct =
         Object.prototype.hasOwnProperty.call(typeOverrides, key) && typeOverrides[key]
@@ -119,6 +137,16 @@ function savePageForm(formEl, pageSlug, typeOverrides, options) {
       });
     })
   );
+
+  if (options.pageActiveSettingKey) {
+    const pageActiveFieldName = options.pageActiveFieldName || '__page_active';
+    const pageActiveValue = formData.get(pageActiveFieldName) ? '1' : '0';
+    promise = promise.then(function () {
+      return saveSettingsPayload({
+        [options.pageActiveSettingKey]: pageActiveValue
+      });
+    });
+  }
 
   return promise.finally(function () {
     setSaveButtonSavingState(submitBtn, false);

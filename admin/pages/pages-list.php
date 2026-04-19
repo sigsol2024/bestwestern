@@ -8,7 +8,7 @@ require_once __DIR__ . '/../includes/header.php';
 $availablePages = [
   'index' => ['name' => 'Homepage', 'editor' => 'homepage.php', 'icon' => 'fa-home'],
   'about' => ['name' => 'About', 'editor' => 'about-page.php', 'icon' => 'fa-info-circle'],
-  'rooms' => ['name' => 'Rooms listing (hero & intro)', 'editor' => 'rooms-page.php', 'icon' => 'fa-list'],
+  'rooms' => ['name' => 'Rooms listing', 'editor' => 'rooms-page.php', 'icon' => 'fa-list'],
   'contact' => ['name' => 'Contact', 'editor' => 'contact-page.php', 'icon' => 'fa-envelope'],
   'gallery' => ['name' => 'Gallery', 'editor' => 'gallery-page.php', 'icon' => 'fa-images'],
   'dining' => ['name' => 'Dining', 'editor' => 'dining-page.php', 'icon' => 'fa-utensils'],
@@ -61,29 +61,6 @@ foreach ($availablePages as $pageKey => $info) {
               <?php endif; ?>
             </div>
           </div>
-          <?php if ($pageKey !== 'index'): ?>
-            <div class="page-status-panel">
-              <div>
-                <strong class="page-status-panel__title"><?= $pageStatuses[$pageKey] ? 'Live' : 'Draft' ?></strong>
-              </div>
-              <label style="display:flex;align-items:center;gap:8px;white-space:nowrap;">
-                <input
-                  type="checkbox"
-                  class="js-page-status-toggle"
-                  data-page="<?= sanitize($pageKey) ?>"
-                  data-setting-key="<?= sanitize('page_active_' . $pageKey) ?>"
-                  <?= $pageStatuses[$pageKey] ? 'checked' : '' ?>
-                >
-                <span>Active</span>
-              </label>
-            </div>
-          <?php else: ?>
-            <div class="page-status-panel">
-              <div>
-                <strong class="page-status-panel__title">Always live</strong>
-              </div>
-            </div>
-          <?php endif; ?>
           <a href="<?= ADMIN_URL ?>pages/<?= $info['editor'] ?>" class="btn btn-primary" style="width:100%;"><i class="fas fa-edit"></i> Edit Page</a>
         </div>
       <?php endforeach; ?>
@@ -93,61 +70,5 @@ foreach ($availablePages as $pageKey => $info) {
     </div>
   </div>
 </div>
-
-<script>
-document.querySelectorAll('.js-page-status-toggle').forEach(function (toggle) {
-  toggle.addEventListener('change', function () {
-    const settingKey = toggle.getAttribute('data-setting-key');
-    const isActive = toggle.checked ? '1' : '0';
-    const panel = toggle.closest('.page-status-panel');
-    const card = toggle.closest('.page-card');
-    const titleEl = panel ? panel.querySelector('.page-status-panel__title') : null;
-    const badgeEl = card ? card.querySelector('.page-status-badge') : null;
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-    const originalChecked = !toggle.checked;
-
-    toggle.disabled = true;
-
-    fetch('<?= ADMIN_URL ?>api/settings.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': csrfToken
-      },
-      body: JSON.stringify({ [settingKey]: isActive })
-    })
-    .then(function (response) {
-      return response.json();
-    })
-    .then(function (data) {
-      if (data.success) {
-        if (titleEl) titleEl.textContent = toggle.checked ? 'Live' : 'Draft';
-        if (badgeEl) {
-          badgeEl.textContent = toggle.checked ? 'Live' : 'Draft';
-          badgeEl.classList.toggle('page-status-badge--live', toggle.checked);
-          badgeEl.classList.toggle('page-status-badge--draft', !toggle.checked);
-        }
-        if (typeof showToast === 'function') {
-          showToast('Page status updated.', 'success');
-        }
-      } else {
-        toggle.checked = originalChecked;
-        if (typeof showToast === 'function') {
-          showToast(data.message || 'Failed to update page status.', 'error');
-        }
-      }
-    })
-    .catch(function () {
-      toggle.checked = originalChecked;
-      if (typeof showToast === 'function') {
-        showToast('Failed to update page status.', 'error');
-      }
-    })
-    .finally(function () {
-      toggle.disabled = false;
-    });
-  });
-});
-</script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

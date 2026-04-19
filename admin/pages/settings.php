@@ -673,6 +673,7 @@ document.getElementById('settingsForm').addEventListener('submit', function(e) {
             'Content-Type': 'application/json',
             'X-CSRF-Token': csrfToken
         },
+        credentials: 'same-origin',
         body: JSON.stringify(data)
     })
     .then(response => {

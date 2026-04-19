@@ -15,6 +15,8 @@ try {
 } catch (PDOException $e) {
     error_log($e->getMessage());
 }
+$pageActiveSettingKey = 'page_active_rooms';
+$pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting($pageActiveSettingKey, '1'))) === '1';
 ?>
 
 <form id="roomsPageForm">
@@ -46,6 +48,15 @@ try {
       </div>
     </div>
   </div>
+  <div class="card">
+    <div class="card-header"><h2>Page visibility</h2></div>
+    <div style="padding:20px;">
+      <label style="display:flex;align-items:center;gap:8px;">
+        <input type="checkbox" name="__page_active" value="1" <?= $pageIsActive ? 'checked' : '' ?>>
+        <span>Active</span>
+      </label>
+    </div>
+  </div>
   <button type="submit" class="btn btn-primary">Save</button>
 </form>
 
@@ -62,7 +73,7 @@ window.insertSelectedMediaOverride = function () {
 };
 document.getElementById('roomsPageForm').addEventListener('submit', function (e) {
   e.preventDefault();
-  savePageForm(this, 'rooms', { hero_title: 'html' })
+  savePageForm(this, 'rooms', { hero_title: 'html' }, { pageActiveSettingKey: 'page_active_rooms' })
     .then(function () { showToast('Saved', 'success'); })
     .catch(function (err) { showToast(err.message || 'Save failed', 'error'); });
 });
