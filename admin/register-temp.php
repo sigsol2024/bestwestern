@@ -24,12 +24,17 @@ function registerTempBootstrapCode(): string {
     return trim((string) cms_bootstrap_gate_code());
 }
 
+function registerTempBootstrapProof(string $bootstrapCode): string {
+    return hash_hmac('sha256', 'register-temp:create-admin', $bootstrapCode);
+}
+
 function registerTempHasAdmin(PDO $pdo): bool {
     $stmt = $pdo->query('SELECT COUNT(*) FROM admin_users');
     return ((int) $stmt->fetchColumn()) > 0;
 }
 
 $bootstrapCode = registerTempBootstrapCode();
+$bootstrapProof = registerTempBootstrapProof($bootstrapCode);
 if ($bootstrapCode === '') {
     http_response_code(503);
     header('Content-Type: text/plain; charset=UTF-8');
@@ -40,7 +45,9 @@ if ($bootstrapCode === '') {
 $error = '';
 $success = '';
 $gateError = '';
-$gateUnlocked = !empty($_SESSION[CMS_TEMP_REGISTER_SESSION_KEY]);
+$submittedBootstrapProof = trim((string) ($_POST['bootstrap_gate'] ?? ''));
+$gateUnlocked = !empty($_SESSION[CMS_TEMP_REGISTER_SESSION_KEY])
+    || ($submittedBootstrapProof !== '' && hash_equals($bootstrapProof, $submittedBootstrapProof));
 $hasExistingAdmin = false;
 $adminStateKnown = false;
 
@@ -55,12 +62,9 @@ if ($pdo instanceof PDO) {
 }
 
 if (!$gateUnlocked && $_SERVER['REQUEST_METHOD'] === 'POST' && (($_POST['action'] ?? '') === 'unlock_bootstrap')) {
-    $csrf = $_POST['csrf_token'] ?? '';
     $providedCode = trim((string) ($_POST['bootstrap_code'] ?? ''));
 
-    if (!verifyCSRFToken($csrf)) {
-        $gateError = 'Invalid security token. Refresh the page and try again.';
-    } elseif ($providedCode === '' || !hash_equals($bootstrapCode, $providedCode)) {
+    if ($providedCode === '' || !hash_equals($bootstrapCode, $providedCode)) {
         $gateError = 'Access code is incorrect.';
     } else {
         session_regenerate_id(true);
@@ -70,10 +74,7 @@ if (!$gateUnlocked && $_SERVER['REQUEST_METHOD'] === 'POST' && (($_POST['action'
 }
 
 if ($gateUnlocked && $_SERVER['REQUEST_METHOD'] === 'POST' && (($_POST['action'] ?? '') === 'create_admin')) {
-    $csrf = $_POST['csrf_token'] ?? '';
-    if (!verifyCSRFToken($csrf)) {
-        $error = 'Invalid security token. Refresh the page and try again!';
-    } elseif (!$adminStateKnown) {
+    if (!$adminStateKnown) {
         $error = 'Database error. Check that the `admin_users` table exists and database credentials are correct.';
     } elseif ($hasExistingAdmin) {
         $error = 'An admin account already exists. This bootstrap form is only available for first-time setup.';
@@ -115,8 +116,6 @@ if ($gateUnlocked && $_SERVER['REQUEST_METHOD'] === 'POST' && (($_POST['action']
         }
     }
 }
-
-$csrfToken = generateCSRFToken();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -133,9 +132,6 @@ $csrfToken = generateCSRFToken();
       <div class="login-header">
         <div class="login-logo" style="background:#d63638;"><i class="fas fa-user-plus" style="font-size:28px;"></i></div>
         <h1>Bootstrap Access</h1>
-        <p class="login-subtitle" style="color:#b45309;">
-          This page is only for first-time setup. Remove <strong>register-temp.php</strong> after use.
-        </p>
       </div>
 
       <?php if (!$gateUnlocked): ?>
@@ -146,7 +142,6 @@ $csrfToken = generateCSRFToken();
         <?php endif; ?>
 
         <form method="POST" action="register-temp.php" class="login-form" autocomplete="off">
-          <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
           <input type="hidden" name="action" value="unlock_bootstrap">
 
           <div class="form-group">
@@ -161,9 +156,6 @@ $csrfToken = generateCSRFToken();
 
           <button type="submit" class="btn-login"><span>Unlock</span></button>
         </form>
-        <p style="text-align:center;margin-top:20px;color:#6b7280;font-size:13px;">
-          The access code is defined in <code>admin/includes/config.php</code>.
-        </p>
       <?php elseif ($success): ?>
         <div class="alert alert-error" style="margin-bottom:20px;padding:12px;border-left:4px solid #00a32a;background:#ecfdf5;color:#166534;">
           <?= $success ?>
@@ -191,8 +183,8 @@ $csrfToken = generateCSRFToken();
         </div>
 
         <form method="POST" action="register-temp.php" class="login-form" autocomplete="off">
-          <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8') ?>">
           <input type="hidden" name="action" value="create_admin">
+          <input type="hidden" name="bootstrap_gate" value="<?= htmlspecialchars($bootstrapProof, ENT_QUOTES, 'UTF-8') ?>">
 
           <div class="form-group">
             <label for="username">Username</label>
