@@ -656,6 +656,10 @@ document.getElementById('settingsForm').addEventListener('submit', function(e) {
     document.getElementById('social_media_json').value = JSON.stringify(socialMediaList);
     
     const formData = new FormData(this);
+    const metaCsrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+    if (metaCsrf) {
+        formData.set('csrf_token', metaCsrf);
+    }
     const debugSiteName = String(formData.get('site_name') || '').slice(0, 80);
     const debugHasCsrf = !!formData.get('csrf_token');
     const debugHasSmtpSecret = formData.has('smtp_secret');

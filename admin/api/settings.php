@@ -74,6 +74,14 @@ try {
                 jsonResponse(['success' => false, 'message' => 'Invalid security token'], 403);
             }
 
+            // #region agent log
+            if (function_exists('cmsDebugLog')) {
+                cmsDebugLog('H3', 'admin/api/settings.php:verify-ok', 'settings csrf verified post-fix', [
+                    'sessionTokenLength' => strlen((string) ($_SESSION['csrf_token'] ?? '')),
+                ], 'post-fix');
+            }
+            // #endregion
+
             $data = $_POST;
             if (!is_array($data) || empty($data)) {
                 $data = getJsonRequestBody();

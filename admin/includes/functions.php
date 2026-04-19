@@ -29,7 +29,14 @@ function generateSlug($string) {
 
 function generateCSRFToken() {
     if (empty($_SESSION['csrf_token'])) {
-        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        // Restore from cookie first so we do not mint a new token and rotate the
+        // cookie while an already-open tab still has the previous token in its form.
+        $cookieCsrf = $_COOKIE['cms_csrf_token'] ?? '';
+        if (is_string($cookieCsrf) && $cookieCsrf !== '') {
+            $_SESSION['csrf_token'] = $cookieCsrf;
+        } else {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
     }
     if (!headers_sent()) {
         setcookie('cms_csrf_token', $_SESSION['csrf_token'], [
@@ -45,14 +52,27 @@ function generateCSRFToken() {
 }
 
 function verifyCSRFToken($token) {
-    if (empty($token)) {
+    if (!is_string($token)) {
+        $token = (string) $token;
+    }
+    $token = trim($token);
+    if ($token === '') {
         return false;
     }
-    if (isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token)) {
+    if (empty($_SESSION['csrf_token'])) {
+        $cookieCsrf = $_COOKIE['cms_csrf_token'] ?? '';
+        if (is_string($cookieCsrf) && $cookieCsrf !== '') {
+            $_SESSION['csrf_token'] = trim($cookieCsrf);
+        }
+    } elseif (is_string($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = trim($_SESSION['csrf_token']);
+    }
+    if (isset($_SESSION['csrf_token']) && $_SESSION['csrf_token'] !== '' && hash_equals((string) $_SESSION['csrf_token'], $token)) {
         return true;
     }
     $cookieToken = $_COOKIE['cms_csrf_token'] ?? '';
-    return is_string($cookieToken) && $cookieToken !== '' && hash_equals($cookieToken, $token);
+    $cookieToken = is_string($cookieToken) ? trim($cookieToken) : '';
+    return $cookieToken !== '' && hash_equals($cookieToken, $token);
 }
 
 function getRawRequestBody() {
@@ -99,19 +119,19 @@ function getRequestCSRFToken() {
     $headers = getAllHeaders();
     foreach ($headers as $name => $value) {
         if (strcasecmp((string) $name, 'X-CSRF-Token') === 0) {
-            return is_string($value) ? $value : '';
+            return trim(is_string($value) ? $value : '');
         }
     }
     if (!empty($_POST['csrf_token'])) {
-        return (string) $_POST['csrf_token'];
+        return trim((string) $_POST['csrf_token']);
     }
     $jsonBody = getJsonRequestBody();
     if (is_array($jsonBody)) {
         if (!empty($jsonBody['csrf_token'])) {
-            return (string) $jsonBody['csrf_token'];
+            return trim((string) $jsonBody['csrf_token']);
         }
         if (!empty($jsonBody['csrfToken'])) {
-            return (string) $jsonBody['csrfToken'];
+            return trim((string) $jsonBody['csrfToken']);
         }
     }
     return '';
