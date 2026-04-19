@@ -20,7 +20,7 @@ $root = dirname(__DIR__);
 require_once $root . '/admin/includes/config.php';
 
 if (!isset($pdo) || $pdo === null) {
-    fwrite(STDERR, "Database connection failed. Check admin/includes/config (or config.secrets.php).\n");
+    fwrite(STDERR, "Database connection failed. Check admin/includes/config.php.\n");
     exit(1);
 }
 

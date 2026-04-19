@@ -1,6 +1,5 @@
-# Local secrets / environment overrides (never commit)
+# Local runtime configuration / environment overrides
 /admin/includes/config.php
-/admin/includes/config.secrets.php
 
 # Logs
 /admin/logs/
