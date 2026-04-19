@@ -7,7 +7,7 @@
 $pageTitle = 'My Profile';
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/auth.php';
-require_once __DIR__ . '/../includes/header.php';
+requireLogin();
 
 // Get current user info
 try {
@@ -25,6 +25,7 @@ try {
 }
 
 $csrfToken = generateCSRFToken();
+require_once __DIR__ . '/../includes/header.php';
 ?>
 
 <div style="max-width: 800px;">
