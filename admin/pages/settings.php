@@ -402,7 +402,7 @@ $maintenanceBgValue = $settings['maintenance_background'] ?? $defaultSettings['m
             
             <div class="form-group">
                 <label for="smtp_password">SMTP Password</label>
-                <input type="password" id="smtp_password" name="smtp_password" value="<?= sanitize($settings['smtp_password'] ?? '') ?>" placeholder="Your SMTP password">
+                <input type="password" id="smtp_password" name="smtp_secret" value="<?= sanitize($settings['smtp_password'] ?? '') ?>" placeholder="Your SMTP password" autocomplete="current-password">
                 <p class="form-help">SMTP authentication password (for Gmail, use an App Password)</p>
             </div>
             
@@ -656,26 +656,14 @@ document.getElementById('settingsForm').addEventListener('submit', function(e) {
     document.getElementById('social_media_json').value = JSON.stringify(socialMediaList);
     
     const formData = new FormData(this);
-    const data = {};
-    formData.forEach((value, key) => {
-        if (key !== 'csrf_token') {
-            data[key] = value;
-        }
-    });
-    data.csrf_token = formData.get('csrf_token') || '';
     
     const submitBtn = this.querySelector('button[type="submit"]');
     if (typeof setSaveButtonSavingState === 'function') setSaveButtonSavingState(submitBtn, true);
 
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
     fetch('<?= ADMIN_URL ?>api/settings.php', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-Token': csrfToken
-        },
         credentials: 'same-origin',
-        body: JSON.stringify(data)
+        body: formData
     })
     .then(response => {
         if (!response.ok) {

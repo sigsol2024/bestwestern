@@ -40,15 +40,20 @@ try {
                 jsonResponse(['success' => false, 'message' => 'Invalid security token'], 403);
             }
 
-            $data = getJsonRequestBody();
-
-            if (getJsonRequestError() !== JSON_ERROR_NONE) {
-                jsonResponse(['success' => false, 'message' => 'Invalid JSON data'], 400);
+            $data = $_POST;
+            if (!is_array($data) || empty($data)) {
+                $data = getJsonRequestBody();
             }
 
             if (!is_array($data)) {
                 jsonResponse(['success' => false, 'message' => 'Invalid data format'], 400);
             }
+
+            if (array_key_exists('smtp_secret', $data)) {
+                $data['smtp_password'] = $data['smtp_secret'];
+                unset($data['smtp_secret']);
+            }
+            unset($data['csrf_token'], $data['csrfToken']);
 
             $updated = [];
             foreach ($data as $key => $value) {
