@@ -19,8 +19,7 @@ if ($method !== 'POST') {
 }
 
 try {
-    $headers = getAllHeaders();
-    $csrfToken = $headers['X-CSRF-Token'] ?? '';
+    $csrfToken = getRequestCSRFToken();
     if (!verifyCSRFToken($csrfToken)) {
         jsonResponse(['success' => false, 'message' => 'Invalid security token'], 403);
         exit;

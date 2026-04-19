@@ -35,8 +35,7 @@ try {
             break;
 
         case 'POST':
-            $headers = getAllHeaders();
-            $csrfToken = $headers['X-CSRF-Token'] ?? ($_POST['csrf_token'] ?? '');
+            $csrfToken = getRequestCSRFToken();
             if (!verifyCSRFToken($csrfToken)) {
                 jsonResponse(['success' => false, 'message' => 'Invalid security token'], 403);
             }

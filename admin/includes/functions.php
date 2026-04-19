@@ -55,6 +55,16 @@ function verifyCSRFToken($token) {
     return is_string($cookieToken) && $cookieToken !== '' && hash_equals($cookieToken, $token);
 }
 
+function getRequestCSRFToken() {
+    $headers = getAllHeaders();
+    foreach ($headers as $name => $value) {
+        if (strcasecmp((string) $name, 'X-CSRF-Token') === 0) {
+            return is_string($value) ? $value : '';
+        }
+    }
+    return $_POST['csrf_token'] ?? '';
+}
+
 if (!function_exists('getAllHeaders')) {
     function getAllHeaders() {
         if (function_exists('getallheaders')) {

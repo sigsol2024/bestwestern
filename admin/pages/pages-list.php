@@ -65,7 +65,6 @@ foreach ($availablePages as $pageKey => $info) {
             <div class="page-status-panel">
               <div>
                 <strong class="page-status-panel__title"><?= $pageStatuses[$pageKey] ? 'Live' : 'Draft' ?></strong>
-                <small class="text-muted">Inactive pages redirect visitors to the homepage.</small>
               </div>
               <label style="display:flex;align-items:center;gap:8px;white-space:nowrap;">
                 <input
@@ -82,7 +81,6 @@ foreach ($availablePages as $pageKey => $info) {
             <div class="page-status-panel">
               <div>
                 <strong class="page-status-panel__title">Always live</strong>
-                <small class="text-muted">Homepage stays available and acts as the redirect target for inactive pages.</small>
               </div>
             </div>
           <?php endif; ?>
