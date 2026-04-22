@@ -23,6 +23,23 @@ function parseAdminJsonResponse(response) {
 }
 
 /**
+ * UTF-8 → base64 (ASCII) so WAFs are less likely to strip multipart fields that contain raw HTML.
+ */
+function cmsUtf8ToBase64(str) {
+  const s = String(str ?? '');
+  try {
+    const bytes = new TextEncoder().encode(s);
+    let bin = '';
+    for (let i = 0; i < bytes.length; i++) {
+      bin += String.fromCharCode(bytes[i]);
+    }
+    return btoa(bin);
+  } catch (e) {
+    return btoa(unescape(encodeURIComponent(s)));
+  }
+}
+
+/**
  * Infer page_sections content_type from field name (with optional per-form overrides).
  */
 function inferPageSectionContentType(key) {
@@ -41,14 +58,16 @@ function savePageSection(payload) {
   if (!csrf) {
     return Promise.reject(new Error('Security token missing. Refresh the page and try again.'));
   }
-  const url = adminApiBase() + 'api/pages.php';
-  // multipart/form-data: CSRF in $_POST (works when proxies strip custom headers or block JSON bodies with HTML)
+  const base = adminApiBase() + 'api/pages.php';
+  const sep = base.indexOf('?') === -1 ? '?' : '&';
+  const url = base + sep + 'csrf_token=' + encodeURIComponent(csrf);
   const fd = new FormData();
   fd.append('csrf_token', csrf);
   fd.append('page', String(payload.page ?? ''));
   fd.append('section_key', String(payload.section_key ?? ''));
   fd.append('content_type', String(payload.content_type ?? 'text'));
-  fd.append('content', String(payload.content ?? ''));
+  fd.append('content_encoding', 'base64');
+  fd.append('content', cmsUtf8ToBase64(String(payload.content ?? '')));
   return fetch(url, {
     method: 'POST',
     body: fd,

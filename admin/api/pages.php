@@ -62,6 +62,15 @@ try {
             if (!is_string($content)) {
                 $content = is_array($content) ? (string)json_encode($content) : (string)$content;
             }
+            $encRaw = trim((string)($data['content_encoding'] ?? ''));
+            if ($encRaw !== '' && strcasecmp($encRaw, 'base64') === 0) {
+                $b = preg_replace('/\s+/', '', $content);
+                $decoded = base64_decode($b, true);
+                if ($decoded === false) {
+                    jsonResponse(['success' => false, 'message' => 'Invalid base64 content'], 400);
+                }
+                $content = $decoded;
+            }
 
             $stmt = $pdo->prepare("INSERT INTO page_sections (page, section_key, content_type, content)
                                    VALUES (?, ?, ?, ?)

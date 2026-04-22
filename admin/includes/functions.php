@@ -119,6 +119,9 @@ function getRequestCSRFToken() {
     if (!empty($_POST['csrf_token'])) {
         return trim((string) $_POST['csrf_token']);
     }
+    if (!empty($_GET['csrf_token'])) {
+        return trim((string) $_GET['csrf_token']);
+    }
     if (!empty($_SERVER['HTTP_X_CSRF_TOKEN'])) {
         $t = trim((string) $_SERVER['HTTP_X_CSRF_TOKEN']);
         if ($t !== '') {
