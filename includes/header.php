@@ -21,34 +21,32 @@ if (function_exists('getSiteSetting')) {
 }
 
 $siteName = getSiteSetting('site_name', cms_default_setting('site_name'));
+$siteBrandCollection = getSiteSetting('site_brand_collection_line', cms_default_setting('site_brand_collection_line'));
 /** Dark / full-color logo for light backgrounds (header): CMS or assets/images/logo/logo-dark.png */
 $siteLogoDarkPath = site_brand_logo_path((string)getSiteSetting('site_logo', ''), 'assets/images/logo/logo-dark.png');
 $siteLogoDarkUrl = $siteLogoDarkPath !== '' ? site_media_url($siteLogoDarkPath) : '';
 $useHeaderLogo = $siteLogoDarkUrl !== '';
-$navSuitesLabel = getSiteSetting('nav_suites_label', 'Suites');
-$navDiningLabel = getSiteSetting('nav_dining_label', 'Dining');
-$navExperienceLabel = getSiteSetting('nav_experience_label', 'Amenities');
-$navEventsLabel = getSiteSetting('nav_events_label', 'Gallery');
 
-$navHomeHref = site_href('/');
-$navAboutHref = site_href('/about');
-$navSuitesHref = site_href(getSiteSetting('nav_suites_href', '/rooms'));
-$navDiningHref = site_href(getSiteSetting('nav_dining_href', '/dining'));
-$navExperienceHref = site_href(getSiteSetting('nav_experience_href', '/amenities'));
-$navEventsHref = site_href(getSiteSetting('nav_events_href', '/gallery'));
+$navSuitesLabel = getSiteSetting('nav_suites_label', cms_default_setting('nav_suites_label'));
+$navDiningLabel = getSiteSetting('nav_dining_label', cms_default_setting('nav_dining_label'));
+$navExperienceLabel = getSiteSetting('nav_experience_label', cms_default_setting('nav_experience_label'));
+$navStoryLabel = getSiteSetting('nav_story_label', cms_default_setting('nav_story_label'));
+
+$navSuitesHref = site_href(getSiteSetting('nav_suites_href', cms_default_setting('nav_suites_href')));
+$navDiningHref = site_href(getSiteSetting('nav_dining_href', cms_default_setting('nav_dining_href')));
+$navExperienceHref = site_href(getSiteSetting('nav_experience_href', cms_default_setting('nav_experience_href')));
+$navStoryHref = site_href(getSiteSetting('nav_story_href', cms_default_setting('nav_story_href')));
 $navContactHref = site_href('/contact');
 
 $ctaLabel = getSiteSetting('nav_cta_label', cms_default_setting('nav_cta_label'));
 $ctaHref = site_href(getSiteSetting('nav_cta_href', cms_default_setting('nav_cta_href')));
 
 $headerNavLinks = [
-    ['Home', $navHomeHref],
-    ['About Us', $navAboutHref],
     [$navSuitesLabel, $navSuitesHref],
-    [$navDiningLabel, $navDiningHref],
     [$navExperienceLabel, $navExperienceHref],
-    [$navEventsLabel, $navEventsHref],
-    ['Contact Us', $navContactHref],
+    [$navDiningLabel, $navDiningHref],
+    [$navStoryLabel, $navStoryHref],
+    ['Contact', $navContactHref],
 ];
 $headerNavLinks = array_values(array_filter($headerNavLinks, static function ($row) {
     $href = (string) $row[1];
@@ -56,57 +54,81 @@ $headerNavLinks = array_values(array_filter($headerNavLinks, static function ($r
 }));
 
 $showNavCta = site_is_valid_nav_href($ctaHref) && site_nav_link_visible($ctaHref);
+
+$requestPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+$requestPath = is_string($requestPath) ? rtrim($requestPath, '/') : '';
+if ($requestPath === '') {
+    $requestPath = '/';
+}
+
+$headerOverlapsHero = !empty($GLOBALS['site_header_overlaps_hero']);
 ?>
 
-<!-- Sticky Navigation — light background: use dark logo variant (brand guidelines) -->
-<nav class="sticky top-0 z-50 w-full transition-all duration-300 bg-background-light/95 backdrop-blur-md border-b border-black/[0.06]">
-  <div class="max-w-[1440px] mx-auto px-6 lg:px-12 min-h-[5rem] flex items-center justify-between gap-4">
-    <a class="site-brand-logo site-brand-logo--header flex items-center shrink-0 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 py-3 ps-1 pe-3 md:py-4 md:ps-2 md:pe-5 lg:pe-8 -ms-1 md:-ms-2" href="<?= e(site_url('index')) ?>" aria-label="<?= e($siteName) ?>">
-      <?php if ($useHeaderLogo): ?>
-      <img src="<?= e($siteLogoDarkUrl) ?>" alt="<?= e($siteName) ?>" class="h-11 w-auto md:h-12 lg:h-14 max-w-[min(100%,16rem)] object-contain object-left" decoding="async"/>
-      <?php else: ?>
-      <span class="material-symbols-outlined text-primary text-3xl">diamond</span>
-      <span class="font-serif text-2xl font-bold tracking-tight text-text-main"><?= e($siteName) ?></span>
-      <?php endif; ?>
-    </a>
-    <div class="hidden md:flex items-center gap-10">
-      <?php foreach ($headerNavLinks as $navRow):
-        [$navLabel, $navHref] = $navRow; ?>
-      <a class="text-sm font-medium text-text-main hover:text-primary transition-colors" href="<?= e(site_href((string)$navHref)) ?>"><?= e((string)$navLabel) ?></a>
-      <?php endforeach; ?>
-    </div>
-    <div class="flex items-center gap-4">
-      <?php if ($showNavCta): ?>
-      <a class="hidden md:inline-flex items-center justify-center shrink min-w-0 max-w-[10.5rem] sm:max-w-none bg-primary text-white hover:bg-primary-light transition-all px-3 py-2 sm:px-6 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold tracking-wide text-center leading-tight" href="<?= e(site_href($ctaHref)) ?>">
-        <?= e($ctaLabel) ?>
-      </a>
-      <?php endif; ?>
-      <button class="md:hidden p-2 rounded-xl text-text-main hover:bg-black/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30" type="button" id="siteMobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="siteMobileMenuOverlay">
-        <span class="material-symbols-outlined text-3xl">menu</span>
-      </button>
-    </div>
+<!-- Fixed top navigation (BW layout) -->
+<nav class="fixed top-0 w-full z-50 bg-transparent backdrop-blur-md flex justify-between items-center px-6 md:px-12 py-6 md:py-8 max-w-screen-2xl mx-auto left-1/2 -translate-x-1/2 text-on-surface">
+  <a class="site-brand-logo site-brand-logo--header flex flex-col shrink-0 min-w-0 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/40 pe-2" href="<?= e(site_url('index')) ?>" aria-label="<?= e($siteName) ?>">
+    <?php if ($useHeaderLogo): ?>
+    <img src="<?= e($siteLogoDarkUrl) ?>" alt="<?= e($siteName) ?>" class="h-10 md:h-11 w-auto max-w-[14rem] object-contain object-left" decoding="async"/>
+    <?php if (trim($siteBrandCollection) !== ''): ?>
+    <span class="font-body text-[9px] uppercase tracking-[0.2em] text-on-surface-variant mt-1 max-w-[16rem]"><?= site_brand_name_html($siteBrandCollection) ?></span>
+    <?php endif; ?>
+    <?php else: ?>
+    <div class="font-headline text-xl md:text-2xl tracking-tighter text-slate-900 leading-none"><?= site_brand_name_html($siteName) ?></div>
+    <?php if (trim($siteBrandCollection) !== ''): ?>
+    <span class="font-body text-[9px] uppercase tracking-[0.2em] text-on-surface-variant mt-1 max-w-[16rem]"><?= site_brand_name_html($siteBrandCollection) ?></span>
+    <?php endif; ?>
+    <?php endif; ?>
+  </a>
+  <div class="hidden md:flex items-center space-x-8 lg:space-x-10">
+    <?php foreach ($headerNavLinks as $navRow):
+        [$navLabel, $navHref] = $navRow;
+        $navPath = parse_url((string) $navHref, PHP_URL_PATH);
+        $navPath = is_string($navPath) ? rtrim($navPath, '/') : '';
+        if ($navPath === '') {
+            $navPath = '/';
+        }
+        $isActive = ($requestPath === $navPath || ($navPath !== '/' && strpos($requestPath, $navPath) === 0));
+        $linkClass = 'font-body uppercase tracking-[0.2em] text-xs font-semibold transition-colors pb-1 border-b-2 ';
+        $linkClass .= $isActive
+            ? 'text-brand-gold border-brand-red/30'
+            : 'text-slate-800 border-transparent hover:text-brand-red';
+        ?>
+    <a class="<?= e($linkClass) ?>" href="<?= e(site_href((string) $navHref)) ?>"><?= e((string) $navLabel) ?></a>
+    <?php endforeach; ?>
+  </div>
+  <div class="flex items-center gap-3 md:gap-4 shrink-0">
+    <?php if ($showNavCta): ?>
+    <a class="hidden md:inline-flex bg-brand-gold text-on-secondary-fixed px-6 lg:px-8 py-2.5 lg:py-3 font-body uppercase tracking-[0.2em] text-xs font-bold hover:brightness-110 transition-all duration-300 text-center" href="<?= e(site_href($ctaHref)) ?>"><?= e($ctaLabel) ?></a>
+    <?php endif; ?>
+    <button class="md:hidden p-2 rounded-lg text-on-surface hover:bg-black/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/40" type="button" id="siteMobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="siteMobileMenuOverlay">
+      <span class="material-symbols-outlined text-3xl">menu</span>
+    </button>
   </div>
 </nav>
 
-<!-- Mobile menu: centered modal (not sidebar) -->
+<?php if (!$headerOverlapsHero): ?>
+<div class="site-fixed-nav-spacer h-[5.5rem] md:h-[7.5rem] shrink-0" aria-hidden="true"></div>
+<?php endif; ?>
+
+<!-- Mobile menu -->
 <div id="siteMobileMenuOverlay" class="site-mobile-menu-overlay fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 md:hidden" aria-hidden="true">
-  <div id="siteMobileMenuModal" class="site-mobile-menu-modal w-full max-w-sm bg-background-light rounded-2xl shadow-2xl border border-black/[0.08] overflow-hidden max-h-[90vh] flex flex-col">
-    <div class="flex items-center justify-between px-5 py-4 border-b border-black/[0.08] shrink-0">
-      <span class="font-serif text-lg font-semibold text-text-main"><?= e($siteName) ?></span>
-      <button type="button" id="siteMobileMenuClose" class="p-2 rounded-xl text-text-muted hover:bg-black/[0.05] hover:text-text-main focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30" aria-label="Close menu">
+  <div id="siteMobileMenuModal" class="site-mobile-menu-modal w-full max-w-sm bg-surface rounded-xl shadow-2xl border border-outline-variant/40 overflow-hidden max-h-[90vh] flex flex-col">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-outline-variant/30 shrink-0">
+      <span class="font-headline text-lg font-semibold text-on-surface"><?= e($siteName) ?></span>
+      <button type="button" id="siteMobileMenuClose" class="p-2 rounded-lg text-on-surface-variant hover:bg-black/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/40" aria-label="Close menu">
         <span class="material-symbols-outlined text-2xl">close</span>
       </button>
     </div>
     <nav class="flex flex-col p-3 gap-0.5 overflow-y-auto" aria-label="Mobile">
       <?php foreach ($headerNavLinks as $navRow):
-        [$navLabel, $navHref] = $navRow;
-        if (!site_is_valid_nav_href((string)$navHref)) {
-            continue;
-        } ?>
-      <a class="site-mobile-menu-link px-4 py-3.5 rounded-xl text-text-main font-medium hover:bg-primary/10 hover:text-primary transition-colors" href="<?= e(site_href((string)$navHref)) ?>"><?= e((string)$navLabel) ?></a>
+          [$navLabel, $navHref] = $navRow;
+          if (!site_is_valid_nav_href((string) $navHref)) {
+              continue;
+          } ?>
+      <a class="site-mobile-menu-link px-4 py-3.5 rounded-lg text-on-surface font-medium hover:bg-brand-gold/15 hover:text-brand-red transition-colors" href="<?= e(site_href((string) $navHref)) ?>"><?= e((string) $navLabel) ?></a>
       <?php endforeach; ?>
       <?php if ($showNavCta): ?>
-      <a class="site-mobile-menu-link mt-2 mx-1 px-4 py-3.5 rounded-xl bg-primary text-white font-bold text-center hover:bg-primary-light transition-colors" href="<?= e(site_href($ctaHref)) ?>"><?= e($ctaLabel) ?></a>
+      <a class="site-mobile-menu-link mt-2 mx-1 px-4 py-3.5 rounded-lg bg-brand-gold text-on-secondary-fixed font-bold text-center hover:brightness-110 transition-colors" href="<?= e(site_href($ctaHref)) ?>"><?= e($ctaLabel) ?></a>
       <?php endif; ?>
     </nav>
   </div>
@@ -152,4 +174,3 @@ $showNavCta = site_is_valid_nav_href($ctaHref) && site_nav_link_visible($ctaHref
   });
 })();
 </script>
-

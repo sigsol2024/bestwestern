@@ -18,8 +18,7 @@ $bookingWrapperSelector = '#' . $bookingWrapperId;
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&amp;family=Inter:wght@300;400;600;700&amp;display=swap" rel="stylesheet"/>
 <?php
 if (function_exists('getSiteSetting') && function_exists('site_media_url') && function_exists('site_root')) {
     $fav = trim((string)getSiteSetting('site_favicon', cms_default_setting('site_favicon', '')));
@@ -55,17 +54,41 @@ if (function_exists('getSiteSetting') && function_exists('site_media_url') && fu
           "surface-dark": "<?= htmlspecialchars((string) getSiteSetting('theme_surface_dark_color', cms_default_setting('theme_surface_dark_color')), ENT_QUOTES, 'UTF-8') ?>",
           "surface-ink": "<?= htmlspecialchars((string) getSiteSetting('theme_surface_ink_color', cms_default_setting('theme_surface_ink_color')), ENT_QUOTES, 'UTF-8') ?>",
           "sand-darker": "<?= htmlspecialchars((string) getSiteSetting('theme_sand_darker_color', cms_default_setting('theme_sand_darker_color')), ENT_QUOTES, 'UTF-8') ?>",
+          "brand-gold": "#C8A96A",
+          "brand-red": "#E31837",
+          "surface": "#fdf9f3",
+          "on-surface": "#1c1c18",
+          "on-surface-variant": "#44474d",
+          "surface-container-low": "#f7f3ed",
+          "surface-container-highest": "#e6e2dc",
+          "outline-variant": "#c4c6ce",
+          "outline": "#75777e",
+          "brand-ink": "#000615",
+          "secondary-container": "#fedb98",
+          "on-secondary-container": "#785f28",
+          "on-secondary-fixed": "#261a00",
+          "surface-container": "#eae7e2",
+          "on-primary": "#ffffff",
+          "inverse-primary": "#2f2f37",
+          "inverse-on-surface": "#f1eff7",
+          "scrim": "#000000",
         },
         fontFamily: {
           "display": ["<?= htmlspecialchars((string) getSiteSetting('theme_display_font', cms_default_setting('theme_display_font')), ENT_QUOTES, 'UTF-8') ?>", "sans-serif"],
           "serif": ["<?= htmlspecialchars((string) getSiteSetting('theme_serif_font', cms_default_setting('theme_serif_font')), ENT_QUOTES, 'UTF-8') ?>", "serif"],
           "body": ["<?= htmlspecialchars((string) getSiteSetting('theme_body_font', cms_default_setting('theme_body_font')), ENT_QUOTES, 'UTF-8') ?>", "sans-serif"],
+          "headline": ["<?= htmlspecialchars((string) getSiteSetting('theme_serif_font', cms_default_setting('theme_serif_font')), ENT_QUOTES, 'UTF-8') ?>", "serif"],
+          "label": ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
         },
         borderRadius: {
+          "xs": "0.25rem",
+          "sm": "0.375rem",
           "DEFAULT": "0.25rem",
-          "lg": "0.5rem",
-          "xl": "0.75rem",
-          "2xl": "1rem",
+          "md": "0.5rem",
+          "lg": "0.75rem",
+          "xl": "1rem",
+          "2xl": "1.25rem",
+          "3xl": "1.5rem",
           "full": "9999px",
         },
         boxShadow: {
@@ -91,6 +114,20 @@ if (function_exists('getSiteSetting') && function_exists('site_media_url') && fu
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   .text-cinematic { text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  .rooms-fade-overlay {
+    background: linear-gradient(to right, transparent, #f7f3ed);
+  }
+  .inter,
+  .font-inter {
+    font-family: Inter, ui-sans-serif, system-ui, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  .noto-serif,
+  .font-noto-serif {
+    font-family: "Noto Serif", ui-serif, Georgia, "Times New Roman", serif;
+  }
 
   /* Hero: light stroke / outline on accent words (not a box border) */
   .site-hero-accent-text {
@@ -184,13 +221,13 @@ if (function_exists('getSiteSetting') && function_exists('site_media_url') && fu
     margin-top: 0 !important;
     border: 0 !important;
     border-radius: 10px !important;
-    background: #411d13 !important;
-    color: #fff !important;
+    background: #C8A96A !important;
+    color: #261a00 !important;
     font-weight: 700 !important;
     cursor: pointer !important;
   }
   <?= $bookingWrapperSelector ?> #booking-form button:hover {
-    background: #5a2a1f !important;
+    filter: brightness(1.08) !important;
   }
   @media (max-width: 1024px) {
     <?= $bookingWrapperSelector ?> #booking-form {

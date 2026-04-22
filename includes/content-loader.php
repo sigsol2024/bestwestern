@@ -22,6 +22,15 @@ if (!isset($pdo)) {
 }
 
 /**
+ * Escape site name and wrap "Plus" / "PLUS" (whole word) in brand-red for header/footer lockups.
+ */
+function site_brand_name_html(string $name): string {
+    $e = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+    $out = preg_replace('/(?<![A-Za-z])(Plus|PLUS)(?![A-Za-z])/u', '<span class="text-brand-red">$1</span>', $e);
+    return is_string($out) ? $out : $e;
+}
+
+/**
  * Get page section content
  */
 function getPageSection($page, $sectionKey, $default = '') {

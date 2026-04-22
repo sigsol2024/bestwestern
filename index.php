@@ -1,4 +1,5 @@
 <?php
+$GLOBALS['site_header_overlaps_hero'] = true;
 require_once __DIR__ . '/includes/content-loader.php';
 
 $heroPlaceholder = cms_default_setting('placeholder_hero_image');
@@ -7,649 +8,413 @@ $galleryPlaceholder = cms_default_setting('placeholder_gallery_image');
 
 $pageTitle = getSiteSetting('site_name', cms_default_setting('site_name'));
 
-$hero_kicker = getPageSection('index', 'hero_kicker', 'Lorem Ipsum');
+$hero_trust_badge = getPageSection('index', 'hero_trust_badge', 'Travelers Choice 2026');
+$hero_show_stars = trim((string)getPageSection('index', 'hero_show_stars', '1')) === '1';
 $hero_title = normalize_home_hero_title_html(
-    (string) getPageSection('index', 'hero_title', 'Lorem Ipsum <br/><span class="italic text-primary site-hero-accent-text">Dolor Sit</span>')
+    (string) getPageSection('index', 'hero_title', 'Luxury on the Shores<br/><span class="italic text-surface">of Oxbow Lake.</span>')
 );
-$hero_subtitle = getPageSection('index', 'hero_subtitle', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.');
-$hero_cta_text = getPageSection('index', 'hero_cta_text', 'Explore Rooms');
-$hero_cta_href = getPageSection('index', 'hero_cta_href', '/rooms');
+$hero_subtitle = getPageSection('index', 'hero_subtitle', 'An international standard of hospitality in the heart of Bayelsa.');
 $hero_bg = getPageSection('index', 'hero_bg', $heroPlaceholder);
+$hero_bg_url = site_media_url($hero_bg);
 
-$hero_bg_slides_raw = getPageSection('index', 'hero_bg_slides', '');
-$hero_slide_paths = [];
-if (trim((string)$hero_bg_slides_raw) !== '') {
-    $decodedSlides = json_decode((string)$hero_bg_slides_raw, true);
-    if (is_array($decodedSlides)) {
-        foreach ($decodedSlides as $p) {
-            if (is_string($p) && trim($p) !== '') {
-                $hero_slide_paths[] = trim($p);
-            }
-        }
-    }
-}
-if (count($hero_slide_paths) === 0) {
-    $hero_slide_paths = [$hero_bg];
-}
-
-$hero_youtube_url = getPageSection('index', 'hero_youtube_url', '');
-$youtubeVideoId = '';
-if (trim((string)$hero_youtube_url) !== '') {
-    // watch?v=, youtu.be/, embed/, shorts/
-    if (preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', (string)$hero_youtube_url, $m)) {
-        $youtubeVideoId = $m[1];
-    }
-}
-$hasHeroYoutube = ($youtubeVideoId !== '');
-
-// Booking / calendar embed (paste HTML from admin homepage editor — bridges hero → next section)
 $booking_widget_html = getPageSection('index', 'booking_widget_html', '');
-$hasBookingBridge = trim((string)$booking_widget_html) !== '';
-$bookingWrapperId = preg_replace('/[^A-Za-z0-9_-]/', '', (string)getSiteSetting('booking_wrapper_id', cms_default_setting('booking_wrapper_id')));
+$hasBookingEmbed = trim((string) $booking_widget_html) !== '';
+$bookingWrapperId = preg_replace('/[^A-Za-z0-9_-]/', '', (string) getSiteSetting('booking_wrapper_id', cms_default_setting('booking_wrapper_id')));
 if ($bookingWrapperId === '') {
     $bookingWrapperId = cms_default_setting('booking_wrapper_id');
 }
 $bookingWrapperSelector = '#' . $bookingWrapperId;
 
-$hp_kicker = getPageSection('index', 'home_philosophy_kicker', 'Lorem Ipsum');
-$hp_title_html = getPageSection('index', 'home_philosophy_title_html', "Lorem Ipsum <br/> Dolor Sit");
-$hp_body = getPageSection('index', 'home_philosophy_body', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.');
-$hp_link_text = getPageSection('index', 'home_philosophy_link_text', 'Learn More');
+$navCtaLabel = getSiteSetting('nav_cta_label', cms_default_setting('nav_cta_label'));
+$navCtaHref = site_href(getSiteSetting('nav_cta_href', cms_default_setting('nav_cta_href')));
+$showDecorReserve = (!$hasBookingEmbed) && site_is_valid_nav_href($navCtaHref) && site_nav_link_visible($navCtaHref);
+
+$home_booking_guarantee_line = getPageSection('index', 'home_booking_guarantee_line', 'Best Rate Guarantee');
+
+$hp_kicker = getPageSection('index', 'home_philosophy_kicker', 'Our Heritage');
+$hp_title_html = getPageSection('index', 'home_philosophy_title_html', 'Where Heritage Meets Hospitality');
+$hp_body = getPageSection(
+    'index',
+    'home_philosophy_body',
+    '<p>Nestled in the heart of Bayelsa State, our hotel blends rich heritage with modern hospitality. As part of the Best Western <span class="text-brand-red font-semibold">Plus</span> collection, we uphold a legacy of excellence while delivering a distinctively Nigerian warmth.</p>'
+);
+$hp_link_text = getPageSection('index', 'home_philosophy_link_text', 'Explore the Story');
 $hp_link_href = getPageSection('index', 'home_philosophy_link_href', '/about');
-$hp_main_img = getPageSection('index', 'home_philosophy_main_img', $detailPlaceholder);
-$hp_secondary_img = getPageSection('index', 'home_philosophy_secondary_img', $galleryPlaceholder);
+$hp_main_img = site_media_url(getPageSection('index', 'home_philosophy_main_img', $detailPlaceholder));
 
-$arch_img = getPageSection('index', 'home_arch_image', $heroPlaceholder);
-$arch_badge_title = getPageSection('index', 'home_arch_badge_title', 'Lorem');
-$arch_badge_sub = getPageSection('index', 'home_arch_badge_sub', 'Ipsum');
-$arch_title = getPageSection('index', 'home_arch_title', 'Dolor Sit Amet');
-$arch_body = getPageSection('index', 'home_arch_body', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.');
-$arch_li1 = getPageSection('index', 'home_arch_list_1', 'Lorem ipsum dolor');
-$arch_li2 = getPageSection('index', 'home_arch_list_2', 'Sit amet consectetur');
-
-$rooms_kicker = getPageSection('index', 'home_rooms_kicker', 'Accommodations');
-$rooms_title = getPageSection('index', 'home_rooms_title', 'Lorem Rooms');
+$rooms_kicker = getPageSection('index', 'home_rooms_kicker', 'Exquisite suites designed for the refined traveler');
+$rooms_title = getPageSection('index', 'home_rooms_title', 'Sanctuaries of Calm');
 $rooms_view_all = getPageSection('index', 'home_rooms_view_all_href', '/rooms');
 
-$dining_img = getPageSection('index', 'home_dining_image', $galleryPlaceholder);
-$dining_kicker = getPageSection('index', 'home_dining_kicker', 'Dining');
-$dining_title = getPageSection('index', 'home_dining_title', 'Lorem Dining');
-$dining_body_html = getPageSection('index', 'home_dining_body_html', 'Lorem ipsum dolor sit amet, <span class="text-text-main font-semibold">consectetur adipiscing</span> elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.');
-$dining_cta1 = getPageSection('index', 'home_dining_cta1', 'Learn More');
-$dining_cta1_href = getPageSection('index', 'home_dining_cta1_href', '/dining');
-$dining_cta2 = getPageSection('index', 'home_dining_cta2', 'View Details');
-$dining_cta2_href = getPageSection('index', 'home_dining_cta2_href', '/dining');
+$dining_kicker = getPageSection('index', 'home_dining_kicker', 'Gastronomy');
+$dining_heading_html = trim((string) getPageSection('index', 'home_dining_heading_html', ''));
+if ($dining_heading_html === '') {
+    $legacyTitle = trim((string) getPageSection('index', 'home_dining_title', ''));
+    $dining_heading_html = $legacyTitle !== ''
+        ? '<span class="italic">' . htmlspecialchars($legacyTitle, ENT_QUOTES, 'UTF-8') . '</span>'
+        : '<span class="italic">Culinary Excellence</span>';
+}
+$dining_v1_title = getPageSection('index', 'home_dining_venue1_title', 'Mama Oxbow');
+$dining_v1_body = getPageSection('index', 'home_dining_venue1_body', 'Authentic local delicacies crafted with a modern touch, overlooking the gentle ripples of the lake.');
+$dining_v2_title = getPageSection('index', 'home_dining_venue2_title', 'Red Lotus');
+$dining_v2_body = getPageSection('index', 'home_dining_venue2_body', 'An Asian-fusion journey where tradition meets contemporary culinary innovation.');
+$dining_top_path = trim((string) getPageSection('index', 'home_dining_image_top', ''));
+if ($dining_top_path === '') {
+    $dining_top_path = (string) getPageSection('index', 'home_dining_image', $galleryPlaceholder);
+}
+$dining_bottom_path = trim((string) getPageSection('index', 'home_dining_image_bottom', ''));
+if ($dining_bottom_path === '') {
+    $dining_bottom_path = $detailPlaceholder;
+}
+$dining_img_top = site_media_url($dining_top_path !== '' ? $dining_top_path : $galleryPlaceholder);
+$dining_img_bottom = site_media_url($dining_bottom_path !== '' ? $dining_bottom_path : $detailPlaceholder);
 
-// Homepage “amenities highlight” — three image cards (not news). New keys: home_amenity_grid_* ; legacy home_news_* still read if new keys empty.
-$amenity_grid_kicker = trim((string)getPageSection('index', 'home_amenity_grid_kicker', ''));
-if ($amenity_grid_kicker === '') {
-    $amenity_grid_kicker = trim((string)getPageSection('index', 'home_news_kicker', ''));
-}
-$amenity_grid_title = trim((string)getPageSection('index', 'home_amenity_grid_title', ''));
-if ($amenity_grid_title === '') {
-    $amenity_grid_title = trim((string)getPageSection('index', 'home_news_title', ''));
-}
-$amenity_grid_intro = trim((string)getPageSection('index', 'home_amenity_grid_intro', ''));
-$home_amenity_grid_cards = [];
-for ($ni = 1; $ni <= 3; $ni++) {
-    $img = trim((string)getPageSection('index', 'home_amenity_grid_' . $ni . '_image', ''));
-    $ttl = trim((string)getPageSection('index', 'home_amenity_grid_' . $ni . '_title', ''));
-    $desc = trim((string)getPageSection('index', 'home_amenity_grid_' . $ni . '_description', ''));
-    if ($img === '') {
-        $img = trim((string)getPageSection('index', 'home_news_' . $ni . '_image', ''));
-    }
-    if ($ttl === '') {
-        $ttl = trim((string)getPageSection('index', 'home_news_' . $ni . '_title', ''));
-    }
-    if ($desc === '') {
-        $desc = trim((string)getPageSection('index', 'home_news_' . $ni . '_description', ''));
-    }
-    $home_amenity_grid_cards[] = [
-        'image' => $img,
-        'title' => $ttl,
-        'description' => $desc,
+$fac_title = getPageSection('index', 'home_facilities_title', 'Leisure & Wellness');
+$fac_blurb = getPageSection('index', 'home_facilities_blurb', 'Designed to rejuvenate your senses and enhance your productivity.');
+$bentoRaw = (string) getPageSection('index', 'home_facilities_bento_json', '');
+$bentoTiles = json_decode($bentoRaw, true);
+if (!is_array($bentoTiles) || count($bentoTiles) < 4) {
+    $bentoTiles = [
+        ['image' => $heroPlaceholder, 'title' => 'The Infinity Pool', 'subtitle' => 'Open Daily • 6AM - 10PM'],
+        ['image' => $detailPlaceholder, 'title' => 'Wellness Spa', 'subtitle' => ''],
+        ['image' => $galleryPlaceholder, 'title' => 'Elite Gym', 'subtitle' => ''],
+        ['image' => $galleryPlaceholder, 'title' => 'Akassa Hall', 'subtitle' => 'Business & Events'],
     ];
 }
-$hasAmenityGridCard = false;
-foreach ($home_amenity_grid_cards as $gc) {
-    if ($gc['image'] !== '' || $gc['title'] !== '' || $gc['description'] !== '') {
-        $hasAmenityGridCard = true;
-        break;
+foreach ($bentoTiles as $i => $tile) {
+    if (!is_array($tile)) {
+        $bentoTiles[$i] = ['image' => '', 'title' => '', 'subtitle' => ''];
+        continue;
     }
+    $bentoTiles[$i]['image'] = isset($tile['image']) ? (string) $tile['image'] : '';
+    $bentoTiles[$i]['title'] = isset($tile['title']) ? (string) $tile['title'] : '';
+    $bentoTiles[$i]['subtitle'] = isset($tile['subtitle']) ? (string) $tile['subtitle'] : '';
 }
-$showAmenityGridSection = ($amenity_grid_kicker !== '' || $amenity_grid_title !== '' || $amenity_grid_intro !== '' || $hasAmenityGridCard);
+
+$loc_title = getPageSection('index', 'home_location_title', 'The Serenity of Oxbow Lake');
+$loc_body = getPageSection('index', 'home_location_body', 'A peaceful retreat away from the city\'s pulse, offering breathtaking views and tranquil mornings.');
+$bulletsRaw = (string) getPageSection('index', 'home_location_bullets_json', '');
+$loc_bullets = json_decode($bulletsRaw, true);
+if (!is_array($loc_bullets)) {
+    $loc_bullets = ['5 min to Government House', '15 min to Airport', 'Oxbow Lake waterfront'];
+}
+$loc_bullets = array_values(array_filter(array_map('strval', $loc_bullets), static function ($s) { return trim($s) !== ''; }));
+$loc_address = getPageSection('index', 'home_location_address', 'Oxbow Lake Rd, Yenagoa, Bayelsa');
+$loc_map = site_media_url(getPageSection('index', 'home_location_map_image', $galleryPlaceholder));
 
 $currency = getSiteSetting('currency_symbol', '$');
-$featuredRooms = getFeaturedRoomsForHome(5);
+$featuredRooms = getFeaturedRoomsForHome(8);
+
+$home_room_subtitle = static function (array $room): string {
+    $sd = trim((string) ($room['short_description'] ?? ''));
+    if ($sd !== '') {
+        return preg_replace('/\s+/', ' ', strip_tags($sd));
+    }
+    $feats = $room['features'] ?? [];
+    if (is_array($feats) && $feats !== []) {
+        $parts = array_slice(array_map('strval', $feats), 0, 3);
+
+        return implode(' • ', $parts);
+    }
+    $rt = trim((string) ($room['room_type'] ?? ''));
+    $loc = trim((string) ($room['location'] ?? ''));
+    if ($rt !== '' && $loc !== '') {
+        return $rt . ' • ' . $loc;
+    }
+
+    return $rt !== '' ? $rt : $loc;
+};
 ?>
 <!DOCTYPE html>
-<html class="light" lang="en">
+<html class="scroll-smooth" lang="en">
 <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title><?= e($pageTitle) ?></title>
   <?php require_once __DIR__ . '/includes/head-header.php'; ?>
-  <?php if (!empty($hasBookingBridge)): ?>
+  <?php if ($hasBookingEmbed): ?>
   <style>
-    /* Booking embed — NO extra wrapper from us.
-       We style either the provider wrapper (configured in settings) if present,
-       or the provider widget/form ids directly. */
-    <?= $bookingWrapperSelector ?>,
-    #booking-widget,
-    #booking-form,
-    <?= $bookingWrapperSelector ?> #booking-form {
-      position: relative;
-      z-index: 60;
-      max-width: 72rem; /* ~max-w-6xl */
-      margin-left: auto;
-      margin-right: auto;
-      /* Pull upward to “bridge” hero → next section (use transform to avoid margin-collapsing) */
-      margin-top: 0.5rem;
-      transform: translateY(-2.25rem) !important;
-      margin-bottom: 2rem;
+    #home-booking-embed-slot <?= $bookingWrapperSelector ?>,
+    #home-booking-embed-slot #booking-widget,
+    #home-booking-embed-slot #booking-form {
+      position: static !important;
+      transform: none !important;
+      margin: 0 !important;
+      max-width: none !important;
       width: 100% !important;
-      padding: 14px 16px;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.96);
-      border: 1px solid rgba(0, 0, 0, 0.07);
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.07);
-      overflow-x: auto;
-    }
-    @media (min-width: 1024px) {
-      <?= $bookingWrapperSelector ?>,
-      #booking-widget,
-      #booking-form,
-      <?= $bookingWrapperSelector ?> #booking-form {
-        padding-left: 3rem; padding-right: 3rem; /* ~lg:px-12 */
-      }
-    }
-    @media (min-width: 768px) {
-      <?= $bookingWrapperSelector ?>,
-      #booking-widget,
-      #booking-form,
-      <?= $bookingWrapperSelector ?> #booking-form {
-        margin-top: 0.75rem;
-        transform: translateY(-2.75rem) !important;
-        margin-bottom: 2.5rem;
-      }
-    }
-    <?= $bookingWrapperSelector ?> *,
-    #booking-widget *,
-    #booking-form * { box-sizing: border-box; }
-    <?= $bookingWrapperSelector ?> #booking-widget {
-      margin: 0 !important; padding: 0 !important; border: 0 !important;
-      box-shadow: none !important; border-radius: 0 !important;
-      background: transparent !important; max-width: none !important; width: 100% !important;
-    }
-    <?= $bookingWrapperSelector ?> #booking-form {
-      display: flex !important; flex-wrap: wrap !important; gap: 10px !important;
-      align-items: flex-end !important; justify-content: space-between !important;
-      padding: 0 !important; margin: 0 !important; width: 100% !important;
-    }
-    /* If the provider does not include the outer wrapper, style the provider ids directly. */
-    #booking-form {
-      display: flex !important; flex-wrap: wrap !important; gap: 10px !important;
-      align-items: flex-end !important; justify-content: space-between !important;
-    }
-    <?= $bookingWrapperSelector ?> #booking-form > div {
-      width: auto !important; min-width: 140px !important;
-      flex: 1 1 160px !important; margin: 0 !important; padding: 0 !important;
-    }
-    #booking-form > div {
-      width: auto !important; min-width: 140px !important;
-      flex: 1 1 160px !important; margin: 0 !important; padding: 0 !important;
-    }
-    <?= $bookingWrapperSelector ?> #booking-form label {
-      font-size: 11px !important; font-weight: 700 !important;
-      letter-spacing: 0.06em !important; text-transform: uppercase !important;
-      margin-bottom: 6px !important; color: #363636 !important;
-    }
-    #booking-form label {
-      font-size: 11px !important; font-weight: 700 !important;
-      letter-spacing: 0.06em !important; text-transform: uppercase !important;
-      margin-bottom: 6px !important; color: #363636 !important;
-    }
-    <?= $bookingWrapperSelector ?> #booking-form input {
-      width: 100% !important; min-height: 44px !important;
-      padding: 10px 12px !important; border: 1px solid #d8d0bc !important;
-      border-radius: 10px !important; background: #fff !important; color: #363636 !important;
-    }
-    #booking-form input,
-    #booking-form select {
-      width: 100% !important; min-height: 44px !important;
-      padding: 10px 12px !important; border: 1px solid #d8d0bc !important;
-      border-radius: 10px !important; background: #fff !important; color: #363636 !important;
-    }
-    <?= $bookingWrapperSelector ?> #booking-form button {
-      width: 100% !important; min-height: 44px !important; margin-top: 0 !important;
-      border: 0 !important; border-radius: 10px !important;
-      background: #411d13 !important; color: #fff !important;
-      font-weight: 700 !important; cursor: pointer !important;
-    }
-    #booking-form button {
-      width: 100% !important; min-height: 44px !important; margin-top: 0 !important;
-      border: 0 !important; border-radius: 10px !important;
-      background: #411d13 !important; color: #fff !important;
-      font-weight: 700 !important; cursor: pointer !important;
-    }
-    <?= $bookingWrapperSelector ?> #booking-form button:hover {
-      background: #5a2a1f !important;
-    }
-    #booking-form button:hover { background: #5a2a1f !important; }
-    @media (max-width: 1024px) {
-      <?= $bookingWrapperSelector ?> #booking-form {
-        flex-direction: column !important; align-items: stretch !important;
-      }
-      #booking-form {
-        flex-direction: column !important; align-items: stretch !important;
-      }
-      <?= $bookingWrapperSelector ?> #booking-form > div {
-        min-width: 100% !important; flex: 1 1 100% !important;
-      }
-      #booking-form > div {
-        min-width: 100% !important; flex: 1 1 100% !important;
-      }
+      box-shadow: none !important;
+      border: 0 !important;
+      background: transparent !important;
+      padding: 0 !important;
     }
   </style>
   <?php endif; ?>
 </head>
-<body class="bg-background-light dark:bg-background-dark text-text-main font-display antialiased overflow-x-hidden selection:bg-primary/30">
+<body class="bg-surface text-on-surface font-body font-light selection:bg-secondary-container selection:text-on-secondary-container antialiased overflow-x-hidden">
 <?php require_once __DIR__ . '/includes/header.php'; ?>
 
-<style>
-  /* Homepage hero YouTube background (cover-fit like a background image) */
-  #site-hero-youtube {
-    position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    width: 100vw !important;
-    height: 56.25vw !important; /* 16:9 */
-    min-width: 177.77vh !important;
-    min-height: 100vh !important;
-    transform: translate(-50%, -50%) !important;
-    pointer-events: none !important;
-  }
-  /* In-viewport reveal animations (lightweight, no dependencies) */
-  @media (prefers-reduced-motion: reduce) {
-    [data-site-inview] { opacity: 1 !important; transform: none !important; transition: none !important; animation: none !important; }
-  }
-  [data-site-inview] { opacity: 0; transform: translate3d(0, 0, 0); }
-  [data-site-inview].site-inview--on { opacity: 1; }
-
-  /* Slide up slowly */
-  [data-site-inview="up-slow"] { transform: translate3d(0, 28px, 0); }
-  [data-site-inview="up-slow"].site-inview--on {
-    transform: translate3d(0, 0, 0);
-    transition: transform var(--site-duration, 1400ms) ease-out, opacity 900ms ease-out;
-    transition-delay: var(--site-delay, 0ms);
-  }
-
-  /* Fade in from left */
-  [data-site-inview="left-fade"] { transform: translate3d(-28px, 0, 0); }
-  [data-site-inview="left-fade"].site-inview--on {
-    transform: translate3d(0, 0, 0);
-    transition: transform var(--site-duration, 700ms) cubic-bezier(.2,.9,.2,1), opacity 700ms ease-out;
-    transition-delay: var(--site-delay, 0ms);
-  }
-</style>
-
-<section class="relative z-0">
-  <!-- Cinematic hero section -->
-  <header class="relative w-full h-screen min-h-[600px] overflow-hidden group" id="site-home-hero">
-    <div class="absolute inset-0 overflow-hidden">
-      <?php if ($hasHeroYoutube): ?>
-        <?php $heroPosterUrl = site_media_url($hero_slide_paths[0] ?? $hero_bg); ?>
-        <div class="absolute inset-0 bg-cover bg-center z-0" data-alt="Hero background" style="background-image: url('<?= e($heroPosterUrl) ?>');"></div>
-        <iframe
-          id="site-hero-youtube"
-          class="z-[1]"
-          src="https://www.youtube-nocookie.com/embed/<?= e($youtubeVideoId) ?>?autoplay=1&mute=1&controls=0&loop=1&playlist=<?= e($youtubeVideoId) ?>&modestbranding=1&rel=0&playsinline=1"
-          title="Hero video"
-          frameborder="0"
-          loading="eager"
-          referrerpolicy="strict-origin-when-cross-origin"
-          allow="autoplay; encrypted-media; picture-in-picture"
-        ></iframe>
-      <?php else: ?>
-        <?php foreach ($hero_slide_paths as $si => $slidePath): ?>
-          <?php $slideUrl = site_media_url($slidePath); ?>
-        <div class="hero-bg-slide absolute inset-0 bg-cover bg-center transition-opacity duration-[1200ms] ease-in-out group-hover:scale-105 <?= $si === 0 ? 'opacity-100 z-[1]' : 'opacity-0 z-0' ?>"
-             data-slide-index="<?= (int)$si ?>"
-             data-alt="Hero background"
-             style="background-image: url('<?= e($slideUrl) ?>');">
-        </div>
-        <?php endforeach; ?>
-      <?php endif; ?>
-    </div>
-    <div class="absolute inset-0 bg-gradient-to-b from-black/55 via-black/40 to-black/75 z-[5] pointer-events-none"></div>
-
-    <div class="relative h-full flex flex-col justify-center items-center text-center px-6 z-10">
-      <h2 class="text-white/90 text-sm md:text-base font-medium uppercase tracking-[0.2em] mb-4 animate-[fadeIn_1s_ease-out]">
-        <?= e($hero_kicker) ?>
-      </h2>
-      <h1 class="font-serif text-[1.75rem] leading-snug sm:text-4xl sm:leading-tight md:text-7xl lg:text-8xl text-white font-medium mb-5 sm:mb-6 md:mb-8 max-w-4xl px-1 sm:px-0 text-cinematic animate-[fadeIn_1s_ease-out_0.2s] drop-shadow-md [&_.site-hero-accent-text]:animate-none">
-        <?= $hero_title ?>
-      </h1>
-      <p class="text-white/90 text-lg md:text-xl font-light max-w-xl mb-10 animate-[fadeIn_1s_ease-out_0.4s] drop-shadow-sm">
-        <?= e($hero_subtitle) ?>
-      </p>
-      <div class="animate-[fadeIn_1s_ease-out_0.6s]">
-        <a class="inline-block min-w-[200px] px-8 py-4 rounded-2xl text-sm font-bold uppercase tracking-widest text-white bg-white/[0.08] hover:bg-white/[0.18] backdrop-blur-xl border border-white/35 ring-1 ring-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.18)] transition-all duration-300"
-           href="<?= e(site_href((string)$hero_cta_href)) ?>">
-          <?= e($hero_cta_text) ?>
-        </a>
-      </div>
-    </div>
-  </header>
-  <script>
-  (function () {
-    var root = document.getElementById('site-home-hero');
-    if (!root) return;
-    var accent = root.querySelector('.site-hero-accent-text');
-    if (accent) {
-      var full = (accent.textContent || '').trim();
-      if (full.length > 0) {
-        accent.textContent = '';
-        accent.setAttribute('aria-busy', 'true');
-        var i = 0;
-        function tick() {
-          if (i <= full.length) {
-            accent.textContent = full.slice(0, i);
-            i++;
-            window.setTimeout(tick, i < 3 ? 120 : 55);
-          } else {
-            accent.removeAttribute('aria-busy');
-          }
-        }
-        window.setTimeout(tick, 500);
-      }
-    }
-  })();
-  </script>
-  <?php if (!$hasHeroYoutube && count($hero_slide_paths) > 1): ?>
-  <script>
-  (function () {
-    var root = document.getElementById('site-home-hero');
-    if (!root) return;
-    var slides = root.querySelectorAll('.hero-bg-slide');
-    if (slides.length < 2) return;
-    var cur = 0;
-    var n = slides.length;
-    setInterval(function () {
-      slides[cur].classList.remove('opacity-100', 'z-[1]');
-      slides[cur].classList.add('opacity-0', 'z-0');
-      cur = (cur + 1) % n;
-      slides[cur].classList.remove('opacity-0', 'z-0');
-      slides[cur].classList.add('opacity-100', 'z-[1]');
-    }, 7000);
-  })();
-  </script>
-  <?php endif; ?>
-</section>
-
-<?php if ($hasBookingBridge): ?>
-<!-- Booking bridge: render provider HTML as-is (no wrapper) -->
-<?= $booking_widget_html ?>
-<?php endif; ?>
-
-<!-- Asymmetrical editorial section -->
-<section class="relative z-10 w-full <?= $hasBookingBridge ? 'pt-8 md:pt-12 pb-[28px] md:pb-[46px]' : 'py-24 md:py-32' ?> overflow-x-hidden lg:overflow-visible bg-background-light">
-  <div class="absolute inset-0 opacity-[0.04] pointer-events-none" style="background-image: radial-gradient(#363636 1px, transparent 1px); background-size: 32px 32px;"></div>
-  <div class="max-w-[1280px] mx-auto px-6 lg:px-12">
-    <div class="flex flex-col lg:flex-row items-stretch lg:items-start gap-12 lg:gap-0 mb-32 relative">
-      <div class="w-full lg:w-1/2 lg:pr-16 z-20 pt-10">
-        <span class="block text-primary text-sm font-bold uppercase tracking-widest mb-4"><?= e($hp_kicker) ?></span>
-        <h2 class="font-serif text-4xl md:text-5xl lg:text-6xl text-text-main leading-tight mb-6">
-          <?= $hp_title_html ?>
-        </h2>
-        <div class="w-16 h-[2px] bg-primary mb-8"></div>
-        <p class="text-text-muted text-lg leading-relaxed mb-8 max-w-md">
-          <?= e($hp_body) ?>
-        </p>
-        <a class="inline-flex items-center gap-2 text-text-main font-semibold border-b border-primary pb-1 hover:text-primary transition-colors" href="<?= e(site_href((string)$hp_link_href)) ?>">
-          <?= e($hp_link_text) ?> <span class="material-symbols-outlined text-sm">arrow_forward</span>
-        </a>
-      </div>
-      <div class="w-full lg:w-1/2 relative min-w-0 flex flex-col items-center gap-8 lg:block">
-        <div class="absolute top-[-20px] right-[-20px] w-full h-full border border-primary/30 rounded-lg hidden lg:block z-0"></div>
-        <div class="relative z-10 w-full max-w-md mx-auto lg:ml-auto lg:mr-0 rounded-lg overflow-hidden shadow-2xl aspect-[4/5] lg:aspect-[3/4]">
-          <div class="absolute inset-0 bg-cover bg-center bg-no-repeat hover:scale-105 transition-transform duration-700" data-alt="Editorial"
-               style="background-image: url('<?= e($hp_main_img) ?>');"></div>
-        </div>
-        <div class="relative lg:absolute w-full max-w-[280px] aspect-[4/5] min-h-[187px] mx-auto -mt-16 sm:-mt-28 lg:mt-0 lg:max-w-none lg:w-48 lg:h-64 lg:aspect-auto lg:mx-0 left-auto lg:left-[-40px] bottom-auto lg:bottom-[-40px] rounded-lg overflow-hidden shadow-xl z-20 border-4 border-white"
-             data-site-inview="up-slow" style="--site-duration: 2200ms; --site-delay: 80ms;">
-          <div class="absolute inset-0 bg-cover bg-center bg-no-repeat m-0 p-0" style="background-image: url('<?= e($hp_secondary_img) ?>');"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="flex flex-col-reverse lg:flex-row items-stretch lg:items-center gap-12 lg:gap-24 relative">
-      <div class="w-full lg:w-7/12 relative min-w-0">
-        <div class="relative rounded-lg overflow-hidden shadow-elevation aspect-video w-full">
-          <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" data-alt="Architecture"
-               style="background-image: url('<?= e($arch_img) ?>');"></div>
-        </div>
-        <div class="absolute -top-6 -right-6 bg-white p-6 shadow-xl rounded-lg max-w-[200px] hidden lg:block">
-          <p class="font-serif text-2xl text-primary font-bold"><?= e($arch_badge_title) ?></p>
-          <p class="text-xs text-text-muted uppercase tracking-wider mt-1"><?= e($arch_badge_sub) ?></p>
-        </div>
-      </div>
-      <div class="w-full lg:w-5/12 z-20 min-w-0 p-0 mt-[-83px] mb-[-83px]">
-        <h3 class="font-serif text-3xl md:text-4xl text-text-main mb-4"><?= e($arch_title) ?></h3>
-        <p class="text-text-muted text-lg leading-relaxed mb-6">
-          <?= e($arch_body) ?>
-        </p>
-        <ul class="space-y-3 mb-[52px]">
-          <li class="flex items-center gap-3 text-text-main">
-            <span class="material-symbols-outlined text-primary">check_circle</span>
-            <span><?= e($arch_li1) ?></span>
-          </li>
-          <li class="flex items-center gap-3 text-text-main">
-            <span class="material-symbols-outlined text-primary">check_circle</span>
-            <span><?= e($arch_li2) ?></span>
-          </li>
-        </ul>
-      </div>
-    </div>
+<!-- Hero -->
+<header class="relative h-screen min-h-[600px] w-full overflow-hidden">
+  <div class="absolute inset-0 z-0">
+    <img class="w-full h-full object-cover" src="<?= e($hero_bg_url) ?>" alt="" width="1920" height="1080" fetchpriority="high"/>
+    <div class="absolute inset-0 bg-gradient-to-b from-brand-ink/40 via-transparent to-brand-ink/80"></div>
   </div>
-</section>
-
-<?php if ($showAmenityGridSection): ?>
-<!-- Amenities highlight: three cards, dark band (#282828) -->
-<section class="py-[23px] md:py-[26px] border-t border-white/5" style="background-color:#282828;">
-  <div class="max-w-[1280px] mx-auto px-6 lg:px-12">
-    <div class="text-center max-w-3xl mx-auto mb-12 md:mb-16">
-      <?php if ($amenity_grid_kicker !== ''): ?>
-      <span class="text-white/65 text-xs md:text-sm font-bold uppercase tracking-[0.2em]"><?= e($amenity_grid_kicker) ?></span>
+  <div class="relative z-10 flex flex-col justify-center items-center h-full text-center px-6 pt-20">
+    <?php if ($hero_show_stars || trim($hero_trust_badge) !== ''): ?>
+    <div class="flex items-center gap-2 mb-4">
+      <?php if ($hero_show_stars): ?>
+      <div class="flex text-brand-gold">
+        <?php for ($si = 0; $si < 5; $si++): ?>
+        <span class="material-symbols-outlined !text-sm" style="font-variation-settings:'FILL'1,'wght'400;">star</span>
+        <?php endfor; ?>
+      </div>
       <?php endif; ?>
-      <?php if ($amenity_grid_title !== ''): ?>
-      <h2 class="font-serif text-3xl md:text-5xl text-white mt-3 md:mt-4 mb-5 leading-tight"><?= e($amenity_grid_title) ?></h2>
+      <?php if (trim($hero_trust_badge) !== ''): ?>
+      <span class="font-body text-[10px] text-surface/80 uppercase tracking-[0.3em]"><?= e($hero_trust_badge) ?></span>
       <?php endif; ?>
-      <div class="w-14 h-1 rounded-full mx-auto mb-6" style="background:linear-gradient(90deg, transparent, #c9a227, transparent);"></div>
-      <?php if ($amenity_grid_intro !== ''): ?>
-      <p class="text-white/75 text-base md:text-lg leading-relaxed"><?= e($amenity_grid_intro) ?></p>
-      <?php endif; ?>
-    </div>
-    <?php if ($hasAmenityGridCard): ?>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
-      <?php foreach ($home_amenity_grid_cards as $ac):
-          if (trim($ac['image'] . $ac['title'] . $ac['description']) === '') {
-              continue;
-          }
-          $aimg = $ac['image'] !== '' ? site_media_url($ac['image']) : '';
-          static $amenityCardIndex = 0;
-          $amenityCardIndex++;
-          // First card completes fastest, next cards slightly slower.
-          $dur = $amenityCardIndex === 1 ? 650 : ($amenityCardIndex === 2 ? 850 : 1050);
-          $delay = $amenityCardIndex === 1 ? 0 : ($amenityCardIndex === 2 ? 120 : 240);
-          ?>
-      <article class="flex flex-col rounded-xl overflow-hidden border border-white/10 bg-white/[0.04] shadow-lg shadow-black/20"
-               data-site-inview="left-fade" style="--site-duration: <?= (int)$dur ?>ms; --site-delay: <?= (int)$delay ?>ms;">
-        <div class="aspect-[4/3] bg-white/5 bg-cover bg-center" data-alt="<?= e($ac['title']) ?>"
-             <?php if ($aimg !== ''): ?>style="background-image: url('<?= e($aimg) ?>');"<?php endif; ?>></div>
-        <div class="p-6 md:p-7 flex-1 flex flex-col">
-          <?php if ($ac['title'] !== ''): ?>
-          <h3 class="font-serif text-xl md:text-2xl text-white mb-3 leading-snug"><?= e($ac['title']) ?></h3>
-          <?php endif; ?>
-          <?php if ($ac['description'] !== ''): ?>
-          <p class="text-white/70 text-sm md:text-base leading-relaxed flex-1"><?= e($ac['description']) ?></p>
-          <?php endif; ?>
-        </div>
-      </article>
-      <?php endforeach; ?>
     </div>
     <?php endif; ?>
-    <div class="text-center mt-10 md:mt-12">
-      <a class="inline-flex items-center justify-center px-7 py-3.5 rounded-full border border-white/20 text-white font-bold tracking-wide uppercase text-xs hover:bg-white/10 transition-colors"
-         href="<?= e(site_href('/amenities')) ?>">
-        View all amenities
-      </a>
-    </div>
+    <h1 class="font-headline text-4xl sm:text-5xl md:text-7xl lg:text-8xl text-surface leading-tight mb-6 max-w-5xl">
+      <?= $hero_title ?>
+    </h1>
+    <p class="font-body text-base md:text-lg lg:text-xl text-surface/90 tracking-widest uppercase font-light max-w-3xl">
+      <?= e($hero_subtitle) ?>
+    </p>
   </div>
-</section>
-<?php endif; ?>
 
-<!-- Featured rooms (CMS: mark rooms Featured in admin) -->
-<section class="py-[33px] bg-white relative">
-  <div class="max-w-[1440px] mx-auto px-6 lg:px-12">
-    <?php
-      $roomsForSlider = is_array($featuredRooms) ? array_slice($featuredRooms, 0, 5) : [];
-      $showRoomsNav = count($roomsForSlider) > 4;
-    ?>
-    <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-      <div>
-        <span class="text-primary text-sm font-bold uppercase tracking-widest"><?= e($rooms_kicker) ?></span>
-        <h2 class="font-serif text-4xl md:text-5xl text-text-main mt-3"><?= e($rooms_title) ?></h2>
+  <div class="absolute bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 w-full max-w-5xl px-4 md:px-6 z-20">
+    <div class="bg-surface/95 backdrop-blur-xl p-2 flex flex-col md:flex-row items-stretch shadow-[0_35px_60px_-15px_rgba(0,0,0,0.5)]">
+      <?php if ($hasBookingEmbed): ?>
+      <div class="flex-1 min-w-0 p-3 md:p-4" id="home-booking-embed-slot">
+        <?= $booking_widget_html ?>
       </div>
-      <?php if ($showRoomsNav): ?>
-      <div class="flex gap-2">
-        <button type="button" id="homeRoomsPrev" class="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white transition-all" aria-label="Scroll rooms left">
-          <span class="material-symbols-outlined">arrow_back</span>
-        </button>
-        <button type="button" id="homeRoomsNext" class="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white transition-all" aria-label="Scroll rooms right">
-          <span class="material-symbols-outlined">arrow_forward</span>
-        </button>
+      <?php else: ?>
+      <div class="flex-1 grid grid-cols-2 md:grid-cols-3 p-4 gap-y-4 items-center">
+        <div class="flex flex-col border-r border-outline-variant/30 px-4 md:px-6">
+          <label class="font-body text-[10px] uppercase tracking-widest text-outline mb-1" for="home-decor-checkin">Check-in</label>
+          <input id="home-decor-checkin" type="text" readonly tabindex="-1" class="w-full bg-transparent font-body text-on-surface font-semibold border-0 p-0 focus:ring-0 cursor-default text-sm md:text-base" value="Oct 24, 2026" aria-label="Check-in (decorative)"/>
+        </div>
+        <div class="flex flex-col border-r-0 md:border-r border-outline-variant/30 px-4 md:px-6">
+          <label class="font-body text-[10px] uppercase tracking-widest text-outline mb-1" for="home-decor-checkout">Check-out</label>
+          <input id="home-decor-checkout" type="text" readonly tabindex="-1" class="w-full bg-transparent font-body text-on-surface font-semibold border-0 p-0 focus:ring-0 cursor-default text-sm md:text-base" value="Oct 26, 2026" aria-label="Check-out (decorative)"/>
+        </div>
+        <div class="flex flex-col px-4 md:px-6 col-span-2 md:col-span-1 border-t md:border-t-0 border-outline-variant/30 pt-4 md:pt-0">
+          <label class="font-body text-[10px] uppercase tracking-widest text-outline mb-1" for="home-decor-guests">Guests</label>
+          <select id="home-decor-guests" disabled class="w-full bg-transparent font-body text-on-surface font-semibold border-0 p-0 focus:ring-0 cursor-default text-sm md:text-base appearance-none opacity-100" aria-label="Guests (decorative)">
+            <option>2 Adults</option>
+          </select>
+        </div>
+      </div>
+      <div class="relative flex flex-col min-w-[200px]">
+        <?php if ($showDecorReserve): ?>
+        <a href="<?= e(site_href($navCtaHref)) ?>" class="bg-secondary-container text-on-secondary-fixed px-8 md:px-12 py-5 md:py-6 font-body uppercase tracking-[0.2em] text-sm font-bold hover:brightness-105 transition-colors flex items-center justify-center h-full text-center"><?= e($navCtaLabel) ?></a>
+        <?php endif; ?>
+        <?php if (trim($home_booking_guarantee_line) !== ''): ?>
+        <span class="absolute -bottom-5 md:-bottom-6 right-2 md:right-0 font-body text-[9px] uppercase tracking-widest text-surface/70 italic whitespace-nowrap"><?= e($home_booking_guarantee_line) ?></span>
+        <?php endif; ?>
       </div>
       <?php endif; ?>
     </div>
+  </div>
+</header>
 
-    <div id="homeRoomsScroller" class="flex overflow-x-auto gap-8 pb-12 pt-4 px-2 no-scrollbar snap-x snap-mandatory scroll-smooth">
-      <?php if (empty($roomsForSlider)): ?>
-        <p class="text-text-muted py-8">No rooms to show yet. Add rooms and mark them as <strong>Featured</strong> in Admin → Rooms.</p>
+<!-- Brand story -->
+<section class="py-24 md:py-32 px-6 md:px-12 max-w-screen-2xl mx-auto bg-surface">
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 items-center">
+    <div class="md:col-span-7 relative">
+      <img class="w-full aspect-[4/5] object-cover shadow-2xl shadow-brand-ink/5" src="<?= e($hp_main_img) ?>" alt="" width="800" height="1000"/>
+      <div class="absolute -bottom-6 -right-6 md:-bottom-8 md:-right-8 w-48 h-48 md:w-64 md:h-64 bg-surface-container-low -z-10" aria-hidden="true"></div>
+    </div>
+    <div class="md:col-span-5 flex flex-col">
+      <?php if (trim($hp_kicker) !== ''): ?>
+      <span class="font-body uppercase tracking-[0.3em] text-brand-gold mb-6 md:mb-8 text-sm"><?= e($hp_kicker) ?></span>
+      <?php endif; ?>
+      <div class="font-headline text-3xl md:text-4xl lg:text-5xl text-on-surface leading-tight mb-8 md:mb-10"><?= $hp_title_html ?></div>
+      <div class="font-body text-on-surface-variant leading-relaxed text-lg mb-8 [&_a]:text-brand-gold [&_a]:underline"><?= $hp_body ?></div>
+      <?php if (trim($hp_link_text) !== ''): ?>
+      <a class="font-body text-brand-gold uppercase tracking-widest text-sm font-bold border-b border-brand-gold/20 pb-2 self-start hover:border-brand-gold transition-all" href="<?= e(site_href((string) $hp_link_href)) ?>"><?= e($hp_link_text) ?></a>
+      <?php endif; ?>
+    </div>
+  </div>
+</section>
+
+<!-- Rooms -->
+<section class="py-24 md:py-32 bg-surface-container-low relative">
+  <div class="px-6 md:px-12 mb-12 md:mb-20 text-center max-w-4xl mx-auto">
+    <h2 class="font-headline text-4xl md:text-5xl text-on-surface mb-4 md:mb-6"><?= e($rooms_title) ?></h2>
+    <?php if (trim($rooms_kicker) !== ''): ?>
+    <p class="font-body text-on-surface-variant uppercase tracking-widest text-xs"><?= e($rooms_kicker) ?></p>
+    <?php endif; ?>
+  </div>
+  <div class="relative">
+    <?php
+    $roomsForSlider = is_array($featuredRooms) ? array_slice($featuredRooms, 0, 8) : [];
+    ?>
+    <div id="homeRoomsScroller" class="overflow-x-auto no-scrollbar flex space-x-6 md:space-x-8 px-6 md:px-12 pb-10 scroll-smooth">
+      <?php if ($roomsForSlider === []): ?>
+      <p class="font-body text-on-surface-variant py-8 px-2">No rooms to show yet. Mark rooms as <strong>Featured</strong> in Admin → Rooms.</p>
       <?php else: ?>
         <?php foreach ($roomsForSlider as $room):
-          $rtitle = (string)($room['title'] ?? '');
-          $rslug = (string)($room['slug'] ?? '');
-          $rprice = is_numeric($room['price'] ?? null) ? number_format((float)$room['price'], 0) : '';
-          $rdesc = (string)($room['short_description'] ?? '');
-          if ($rdesc === '') {
-              $rdesc = (string)($room['description'] ?? '');
-          }
-          $rdesc = preg_replace('/\s+/', ' ', strip_tags($rdesc));
-          if (function_exists('mb_substr')) {
-              $rdesc = mb_strlen($rdesc) > 140 ? mb_substr($rdesc, 0, 137) . '…' : $rdesc;
-          } else {
-              $rdesc = strlen($rdesc) > 140 ? substr($rdesc, 0, 137) . '…' : $rdesc;
-          }
-          $rimg = (string)($room['main_image'] ?? '');
-          ?>
-      <div class="min-w-[320px] md:min-w-[400px] snap-center group">
-        <div class="relative h-[500px] rounded-xl overflow-hidden shadow-lg transition-all duration-500 group-hover:shadow-2xl group-hover:-translate-y-2">
-          <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
-               data-alt="<?= e($rtitle) ?>"
-               style="background-image: url('<?= e($rimg) ?>');"></div>
-          <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent pointer-events-none"></div>
-          <div class="absolute bottom-0 left-0 p-8 w-full">
-            <div class="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-end mb-2">
-              <h3 class="font-serif text-2xl text-white"><?= e($rtitle) ?></h3>
-              <span class="inline-flex w-fit self-start sm:self-auto text-white font-bold bg-white/10 backdrop-blur-sm border border-white/30 rounded px-3 py-1 shadow-sm">
-                <?= e($currency) ?><?= e($rprice) ?>/n
-              </span>
-            </div>
-            <p class="text-white/80 text-sm mb-6 line-clamp-2"><?= e($rdesc) ?></p>
-            <a class="inline-flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wider border-b border-white/35 pb-1 hover:border-white transition-colors text-center"
-               href="<?= e(site_url('room-details', ['slug' => $rslug])) ?>">
-              View Details
-              <span class="material-symbols-outlined text-base" aria-hidden="true">arrow_forward</span>
-            </a>
-          </div>
+            $rtitle = (string) ($room['title'] ?? '');
+            $rslug = (string) ($room['slug'] ?? '');
+            $rprice = is_numeric($room['price'] ?? null) ? number_format((float) $room['price'], 0) : '';
+            $rsub = $home_room_subtitle($room);
+            $rimgPath = (string) ($room['main_image'] ?? '');
+            $rimg = $rimgPath !== '' ? site_media_url($rimgPath) : site_media_url($detailPlaceholder);
+            ?>
+      <a class="flex-shrink-0 w-[min(100vw-3rem,450px)] group text-left" href="<?= e(site_url('room-details', ['slug' => $rslug])) ?>">
+        <div class="relative overflow-hidden mb-6 aspect-[3/4]">
+          <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="<?= e($rimg) ?>" alt="<?= e($rtitle) ?>" width="450" height="600"/>
+          <div class="absolute inset-0 bg-brand-ink/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
         </div>
-      </div>
+        <div class="flex justify-between items-end gap-4">
+          <div class="min-w-0">
+            <h3 class="font-headline text-2xl text-on-surface mb-1"><?= e($rtitle) ?></h3>
+            <?php if ($rsub !== ''): ?>
+            <span class="font-body text-sm text-on-surface-variant uppercase tracking-widest line-clamp-2"><?= e($rsub) ?></span>
+            <?php endif; ?>
+          </div>
+          <?php if ($rprice !== ''): ?>
+          <span class="font-body text-lg text-brand-gold font-semibold shrink-0"><?= e($currency) ?><?= e($rprice) ?></span>
+          <?php endif; ?>
+        </div>
+      </a>
         <?php endforeach; ?>
       <?php endif; ?>
     </div>
-
-    <div class="mt-4 flex items-center justify-start">
-      <a class="inline-flex items-center gap-2 text-text-muted hover:text-primary transition-colors"
-         href="<?= e(site_href((string)$rooms_view_all)) ?>">
-        <span class="w-10 h-10 rounded-full border border-current flex items-center justify-center">
-          <span class="material-symbols-outlined">arrow_forward</span>
-        </span>
-        <span class="text-sm font-medium">View All</span>
+    <?php if ($roomsForSlider !== []): ?>
+    <div class="flex justify-center gap-2 mt-2 md:mt-4" aria-hidden="true">
+      <span class="h-1.5 w-6 rounded-full bg-brand-gold"></span>
+      <span class="h-1.5 w-1.5 rounded-full bg-outline-variant"></span>
+      <span class="h-1.5 w-1.5 rounded-full bg-outline-variant"></span>
+    </div>
+    <?php endif; ?>
+    <div class="absolute top-0 right-0 h-full w-24 md:w-32 rooms-fade-overlay pointer-events-none hidden md:block"></div>
+    <div class="px-6 md:px-12 mt-8 text-right">
+      <a class="font-body text-xs uppercase tracking-[0.2em] font-bold text-brand-gold hover:text-on-surface transition-colors inline-flex items-center gap-2 group" href="<?= e(site_href((string) $rooms_view_all)) ?>">
+        View All Suites <span class="w-1 h-1 bg-brand-red rounded-full opacity-60"></span> <span class="material-symbols-outlined !text-sm">arrow_forward</span>
       </a>
     </div>
   </div>
 </section>
 
-<script>
-(function () {
-  var sc = document.getElementById('homeRoomsScroller');
-  var prev = document.getElementById('homeRoomsPrev');
-  var next = document.getElementById('homeRoomsNext');
-  if (!sc) return;
-  if (!prev || !next) return;
-  var step = function (dir) {
-    sc.scrollBy({ left: dir * Math.min(420, sc.clientWidth * 0.85), behavior: 'smooth' });
-  };
-  prev.addEventListener('click', function () { step(-1); });
-  next.addEventListener('click', function () { step(1); });
-})();
-</script>
-
-<script>
-(function () {
-  function onReady(fn) {
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
-    else fn();
-  }
-  onReady(function () {
-    var els = Array.prototype.slice.call(document.querySelectorAll('[data-site-inview]'));
-    if (!els.length) return;
-    if (!('IntersectionObserver' in window)) {
-      els.forEach(function (el) { el.classList.add('site-inview--on'); });
-      return;
-    }
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('site-inview--on');
-          io.unobserve(entry.target);
-        }
-      });
-    }, { root: null, threshold: 0.18, rootMargin: '0px 0px -10% 0px' });
-    els.forEach(function (el) { io.observe(el); });
-  });
-})();
-</script>
-
-<!-- Culinary Excellence Section -->
-<section class="py-[34px] bg-background-light">
-  <div class="max-w-[1280px] mx-auto px-6 lg:px-12">
-    <div class="bg-white rounded-2xl overflow-hidden shadow-elevation flex flex-col lg:flex-row items-stretch">
-      <div class="w-full lg:w-1/2 relative min-h-[260px] md:min-h-[400px]">
-        <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" data-alt="Dining"
-             style="background-image: url('<?= e($dining_img) ?>');"></div>
-      </div>
-      <div class="w-full lg:w-1/2 p-12 lg:p-20 flex flex-col justify-center min-w-0">
-        <span class="text-primary text-sm font-bold uppercase tracking-widest mb-3"><?= e($dining_kicker) ?></span>
-        <h2 class="font-serif text-4xl text-text-main mb-6"><?= e($dining_title) ?></h2>
-        <p class="text-text-muted text-lg mb-8">
-          <?= $dining_body_html ?>
-        </p>
-        <div class="flex flex-row flex-nowrap gap-2 sm:gap-4 w-full min-w-0">
-          <a class="flex-1 min-w-0 inline-flex items-center justify-center text-center px-3 py-2.5 sm:px-8 sm:py-3 rounded-md text-xs sm:text-sm font-bold tracking-wide transition-colors shadow-md shadow-primary/20 bg-primary text-white hover:bg-primary-light" href="<?= e(site_href((string)$dining_cta1_href)) ?>"><?= e($dining_cta1) ?></a>
-          <a class="flex-1 min-w-0 inline-flex items-center justify-center text-center px-3 py-2.5 sm:px-8 sm:py-3 rounded-md text-xs sm:text-sm font-bold tracking-wide transition-colors bg-transparent border border-text-muted/30 text-text-main hover:border-text-main" href="<?= e(site_href((string)$dining_cta2_href)) ?>"><?= e($dining_cta2) ?></a>
+<!-- Dining -->
+<section class="py-24 md:py-32 bg-[#1A1A1A] text-surface">
+  <div class="px-6 md:px-12 max-w-screen-2xl mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
+    <div class="lg:w-1/2 w-full">
+      <?php if (trim($dining_kicker) !== ''): ?>
+      <span class="font-body uppercase tracking-[0.3em] text-brand-gold text-xs mb-6 md:mb-8 block"><?= e($dining_kicker) ?></span>
+      <?php endif; ?>
+      <div class="font-headline text-4xl md:text-6xl lg:text-7xl mb-10 md:mb-12"><?= $dining_heading_html ?></div>
+      <div class="space-y-12 md:space-y-16">
+        <div class="border-l-2 border-brand-gold/30 pl-6 md:pl-8 py-2">
+          <h4 class="font-body text-xl md:text-2xl font-semibold mb-3 md:mb-4 tracking-tight"><?= e($dining_v1_title) ?></h4>
+          <p class="font-body text-surface/60 leading-relaxed font-light"><?= e($dining_v1_body) ?></p>
         </div>
+        <div class="border-l-2 border-brand-gold/30 pl-6 md:pl-8 py-2">
+          <h4 class="font-body text-xl md:text-2xl font-semibold mb-3 md:mb-4 tracking-tight"><?= e($dining_v2_title) ?></h4>
+          <p class="font-body text-surface/60 leading-relaxed font-light"><?= e($dining_v2_body) ?></p>
+        </div>
+      </div>
+    </div>
+    <div class="lg:w-1/2 w-full grid grid-cols-2 gap-4 md:gap-6 min-h-[400px] md:h-[700px]">
+      <div class="pt-8 md:pt-12 min-h-0">
+        <img class="w-full h-full min-h-[200px] object-cover rounded-sm" src="<?= e($dining_img_top) ?>" alt="" width="400" height="500"/>
+      </div>
+      <div class="pb-8 md:pb-12 min-h-0">
+        <img class="w-full h-full min-h-[200px] object-cover rounded-sm" src="<?= e($dining_img_bottom) ?>" alt="" width="400" height="500"/>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Facilities bento -->
+<section class="py-24 md:py-32 px-6 md:px-12 bg-surface">
+  <div class="max-w-screen-2xl mx-auto">
+    <div class="flex flex-col md:flex-row md:justify-between md:items-end gap-6 mb-12 md:mb-20">
+      <h2 class="font-headline text-4xl md:text-5xl text-on-surface"><?= e($fac_title) ?></h2>
+      <?php if (trim($fac_blurb) !== ''): ?>
+      <div class="font-body text-on-surface-variant md:text-right max-w-xs uppercase tracking-widest text-[10px] leading-relaxed"><?= e($fac_blurb) ?></div>
+      <?php endif; ?>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-6 md:gap-8 md:h-[800px]">
+      <?php
+      $t0 = $bentoTiles[0];
+        $t1 = $bentoTiles[1];
+        $t2 = $bentoTiles[2];
+        $t3 = $bentoTiles[3];
+        $tileImg = static function ($path) use ($heroPlaceholder) {
+            $p = trim((string) $path);
+
+            return $p !== '' ? site_media_url($p) : site_media_url($heroPlaceholder);
+        };
+        ?>
+      <div class="md:col-span-2 md:row-span-2 relative group overflow-hidden min-h-[280px] md:min-h-0">
+        <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 min-h-[280px] md:min-h-0" src="<?= e($tileImg($t0['image'])) ?>" alt="<?= e($t0['title']) ?>" width="800" height="800"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent p-6 md:p-10 flex flex-col justify-end">
+          <h4 class="font-body text-surface text-2xl md:text-3xl font-light"><?= e($t0['title']) ?></h4>
+          <?php if (trim($t0['subtitle']) !== ''): ?>
+          <span class="font-body text-brand-gold text-xs uppercase tracking-widest mt-2"><?= e($t0['subtitle']) ?></span>
+          <?php endif; ?>
+        </div>
+      </div>
+      <div class="md:col-span-1 relative group overflow-hidden min-h-[220px] md:min-h-0">
+        <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 min-h-[220px] md:min-h-0" src="<?= e($tileImg($t1['image'])) ?>" alt="<?= e($t1['title']) ?>" width="400" height="400"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent p-5 md:p-6 flex flex-col justify-end">
+          <h4 class="font-body text-surface text-lg md:text-xl font-light"><?= e($t1['title']) ?></h4>
+          <?php if (trim($t1['subtitle']) !== ''): ?>
+          <span class="font-body text-brand-gold text-xs uppercase tracking-widest mt-2"><?= e($t1['subtitle']) ?></span>
+          <?php endif; ?>
+        </div>
+      </div>
+      <div class="md:col-span-1 relative group overflow-hidden min-h-[220px] md:min-h-0">
+        <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 min-h-[220px] md:min-h-0" src="<?= e($tileImg($t2['image'])) ?>" alt="<?= e($t2['title']) ?>" width="400" height="400"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent p-5 md:p-6 flex flex-col justify-end">
+          <h4 class="font-body text-surface text-lg md:text-xl font-light"><?= e($t2['title']) ?></h4>
+          <?php if (trim($t2['subtitle']) !== ''): ?>
+          <span class="font-body text-brand-gold text-xs uppercase tracking-widest mt-2"><?= e($t2['subtitle']) ?></span>
+          <?php endif; ?>
+        </div>
+      </div>
+      <div class="md:col-span-2 relative group overflow-hidden min-h-[240px] md:min-h-0">
+        <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 min-h-[240px] md:min-h-0" src="<?= e($tileImg($t3['image'])) ?>" alt="<?= e($t3['title']) ?>" width="800" height="400"/>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent p-6 md:p-8 flex flex-col justify-end">
+          <h4 class="font-body text-surface text-xl md:text-2xl font-light"><?= e($t3['title']) ?></h4>
+          <?php if (trim($t3['subtitle']) !== ''): ?>
+          <span class="font-body text-brand-gold text-xs uppercase tracking-widest mt-2"><?= e($t3['subtitle']) ?></span>
+          <?php endif; ?>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Location -->
+<section class="py-24 md:py-32 bg-surface-container-low border-t border-outline-variant/10">
+  <div class="px-6 md:px-12 max-w-screen-2xl mx-auto flex flex-col lg:flex-row gap-12 lg:gap-20">
+    <div class="lg:w-1/3 w-full">
+      <h2 class="font-headline text-3xl md:text-4xl mb-6 md:mb-8 text-on-surface"><?= e($loc_title) ?></h2>
+      <p class="font-body text-on-surface-variant leading-relaxed mb-8"><?= nl2br(e($loc_body)) ?></p>
+      <?php if ($loc_bullets !== []): ?>
+      <ul class="space-y-4 mb-10 font-body text-sm text-on-surface-variant/80 uppercase tracking-widest">
+        <?php foreach ($loc_bullets as $li): ?>
+        <li class="flex items-center gap-3">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-gold shrink-0"></span>
+          <?= e($li) ?>
+        </li>
+        <?php endforeach; ?>
+      </ul>
+      <?php endif; ?>
+      <?php if (trim($loc_address) !== ''): ?>
+      <div class="flex items-start space-x-4">
+        <span class="material-symbols-outlined text-brand-gold shrink-0">location_on</span>
+        <span class="font-body text-sm tracking-wide text-on-surface"><?= e($loc_address) ?></span>
+      </div>
+      <?php endif; ?>
+    </div>
+    <div class="lg:w-2/3 w-full min-h-[320px] md:h-[500px] shadow-xl overflow-hidden grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-700">
+      <div class="w-full h-full min-h-[320px] md:min-h-[500px] bg-surface-container-highest p-2 md:p-3 flex">
+        <img class="w-full h-full object-cover min-h-[280px] md:min-h-[476px] flex-1" src="<?= e($loc_map) ?>" alt="" width="1200" height="800"/>
       </div>
     </div>
   </div>

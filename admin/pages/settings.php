@@ -52,6 +52,12 @@ $maintenanceBgValue = $settings['maintenance_background'] ?? $defaultSettings['m
             </div>
 
             <div class="form-group">
+                <label for="site_brand_collection_line">Brand collection line (under site name in header)</label>
+                <input type="text" id="site_brand_collection_line" name="site_brand_collection_line" value="<?= sanitize($settings['site_brand_collection_line'] ?? $defaultSettings['site_brand_collection_line']) ?>" placeholder="<?= sanitize($defaultSettings['site_brand_collection_line']) ?>">
+                <p class="form-help">Optional subtitle under the text lockup (e.g. “Part of Best Western Plus Collection”). The word “Plus” is highlighted automatically when present.</p>
+            </div>
+
+            <div class="form-group">
                 <label for="room_detail_hero_badge">Room detail hero badge</label>
                 <input type="text" id="room_detail_hero_badge" name="room_detail_hero_badge" value="<?= sanitize($settings['room_detail_hero_badge'] ?? $defaultSettings['room_detail_hero_badge']) ?>" placeholder="<?= sanitize($defaultSettings['room_detail_hero_badge']) ?>">
                 <p class="form-help">Small uppercase label above the room title on single-room pages.</p>
@@ -189,22 +195,32 @@ $maintenanceBgValue = $settings['maintenance_background'] ?? $defaultSettings['m
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label for="nav_experience_label">Amenities link label</label>
+                    <label for="nav_experience_label">Facilities link label</label>
                     <input type="text" id="nav_experience_label" name="nav_experience_label" value="<?= sanitize($settings['nav_experience_label'] ?? $defaultSettings['nav_experience_label']) ?>" placeholder="<?= sanitize($defaultSettings['nav_experience_label']) ?>">
                 </div>
                 <div class="form-group">
-                    <label for="nav_experience_href">Amenities link URL</label>
+                    <label for="nav_experience_href">Facilities link URL</label>
                     <input type="text" id="nav_experience_href" name="nav_experience_href" value="<?= sanitize($settings['nav_experience_href'] ?? $defaultSettings['nav_experience_href']) ?>" placeholder="<?= sanitize($defaultSettings['nav_experience_href']) ?>">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label for="nav_events_label">Gallery link label</label>
+                    <label for="nav_events_label">Events / gallery link label</label>
                     <input type="text" id="nav_events_label" name="nav_events_label" value="<?= sanitize($settings['nav_events_label'] ?? $defaultSettings['nav_events_label']) ?>" placeholder="<?= sanitize($defaultSettings['nav_events_label']) ?>">
                 </div>
                 <div class="form-group">
-                    <label for="nav_events_href">Gallery link URL</label>
+                    <label for="nav_events_href">Events / gallery link URL</label>
                     <input type="text" id="nav_events_href" name="nav_events_href" value="<?= sanitize($settings['nav_events_href'] ?? $defaultSettings['nav_events_href']) ?>" placeholder="<?= sanitize($defaultSettings['nav_events_href']) ?>">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="nav_story_label">Story link label</label>
+                    <input type="text" id="nav_story_label" name="nav_story_label" value="<?= sanitize($settings['nav_story_label'] ?? $defaultSettings['nav_story_label']) ?>" placeholder="<?= sanitize($defaultSettings['nav_story_label']) ?>">
+                </div>
+                <div class="form-group">
+                    <label for="nav_story_href">Story link URL</label>
+                    <input type="text" id="nav_story_href" name="nav_story_href" value="<?= sanitize($settings['nav_story_href'] ?? $defaultSettings['nav_story_href']) ?>" placeholder="<?= sanitize($defaultSettings['nav_story_href']) ?>">
                 </div>
             </div>
         </div>
@@ -318,9 +334,31 @@ $maintenanceBgValue = $settings['maintenance_background'] ?? $defaultSettings['m
         </div>
         <div class="card-body card-body--stack">
             <div class="form-group">
-                <label for="footer_copyright">Copyright Text</label>
+                <label for="footer_copyright">Copyright line (footer bottom)</label>
                 <input type="text" id="footer_copyright" name="footer_copyright" value="<?= sanitize($settings['footer_copyright'] ?? '') ?>">
-                <p class="form-help">This will be shown as: Copyright © [Year] [Your Text]. All rights reserved.</p>
+            </div>
+            <div class="form-group">
+                <label for="footer_line_2">Footer tagline line 2 (optional)</label>
+                <input type="text" id="footer_line_2" name="footer_line_2" value="<?= sanitize($settings['footer_line_2'] ?? $defaultSettings['footer_line_2']) ?>" placeholder="<?= sanitize($defaultSettings['footer_line_2']) ?>">
+            </div>
+            <div class="form-group">
+                <label for="footer_trust_line">Trust strip label (optional)</label>
+                <input type="text" id="footer_trust_line" name="footer_trust_line" value="<?= sanitize($settings['footer_trust_line'] ?? $defaultSettings['footer_trust_line']) ?>" placeholder="<?= sanitize($defaultSettings['footer_trust_line']) ?>">
+                <p class="form-help">If set, shows a five-star row with this label in the footer.</p>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="footer_careers_href">Careers URL (optional)</label>
+                    <input type="text" id="footer_careers_href" name="footer_careers_href" value="<?= sanitize($settings['footer_careers_href'] ?? '') ?>" placeholder="/careers">
+                </div>
+                <div class="form-group">
+                    <label for="footer_press_href">Press room URL (optional)</label>
+                    <input type="text" id="footer_press_href" name="footer_press_href" value="<?= sanitize($settings['footer_press_href'] ?? '') ?>" placeholder="/press">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="footer_sustainability_href">Sustainability URL (optional)</label>
+                <input type="text" id="footer_sustainability_href" name="footer_sustainability_href" value="<?= sanitize($settings['footer_sustainability_href'] ?? '') ?>" placeholder="/sustainability">
             </div>
             
             <div class="form-group">
@@ -515,6 +553,7 @@ let socialMediaList = [];
 const SOCIAL_PLATFORMS = [
     { value: 'facebook', label: 'Facebook' },
     { value: 'instagram', label: 'Instagram' },
+    { value: 'linkedin', label: 'LinkedIn' },
     { value: 'tiktok', label: 'TikTok' },
     { value: 'x', label: 'X (formerly Twitter)' }
 ];
@@ -522,6 +561,7 @@ const SOCIAL_PLATFORMS = [
 function inferPlatformFromUrl(url) {
     const u = String(url || '').toLowerCase();
     if (u.includes('instagram.com')) return 'instagram';
+    if (u.includes('linkedin.com')) return 'linkedin';
     if (u.includes('tiktok.com')) return 'tiktok';
     if (u.includes('twitter.com') || u.includes('x.com')) return 'x';
     if (u.includes('facebook.com') || u.includes('fb.com')) return 'facebook';
@@ -660,16 +700,9 @@ document.getElementById('settingsForm').addEventListener('submit', function(e) {
     if (metaCsrf) {
         formData.set('csrf_token', metaCsrf);
     }
-    const debugSiteName = String(formData.get('site_name') || '').slice(0, 80);
-    const debugHasCsrf = !!formData.get('csrf_token');
-    const debugHasSmtpSecret = formData.has('smtp_secret');
-    
+
     const submitBtn = this.querySelector('button[type="submit"]');
     if (typeof setSaveButtonSavingState === 'function') setSaveButtonSavingState(submitBtn, true);
-
-    // #region agent log
-    fetch('http://127.0.0.1:7262/ingest/0395f273-d6cc-4a5a-a50c-e33b0e3ee23d',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'2bd4ec'},body:JSON.stringify({sessionId:'2bd4ec',runId:'initial',hypothesisId:'H5',location:'admin/pages/settings.php:666',message:'settings submit started',data:{hasCsrf:debugHasCsrf,hasSmtpSecret:debugHasSmtpSecret,siteNamePreview:debugSiteName,formKeyCount:Array.from(formData.keys()).length},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
 
     fetch('<?= ADMIN_URL ?>api/settings.php', {
         method: 'POST',
@@ -677,9 +710,6 @@ document.getElementById('settingsForm').addEventListener('submit', function(e) {
         body: formData
     })
     .then(response => {
-        // #region agent log
-        fetch('http://127.0.0.1:7262/ingest/0395f273-d6cc-4a5a-a50c-e33b0e3ee23d',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'2bd4ec'},body:JSON.stringify({sessionId:'2bd4ec',runId:'initial',hypothesisId:'H5',location:'admin/pages/settings.php:675',message:'settings response received',data:{status:response.status,ok:response.ok,statusText:response.statusText},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion
         if (!response.ok) {
             throw new Error('HTTP ' + response.status + ': ' + response.statusText);
         }
