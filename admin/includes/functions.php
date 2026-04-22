@@ -116,17 +116,23 @@ function cmsDebugLog($hypothesisId, $location, $message, array $data = [], $runI
 }
 
 function getRequestCSRFToken() {
+    if (!empty($_POST['csrf_token'])) {
+        return trim((string) $_POST['csrf_token']);
+    }
     if (!empty($_SERVER['HTTP_X_CSRF_TOKEN'])) {
-        return trim((string) $_SERVER['HTTP_X_CSRF_TOKEN']);
+        $t = trim((string) $_SERVER['HTTP_X_CSRF_TOKEN']);
+        if ($t !== '') {
+            return $t;
+        }
     }
     $headers = getAllHeaders();
     foreach ($headers as $name => $value) {
         if (strcasecmp((string) $name, 'X-CSRF-Token') === 0) {
-            return trim(is_string($value) ? $value : '');
+            $t = trim(is_string($value) ? $value : '');
+            if ($t !== '') {
+                return $t;
+            }
         }
-    }
-    if (!empty($_POST['csrf_token'])) {
-        return trim((string) $_POST['csrf_token']);
     }
     $jsonBody = getJsonRequestBody();
     if (is_array($jsonBody)) {

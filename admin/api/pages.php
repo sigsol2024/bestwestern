@@ -33,9 +33,19 @@ try {
             if (!verifyCSRFToken($csrfToken)) {
                 jsonResponse(['success' => false, 'message' => 'Invalid security token'], 403);
             }
-            $data = getJsonRequestBody();
-            if (getJsonRequestError() !== JSON_ERROR_NONE) {
-                jsonResponse(['success' => false, 'message' => 'Invalid JSON data'], 400);
+            $contentType = (string) ($_SERVER['CONTENT_TYPE'] ?? '');
+            if (stripos($contentType, 'application/json') !== false) {
+                $data = getJsonRequestBody();
+                if (getJsonRequestError() !== JSON_ERROR_NONE || !is_array($data)) {
+                    jsonResponse(['success' => false, 'message' => 'Invalid JSON data'], 400);
+                }
+            } elseif (!empty($_POST)) {
+                $data = $_POST;
+            } else {
+                $data = getJsonRequestBody();
+                if (getJsonRequestError() !== JSON_ERROR_NONE || !is_array($data)) {
+                    jsonResponse(['success' => false, 'message' => 'Expected JSON or form POST (multipart) body'], 400);
+                }
             }
             if (!isset($data['page']) || !isset($data['section_key'])) {
                 jsonResponse(['success' => false, 'message' => 'Page and section_key required'], 400);
