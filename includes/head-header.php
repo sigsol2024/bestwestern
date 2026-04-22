@@ -154,11 +154,17 @@ $twEncTextMainSvg = rawurlencode(site_theme_color('theme_text_main_color', '#363
     font-family: <?= json_encode((string) getSiteSetting('theme_display_font', cms_default_setting('theme_display_font'))) ?>, <?= json_encode((string) getSiteSetting('theme_body_font', cms_default_setting('theme_body_font'))) ?>, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
     font-weight: 700;
     letter-spacing: -0.015em;
-    -webkit-text-stroke: 1.25px rgba(255, 255, 255, 0.9);
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.88);
     paint-order: stroke fill;
     text-shadow:
       0 0 1px rgba(255, 255, 255, 0.95),
-      0 2px 20px rgba(0, 0, 0, 0.4);
+      0 2px 16px rgba(0, 0, 0, 0.35);
+  }
+
+  /* Accent line slightly smaller than the main hero headline line(s) */
+  .site-hero-title .site-hero-accent-text {
+    font-size: 0.82em;
+    line-height: 1.12;
   }
 
   /* Mobile nav modal (centered card, not sidebar) */

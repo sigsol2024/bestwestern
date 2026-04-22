@@ -98,7 +98,7 @@ $headerOverlapsHero = !empty($GLOBALS['site_header_overlaps_hero']);
   </div>
   <div class="flex items-center gap-3 md:gap-4 shrink-0">
     <?php if ($showNavCta): ?>
-    <a class="hidden md:inline-flex bg-brand-gold text-on-secondary-fixed px-6 lg:px-8 py-2.5 lg:py-3 font-body uppercase tracking-[0.2em] text-xs font-bold hover:brightness-110 transition-all duration-300 text-center" href="<?= e(site_href($ctaHref)) ?>"><?= e($ctaLabel) ?></a>
+    <a class="hidden md:inline-flex bg-brand-gold text-white px-6 lg:px-8 py-2.5 lg:py-3 font-body uppercase tracking-[0.2em] text-xs font-bold hover:brightness-110 transition-all duration-300 text-center" href="<?= e(site_href($ctaHref)) ?>"><?= e($ctaLabel) ?></a>
     <?php endif; ?>
     <button class="site-header-mobile-trigger md:hidden p-2 rounded-lg text-on-surface hover:bg-black/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/40" type="button" id="siteMobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="siteMobileMenuOverlay">
       <span class="material-symbols-outlined text-3xl">menu</span>
@@ -128,7 +128,7 @@ $headerOverlapsHero = !empty($GLOBALS['site_header_overlaps_hero']);
       <a class="site-mobile-menu-link px-4 py-3.5 rounded-lg text-on-surface font-medium hover:bg-brand-gold/15 hover:text-brand-red transition-colors" href="<?= e(site_href((string) $navHref)) ?>"><?= e((string) $navLabel) ?></a>
       <?php endforeach; ?>
       <?php if ($showNavCta): ?>
-      <a class="site-mobile-menu-link mt-2 mx-1 px-4 py-3.5 rounded-lg bg-brand-gold text-on-secondary-fixed font-bold text-center hover:brightness-110 transition-colors" href="<?= e(site_href($ctaHref)) ?>"><?= e($ctaLabel) ?></a>
+      <a class="site-mobile-menu-link mt-2 mx-1 px-4 py-3.5 rounded-lg bg-brand-gold text-white font-bold text-center hover:brightness-110 transition-colors" href="<?= e(site_href($ctaHref)) ?>"><?= e($ctaLabel) ?></a>
       <?php endif; ?>
     </nav>
   </div>

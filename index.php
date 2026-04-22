@@ -155,23 +155,23 @@ $home_room_subtitle = static function (array $room): string {
   </div>
   <div class="relative z-10 flex flex-col justify-center items-center h-full text-center px-6 pt-20">
     <?php if ($hero_show_stars || trim($hero_trust_badge) !== ''): ?>
-    <div class="flex items-center gap-2 mb-4">
+    <div class="flex items-center gap-2 mb-3">
       <?php if ($hero_show_stars): ?>
       <div class="flex text-brand-gold">
         <?php for ($si = 0; $si < 5; $si++): ?>
-        <span class="material-symbols-outlined !text-sm" style="font-variation-settings:'FILL'1,'wght'400;">star</span>
+        <span class="material-symbols-outlined !text-xs" style="font-variation-settings:'FILL'1,'wght'400;">star</span>
         <?php endfor; ?>
       </div>
       <?php endif; ?>
       <?php if (trim($hero_trust_badge) !== ''): ?>
-      <span class="font-body text-[10px] text-surface/80 uppercase tracking-[0.3em]"><?= e($hero_trust_badge) ?></span>
+      <span class="font-body text-[9px] sm:text-[10px] text-surface/80 uppercase tracking-[0.22em] sm:tracking-[0.28em]"><?= e($hero_trust_badge) ?></span>
       <?php endif; ?>
     </div>
     <?php endif; ?>
-    <h1 class="font-headline text-4xl sm:text-5xl md:text-7xl lg:text-8xl text-surface leading-tight mb-6 max-w-5xl">
+    <h1 class="site-hero-title font-headline text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-surface leading-tight mb-5 max-w-5xl">
       <?= $hero_title ?>
     </h1>
-    <p class="font-body text-base md:text-lg lg:text-xl text-surface/90 tracking-widest uppercase font-light max-w-3xl">
+    <p class="font-body text-sm md:text-base lg:text-lg text-surface/90 tracking-widest uppercase font-light max-w-3xl">
       <?= e($hero_subtitle) ?>
     </p>
   </div>
