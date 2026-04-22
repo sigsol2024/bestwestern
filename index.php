@@ -182,40 +182,29 @@ $home_room_subtitle = static function (array $room): string {
     </p>
   </div>
 
+  <?php
+  $showHeroBookingBar = $hasBookingEmbed || $showDecorReserve || trim($home_booking_guarantee_line) !== '';
+  ?>
+  <?php if ($showHeroBookingBar): ?>
   <div class="absolute bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 w-full max-w-5xl px-4 md:px-6 z-20">
-    <div class="bg-surface/95 backdrop-blur-xl p-2 flex flex-col md:flex-row items-stretch shadow-[0_35px_60px_-15px_rgba(0,0,0,0.5)]">
+    <div class="bg-surface/95 backdrop-blur-xl p-2 flex flex-col md:flex-row items-stretch justify-center md:justify-end shadow-[0_35px_60px_-15px_rgba(0,0,0,0.5)]">
       <?php if ($hasBookingEmbed): ?>
       <div class="flex-1 min-w-0 p-3 md:p-4" id="home-booking-embed-slot">
         <?= $booking_widget_html ?>
       </div>
       <?php else: ?>
-      <div class="flex-1 grid grid-cols-2 md:grid-cols-3 p-4 gap-y-4 items-center">
-        <div class="flex flex-col border-r border-outline-variant/30 px-4 md:px-6">
-          <label class="font-body text-[10px] uppercase tracking-widest text-outline mb-1" for="home-decor-checkin">Check-in</label>
-          <input id="home-decor-checkin" type="text" readonly tabindex="-1" class="w-full bg-transparent font-body text-on-surface font-semibold border-0 p-0 focus:ring-0 cursor-default text-sm md:text-base" value="Oct 24, 2026" aria-label="Check-in (decorative)"/>
-        </div>
-        <div class="flex flex-col border-r-0 md:border-r border-outline-variant/30 px-4 md:px-6">
-          <label class="font-body text-[10px] uppercase tracking-widest text-outline mb-1" for="home-decor-checkout">Check-out</label>
-          <input id="home-decor-checkout" type="text" readonly tabindex="-1" class="w-full bg-transparent font-body text-on-surface font-semibold border-0 p-0 focus:ring-0 cursor-default text-sm md:text-base" value="Oct 26, 2026" aria-label="Check-out (decorative)"/>
-        </div>
-        <div class="flex flex-col px-4 md:px-6 col-span-2 md:col-span-1 border-t md:border-t-0 border-outline-variant/30 pt-4 md:pt-0">
-          <label class="font-body text-[10px] uppercase tracking-widest text-outline mb-1" for="home-decor-guests">Guests</label>
-          <select id="home-decor-guests" disabled class="w-full bg-transparent font-body text-on-surface font-semibold border-0 p-0 focus:ring-0 cursor-default text-sm md:text-base appearance-none opacity-100" aria-label="Guests (decorative)">
-            <option>2 Adults</option>
-          </select>
-        </div>
-      </div>
-      <div class="relative flex flex-col min-w-[200px]">
+      <div class="relative flex flex-col min-w-[200px] max-w-md mx-auto md:mx-0 md:ml-auto">
         <?php if ($showDecorReserve): ?>
         <a href="<?= e(site_href($navCtaHref)) ?>" class="bg-secondary-container text-on-secondary-fixed px-8 md:px-12 py-5 md:py-6 font-body uppercase tracking-[0.2em] text-sm font-bold hover:brightness-105 transition-colors flex items-center justify-center h-full text-center"><?= e($navCtaLabel) ?></a>
         <?php endif; ?>
         <?php if (trim($home_booking_guarantee_line) !== ''): ?>
-        <span class="absolute -bottom-5 md:-bottom-6 right-2 md:right-0 font-body text-[9px] uppercase tracking-widest text-surface/70 italic whitespace-nowrap"><?= e($home_booking_guarantee_line) ?></span>
+        <span class="<?= $showDecorReserve ? 'absolute -bottom-5 md:-bottom-6 right-2 md:right-0' : 'block text-center mt-3' ?> font-body text-[9px] uppercase tracking-widest text-surface/70 italic whitespace-nowrap"><?= e($home_booking_guarantee_line) ?></span>
         <?php endif; ?>
       </div>
       <?php endif; ?>
     </div>
   </div>
+  <?php endif; ?>
 </header>
 
 <!-- Brand story -->

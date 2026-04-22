@@ -25,6 +25,43 @@ try {
 $csrfToken = generateCSRFToken();
 $defaultSettings = cms_system_defaults();
 $maintenanceBgValue = $settings['maintenance_background'] ?? $defaultSettings['maintenance_background'];
+
+/** Normalize to #rrggbb for HTML color inputs and preview swatches. */
+$themeHexPickerValue = static function (string $key) use ($settings, $defaultSettings): string {
+    $normalize = static function (string $v, string $fallback): string {
+        $v = trim($v);
+        if ($v === '') {
+            $v = trim($fallback);
+        }
+        if (preg_match('/^#([0-9a-fA-F]{3})$/', $v, $m)) {
+            $h = $m[1];
+
+            return '#' . $h[0] . $h[0] . $h[1] . $h[1] . $h[2] . $h[2];
+        }
+        if (preg_match('/^#[0-9a-fA-F]{6}$/', $v)) {
+            return strtolower($v);
+        }
+        $fb = trim($fallback);
+
+        return preg_match('/^#[0-9a-fA-F]{6}$/', $fb) ? strtolower($fb) : '#411d13';
+    };
+    $fb = (string) ($defaultSettings[$key] ?? '#000000');
+
+    return $normalize((string) ($settings[$key] ?? $fb), $fb);
+};
+$themeColorFieldMeta = [
+    ['theme_primary_color', 'Primary'],
+    ['theme_primary_light_color', 'Primary light'],
+    ['theme_background_light_color', 'Light background'],
+    ['theme_background_dark_color', 'Dark background'],
+    ['theme_champagne_color', 'Accent light'],
+    ['theme_sand_darker_color', 'Muted surface'],
+    ['theme_text_main_color', 'Main text'],
+    ['theme_text_muted_color', 'Muted text'],
+    ['theme_surface_light_color', 'Light surface'],
+    ['theme_surface_dark_color', 'Dark surface'],
+    ['theme_surface_ink_color', 'Ink surface'],
+];
 ?>
 
 <div class="page-intro">
@@ -249,59 +286,105 @@ $maintenanceBgValue = $settings['maintenance_background'] ?? $defaultSettings['m
             <h2>Theme</h2>
         </div>
         <div class="card-body card-body--stack">
+            <p class="form-help" style="margin-top:0;">Swatches reflect the values in the fields below (including unsaved edits).</p>
+            <div class="theme-colors-preview" id="themeColorsPreview" aria-label="Theme color preview">
+                <?php foreach ($themeColorFieldMeta as $themePreviewRow):
+                    $tkey = $themePreviewRow[0];
+                    $tlabel = $themePreviewRow[1];
+                    ?>
+                <div class="theme-colors-preview__item">
+                    <span class="theme-colors-preview__chip" data-color-key="<?= htmlspecialchars($tkey, ENT_QUOTES, 'UTF-8') ?>" style="background-color: <?= htmlspecialchars($themeHexPickerValue($tkey), ENT_QUOTES, 'UTF-8') ?>"></span>
+                    <span class="theme-colors-preview__label"><?= htmlspecialchars($tlabel, ENT_QUOTES, 'UTF-8') ?></span>
+                    <code class="theme-colors-preview__hex" data-hex-for="<?= htmlspecialchars($tkey, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($themeHexPickerValue($tkey), ENT_QUOTES, 'UTF-8') ?></code>
+                </div>
+                <?php endforeach; ?>
+            </div>
             <div class="form-row">
-                <div class="form-group">
+                <div class="form-group theme-color-field">
                     <label for="theme_primary_color">Primary color</label>
-                    <input type="text" id="theme_primary_color" name="theme_primary_color" value="<?= sanitize($settings['theme_primary_color'] ?? $defaultSettings['theme_primary_color']) ?>" placeholder="#411d13">
+                    <div class="theme-color-input-row">
+                        <input type="color" class="theme-color-picker" data-hex-target="theme_primary_color" value="<?= htmlspecialchars($themeHexPickerValue('theme_primary_color'), ENT_QUOTES, 'UTF-8') ?>" title="Pick primary color" aria-label="Pick primary color">
+                        <input type="text" id="theme_primary_color" name="theme_primary_color" class="theme-color-hex" value="<?= sanitize($settings['theme_primary_color'] ?? $defaultSettings['theme_primary_color']) ?>" placeholder="#411d13" maxlength="7" pattern="^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$" autocomplete="off">
+                    </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group theme-color-field">
                     <label for="theme_primary_light_color">Primary light color</label>
-                    <input type="text" id="theme_primary_light_color" name="theme_primary_light_color" value="<?= sanitize($settings['theme_primary_light_color'] ?? $defaultSettings['theme_primary_light_color']) ?>" placeholder="#5a2a1f">
+                    <div class="theme-color-input-row">
+                        <input type="color" class="theme-color-picker" data-hex-target="theme_primary_light_color" value="<?= htmlspecialchars($themeHexPickerValue('theme_primary_light_color'), ENT_QUOTES, 'UTF-8') ?>" title="Pick primary light color" aria-label="Pick primary light color">
+                        <input type="text" id="theme_primary_light_color" name="theme_primary_light_color" class="theme-color-hex" value="<?= sanitize($settings['theme_primary_light_color'] ?? $defaultSettings['theme_primary_light_color']) ?>" placeholder="#5a2a1f" maxlength="7" pattern="^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$" autocomplete="off">
+                    </div>
                 </div>
             </div>
             <div class="form-row">
-                <div class="form-group">
+                <div class="form-group theme-color-field">
                     <label for="theme_background_light_color">Light background</label>
-                    <input type="text" id="theme_background_light_color" name="theme_background_light_color" value="<?= sanitize($settings['theme_background_light_color'] ?? $defaultSettings['theme_background_light_color']) ?>" placeholder="#efe8d6">
+                    <div class="theme-color-input-row">
+                        <input type="color" class="theme-color-picker" data-hex-target="theme_background_light_color" value="<?= htmlspecialchars($themeHexPickerValue('theme_background_light_color'), ENT_QUOTES, 'UTF-8') ?>" title="Pick light background" aria-label="Pick light background">
+                        <input type="text" id="theme_background_light_color" name="theme_background_light_color" class="theme-color-hex" value="<?= sanitize($settings['theme_background_light_color'] ?? $defaultSettings['theme_background_light_color']) ?>" placeholder="#efe8d6" maxlength="7" pattern="^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$" autocomplete="off">
+                    </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group theme-color-field">
                     <label for="theme_background_dark_color">Dark background</label>
-                    <input type="text" id="theme_background_dark_color" name="theme_background_dark_color" value="<?= sanitize($settings['theme_background_dark_color'] ?? $defaultSettings['theme_background_dark_color']) ?>" placeholder="#1a1210">
+                    <div class="theme-color-input-row">
+                        <input type="color" class="theme-color-picker" data-hex-target="theme_background_dark_color" value="<?= htmlspecialchars($themeHexPickerValue('theme_background_dark_color'), ENT_QUOTES, 'UTF-8') ?>" title="Pick dark background" aria-label="Pick dark background">
+                        <input type="text" id="theme_background_dark_color" name="theme_background_dark_color" class="theme-color-hex" value="<?= sanitize($settings['theme_background_dark_color'] ?? $defaultSettings['theme_background_dark_color']) ?>" placeholder="#1a1210" maxlength="7" pattern="^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$" autocomplete="off">
+                    </div>
                 </div>
             </div>
             <div class="form-row">
-                <div class="form-group">
+                <div class="form-group theme-color-field">
                     <label for="theme_champagne_color">Accent light color</label>
-                    <input type="text" id="theme_champagne_color" name="theme_champagne_color" value="<?= sanitize($settings['theme_champagne_color'] ?? $defaultSettings['theme_champagne_color']) ?>" placeholder="#f5ede0">
+                    <div class="theme-color-input-row">
+                        <input type="color" class="theme-color-picker" data-hex-target="theme_champagne_color" value="<?= htmlspecialchars($themeHexPickerValue('theme_champagne_color'), ENT_QUOTES, 'UTF-8') ?>" title="Pick accent light color" aria-label="Pick accent light color">
+                        <input type="text" id="theme_champagne_color" name="theme_champagne_color" class="theme-color-hex" value="<?= sanitize($settings['theme_champagne_color'] ?? $defaultSettings['theme_champagne_color']) ?>" placeholder="#f5ede0" maxlength="7" pattern="^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$" autocomplete="off">
+                    </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group theme-color-field">
                     <label for="theme_sand_darker_color">Muted surface accent</label>
-                    <input type="text" id="theme_sand_darker_color" name="theme_sand_darker_color" value="<?= sanitize($settings['theme_sand_darker_color'] ?? $defaultSettings['theme_sand_darker_color']) ?>" placeholder="#e3dcc8">
+                    <div class="theme-color-input-row">
+                        <input type="color" class="theme-color-picker" data-hex-target="theme_sand_darker_color" value="<?= htmlspecialchars($themeHexPickerValue('theme_sand_darker_color'), ENT_QUOTES, 'UTF-8') ?>" title="Pick muted surface accent" aria-label="Pick muted surface accent">
+                        <input type="text" id="theme_sand_darker_color" name="theme_sand_darker_color" class="theme-color-hex" value="<?= sanitize($settings['theme_sand_darker_color'] ?? $defaultSettings['theme_sand_darker_color']) ?>" placeholder="#e3dcc8" maxlength="7" pattern="^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$" autocomplete="off">
+                    </div>
                 </div>
             </div>
             <div class="form-row">
-                <div class="form-group">
+                <div class="form-group theme-color-field">
                     <label for="theme_text_main_color">Main text color</label>
-                    <input type="text" id="theme_text_main_color" name="theme_text_main_color" value="<?= sanitize($settings['theme_text_main_color'] ?? $defaultSettings['theme_text_main_color']) ?>" placeholder="#363636">
+                    <div class="theme-color-input-row">
+                        <input type="color" class="theme-color-picker" data-hex-target="theme_text_main_color" value="<?= htmlspecialchars($themeHexPickerValue('theme_text_main_color'), ENT_QUOTES, 'UTF-8') ?>" title="Pick main text color" aria-label="Pick main text color">
+                        <input type="text" id="theme_text_main_color" name="theme_text_main_color" class="theme-color-hex" value="<?= sanitize($settings['theme_text_main_color'] ?? $defaultSettings['theme_text_main_color']) ?>" placeholder="#363636" maxlength="7" pattern="^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$" autocomplete="off">
+                    </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group theme-color-field">
                     <label for="theme_text_muted_color">Muted text color</label>
-                    <input type="text" id="theme_text_muted_color" name="theme_text_muted_color" value="<?= sanitize($settings['theme_text_muted_color'] ?? $defaultSettings['theme_text_muted_color']) ?>" placeholder="#5c5c5c">
+                    <div class="theme-color-input-row">
+                        <input type="color" class="theme-color-picker" data-hex-target="theme_text_muted_color" value="<?= htmlspecialchars($themeHexPickerValue('theme_text_muted_color'), ENT_QUOTES, 'UTF-8') ?>" title="Pick muted text color" aria-label="Pick muted text color">
+                        <input type="text" id="theme_text_muted_color" name="theme_text_muted_color" class="theme-color-hex" value="<?= sanitize($settings['theme_text_muted_color'] ?? $defaultSettings['theme_text_muted_color']) ?>" placeholder="#5c5c5c" maxlength="7" pattern="^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$" autocomplete="off">
+                    </div>
                 </div>
             </div>
             <div class="form-row">
-                <div class="form-group">
+                <div class="form-group theme-color-field">
                     <label for="theme_surface_light_color">Light surface</label>
-                    <input type="text" id="theme_surface_light_color" name="theme_surface_light_color" value="<?= sanitize($settings['theme_surface_light_color'] ?? $defaultSettings['theme_surface_light_color']) ?>" placeholder="#ffffff">
+                    <div class="theme-color-input-row">
+                        <input type="color" class="theme-color-picker" data-hex-target="theme_surface_light_color" value="<?= htmlspecialchars($themeHexPickerValue('theme_surface_light_color'), ENT_QUOTES, 'UTF-8') ?>" title="Pick light surface" aria-label="Pick light surface">
+                        <input type="text" id="theme_surface_light_color" name="theme_surface_light_color" class="theme-color-hex" value="<?= sanitize($settings['theme_surface_light_color'] ?? $defaultSettings['theme_surface_light_color']) ?>" placeholder="#ffffff" maxlength="7" pattern="^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$" autocomplete="off">
+                    </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group theme-color-field">
                     <label for="theme_surface_dark_color">Dark surface</label>
-                    <input type="text" id="theme_surface_dark_color" name="theme_surface_dark_color" value="<?= sanitize($settings['theme_surface_dark_color'] ?? $defaultSettings['theme_surface_dark_color']) ?>" placeholder="#2a1f1c">
+                    <div class="theme-color-input-row">
+                        <input type="color" class="theme-color-picker" data-hex-target="theme_surface_dark_color" value="<?= htmlspecialchars($themeHexPickerValue('theme_surface_dark_color'), ENT_QUOTES, 'UTF-8') ?>" title="Pick dark surface" aria-label="Pick dark surface">
+                        <input type="text" id="theme_surface_dark_color" name="theme_surface_dark_color" class="theme-color-hex" value="<?= sanitize($settings['theme_surface_dark_color'] ?? $defaultSettings['theme_surface_dark_color']) ?>" placeholder="#2a1f1c" maxlength="7" pattern="^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$" autocomplete="off">
+                    </div>
                 </div>
             </div>
-            <div class="form-group">
+            <div class="form-group theme-color-field">
                 <label for="theme_surface_ink_color">Ink surface</label>
-                <input type="text" id="theme_surface_ink_color" name="theme_surface_ink_color" value="<?= sanitize($settings['theme_surface_ink_color'] ?? $defaultSettings['theme_surface_ink_color']) ?>" placeholder="#2a1814">
+                <div class="theme-color-input-row">
+                    <input type="color" class="theme-color-picker" data-hex-target="theme_surface_ink_color" value="<?= htmlspecialchars($themeHexPickerValue('theme_surface_ink_color'), ENT_QUOTES, 'UTF-8') ?>" title="Pick ink surface" aria-label="Pick ink surface">
+                    <input type="text" id="theme_surface_ink_color" name="theme_surface_ink_color" class="theme-color-hex" value="<?= sanitize($settings['theme_surface_ink_color'] ?? $defaultSettings['theme_surface_ink_color']) ?>" placeholder="#2a1814" maxlength="7" pattern="^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$" autocomplete="off">
+                </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
@@ -546,6 +629,67 @@ $maintenanceBgValue = $settings['maintenance_background'] ?? $defaultSettings['m
 
 <script>
 // Media modal integration - the openMediaModal function is provided by media-library.js
+
+// Theme: native color pickers ↔ hex inputs + live preview swatches
+(function initThemeColorPickers() {
+    function expandShortHex(hex) {
+        hex = String(hex || '').trim();
+        if (/^#[0-9a-fA-F]{6}$/i.test(hex)) {
+            return hex.toLowerCase();
+        }
+        if (/^#[0-9a-fA-F]{3}$/i.test(hex)) {
+            var h = hex.slice(1);
+            return '#' + h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+        }
+        return null;
+    }
+    function syncPreview(key) {
+        var hexInput = document.getElementById(key);
+        if (!hexInput) {
+            return;
+        }
+        var raw = hexInput.value.trim();
+        var solid = expandShortHex(raw) || '#cccccc';
+        var chip = document.querySelector('.theme-colors-preview__chip[data-color-key="' + key + '"]');
+        if (chip) {
+            chip.style.backgroundColor = solid;
+        }
+        var code = document.querySelector('.theme-colors-preview__hex[data-hex-for="' + key + '"]');
+        if (code) {
+            code.textContent = expandShortHex(raw) || raw || solid;
+        }
+    }
+    function bindPicker(picker) {
+        var tid = picker.getAttribute('data-hex-target');
+        var hexInput = document.getElementById(tid);
+        if (!hexInput) {
+            return;
+        }
+        picker.addEventListener('input', function () {
+            hexInput.value = picker.value.toLowerCase();
+            syncPreview(tid);
+        });
+        hexInput.addEventListener('input', function () {
+            var x = expandShortHex(hexInput.value);
+            if (x) {
+                picker.value = x;
+            }
+            syncPreview(tid);
+        });
+        hexInput.addEventListener('change', function () {
+            var x = expandShortHex(hexInput.value);
+            if (x) {
+                hexInput.value = x;
+                picker.value = x;
+            }
+            syncPreview(tid);
+        });
+    }
+    document.querySelectorAll('.theme-color-picker').forEach(bindPicker);
+    document.querySelectorAll('.theme-color-picker').forEach(function (p) {
+        syncPreview(p.getAttribute('data-hex-target'));
+    });
+})();
 
 // Social Media Management
 let socialMediaList = [];

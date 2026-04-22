@@ -86,10 +86,10 @@ if ($bulletsJsonRaw === '') {
       <div class="form-group">
         <label for="booking_widget_html">Booking widget HTML (optional)</label>
         <textarea id="booking_widget_html" name="booking_widget_html" rows="8" style="font-family:monospace;font-size:12px;"><?= htmlspecialchars($sectionsArray['booking_widget_html'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
-        <p class="form-help">If set, the provider embed fills the booking bar on the homepage. If empty, the bar shows a decorative layout and the global <strong>Reserve</strong> button from Settings → Header.</p>
+        <p class="form-help">If set, the provider embed fills the booking bar on the homepage. If empty, the bar shows only the global <strong>Reserve</strong> button from Settings → Header (and the best-rate line below, if set).</p>
       </div>
       <div class="form-group">
-        <label for="home_booking_guarantee_line">Best rate line (decorative bar only)</label>
+        <label for="home_booking_guarantee_line">Best rate line (shown when no embed is set)</label>
         <input id="home_booking_guarantee_line" name="home_booking_guarantee_line" type="text" value="<?= hsec($sectionsArray, 'home_booking_guarantee_line', 'Best Rate Guarantee') ?>">
       </div>
     </div>
