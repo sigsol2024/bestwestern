@@ -36,6 +36,22 @@ if (function_exists('getSiteSetting') && function_exists('site_media_url') && fu
     }
 }
 ?>
+<?php
+// Layout tokens used across Tailwind classes map to Theme settings (see Admin → Settings → Theme).
+$twPrimary = site_theme_color('theme_primary_color', cms_default_setting('theme_primary_color'));
+$twPrimaryLight = site_theme_color('theme_primary_light_color', cms_default_setting('theme_primary_light_color'));
+$twBgLight = site_theme_color('theme_background_light_color', cms_default_setting('theme_background_light_color'));
+$twBgDark = site_theme_color('theme_background_dark_color', cms_default_setting('theme_background_dark_color'));
+$twChampagne = site_theme_color('theme_champagne_color', cms_default_setting('theme_champagne_color'));
+$twTextMain = site_theme_color('theme_text_main_color', cms_default_setting('theme_text_main_color'));
+$twTextMuted = site_theme_color('theme_text_muted_color', cms_default_setting('theme_text_muted_color'));
+$twSurfaceLight = site_theme_color('theme_surface_light_color', cms_default_setting('theme_surface_light_color'));
+$twSurfaceDark = site_theme_color('theme_surface_dark_color', cms_default_setting('theme_surface_dark_color'));
+$twSurfaceInk = site_theme_color('theme_surface_ink_color', cms_default_setting('theme_surface_ink_color'));
+$twSandDarker = site_theme_color('theme_sand_darker_color', cms_default_setting('theme_sand_darker_color'));
+$twEncPrimarySvg = rawurlencode(site_theme_color('theme_primary_color', '#411d13'));
+$twEncTextMainSvg = rawurlencode(site_theme_color('theme_text_main_color', '#363636'));
+?>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script id="tailwind-config">
   tailwind.config = {
@@ -43,34 +59,34 @@ if (function_exists('getSiteSetting') && function_exists('site_media_url') && fu
     theme: {
       extend: {
         colors: {
-          "primary": "<?= htmlspecialchars((string) getSiteSetting('theme_primary_color', cms_default_setting('theme_primary_color')), ENT_QUOTES, 'UTF-8') ?>",
-          "primary-light": "<?= htmlspecialchars((string) getSiteSetting('theme_primary_light_color', cms_default_setting('theme_primary_light_color')), ENT_QUOTES, 'UTF-8') ?>",
-          "background-light": "<?= htmlspecialchars((string) getSiteSetting('theme_background_light_color', cms_default_setting('theme_background_light_color')), ENT_QUOTES, 'UTF-8') ?>",
-          "background-dark": "<?= htmlspecialchars((string) getSiteSetting('theme_background_dark_color', cms_default_setting('theme_background_dark_color')), ENT_QUOTES, 'UTF-8') ?>",
-          "champagne": "<?= htmlspecialchars((string) getSiteSetting('theme_champagne_color', cms_default_setting('theme_champagne_color')), ENT_QUOTES, 'UTF-8') ?>",
-          "text-main": "<?= htmlspecialchars((string) getSiteSetting('theme_text_main_color', cms_default_setting('theme_text_main_color')), ENT_QUOTES, 'UTF-8') ?>",
-          "text-muted": "<?= htmlspecialchars((string) getSiteSetting('theme_text_muted_color', cms_default_setting('theme_text_muted_color')), ENT_QUOTES, 'UTF-8') ?>",
-          "surface-light": "<?= htmlspecialchars((string) getSiteSetting('theme_surface_light_color', cms_default_setting('theme_surface_light_color')), ENT_QUOTES, 'UTF-8') ?>",
-          "surface-dark": "<?= htmlspecialchars((string) getSiteSetting('theme_surface_dark_color', cms_default_setting('theme_surface_dark_color')), ENT_QUOTES, 'UTF-8') ?>",
-          "surface-ink": "<?= htmlspecialchars((string) getSiteSetting('theme_surface_ink_color', cms_default_setting('theme_surface_ink_color')), ENT_QUOTES, 'UTF-8') ?>",
-          "sand-darker": "<?= htmlspecialchars((string) getSiteSetting('theme_sand_darker_color', cms_default_setting('theme_sand_darker_color')), ENT_QUOTES, 'UTF-8') ?>",
-          "brand-gold": "#C8A96A",
+          "primary": "<?= htmlspecialchars($twPrimary, ENT_QUOTES, 'UTF-8') ?>",
+          "primary-light": "<?= htmlspecialchars($twPrimaryLight, ENT_QUOTES, 'UTF-8') ?>",
+          "background-light": "<?= htmlspecialchars($twBgLight, ENT_QUOTES, 'UTF-8') ?>",
+          "background-dark": "<?= htmlspecialchars($twBgDark, ENT_QUOTES, 'UTF-8') ?>",
+          "champagne": "<?= htmlspecialchars($twChampagne, ENT_QUOTES, 'UTF-8') ?>",
+          "text-main": "<?= htmlspecialchars($twTextMain, ENT_QUOTES, 'UTF-8') ?>",
+          "text-muted": "<?= htmlspecialchars($twTextMuted, ENT_QUOTES, 'UTF-8') ?>",
+          "surface-light": "<?= htmlspecialchars($twSurfaceLight, ENT_QUOTES, 'UTF-8') ?>",
+          "surface-dark": "<?= htmlspecialchars($twSurfaceDark, ENT_QUOTES, 'UTF-8') ?>",
+          "surface-ink": "<?= htmlspecialchars($twSurfaceInk, ENT_QUOTES, 'UTF-8') ?>",
+          "sand-darker": "<?= htmlspecialchars($twSandDarker, ENT_QUOTES, 'UTF-8') ?>",
+          "brand-gold": "<?= htmlspecialchars($twPrimary, ENT_QUOTES, 'UTF-8') ?>",
           "brand-red": "#E31837",
-          "surface": "#fdf9f3",
-          "on-surface": "#1c1c18",
-          "on-surface-variant": "#44474d",
-          "surface-container-low": "#f7f3ed",
-          "surface-container-highest": "#e6e2dc",
-          "outline-variant": "#c4c6ce",
-          "outline": "#75777e",
-          "brand-ink": "#000615",
-          "secondary-container": "#fedb98",
-          "on-secondary-container": "#785f28",
-          "on-secondary-fixed": "#261a00",
-          "surface-container": "#eae7e2",
+          "surface": "<?= htmlspecialchars($twBgLight, ENT_QUOTES, 'UTF-8') ?>",
+          "on-surface": "<?= htmlspecialchars($twTextMain, ENT_QUOTES, 'UTF-8') ?>",
+          "on-surface-variant": "<?= htmlspecialchars($twTextMuted, ENT_QUOTES, 'UTF-8') ?>",
+          "surface-container-low": "<?= htmlspecialchars($twChampagne, ENT_QUOTES, 'UTF-8') ?>",
+          "surface-container-highest": "<?= htmlspecialchars($twSandDarker, ENT_QUOTES, 'UTF-8') ?>",
+          "outline-variant": "<?= htmlspecialchars($twSandDarker, ENT_QUOTES, 'UTF-8') ?>",
+          "outline": "<?= htmlspecialchars($twTextMuted, ENT_QUOTES, 'UTF-8') ?>",
+          "brand-ink": "<?= htmlspecialchars($twSurfaceInk, ENT_QUOTES, 'UTF-8') ?>",
+          "secondary-container": "<?= htmlspecialchars($twChampagne, ENT_QUOTES, 'UTF-8') ?>",
+          "on-secondary-container": "<?= htmlspecialchars($twPrimary, ENT_QUOTES, 'UTF-8') ?>",
+          "on-secondary-fixed": "<?= htmlspecialchars($twSurfaceInk, ENT_QUOTES, 'UTF-8') ?>",
+          "surface-container": "<?= htmlspecialchars($twSandDarker, ENT_QUOTES, 'UTF-8') ?>",
           "on-primary": "#ffffff",
-          "inverse-primary": "#2f2f37",
-          "inverse-on-surface": "#f1eff7",
+          "inverse-primary": "<?= htmlspecialchars($twPrimaryLight, ENT_QUOTES, 'UTF-8') ?>",
+          "inverse-on-surface": "<?= htmlspecialchars($twChampagne, ENT_QUOTES, 'UTF-8') ?>",
           "scrim": "#000000",
         },
         fontFamily: {
@@ -95,16 +111,19 @@ if (function_exists('getSiteSetting') && function_exists('site_media_url') && fu
           "elevation": "0 20px 40px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01)",
         },
         backgroundImage: {
-          "texture-pattern": "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23411d13' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-          "fabric-pattern": "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23363636' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-          "architectural-pattern": "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23363636' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-          "subtle-pattern": "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23411d13' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+          "texture-pattern": "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='<?= $twEncPrimarySvg ?>' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+          "fabric-pattern": "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='<?= $twEncTextMainSvg ?>' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+          "architectural-pattern": "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='<?= $twEncTextMainSvg ?>' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+          "subtle-pattern": "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='<?= $twEncPrimarySvg ?>' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
         }
       },
     },
   }
 </script>
 <style>
+  :root {
+    --site-surface-container-low: <?= htmlspecialchars($twChampagne, ENT_QUOTES, 'UTF-8') ?>;
+  }
   html { scroll-behavior: smooth; }
   /* Brand: do not distort logos or add effects. */
   .site-brand-logo img {
@@ -118,7 +137,7 @@ if (function_exists('getSiteSetting') && function_exists('site_media_url') && fu
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   }
   .rooms-fade-overlay {
-    background: linear-gradient(to right, transparent, #f7f3ed);
+    background: linear-gradient(to right, transparent, var(--site-surface-container-low));
   }
   .inter,
   .font-inter {

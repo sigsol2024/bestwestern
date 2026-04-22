@@ -65,7 +65,7 @@ $headerOverlapsHero = !empty($GLOBALS['site_header_overlaps_hero']);
 ?>
 
 <!-- Fixed top navigation (BW layout) -->
-<nav class="fixed top-0 w-full z-50 bg-transparent backdrop-blur-md flex justify-between items-center px-6 md:px-12 py-6 md:py-8 max-w-screen-2xl mx-auto left-1/2 -translate-x-1/2 text-on-surface">
+<nav class="site-header-nav fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-12 py-6 md:py-8 max-w-screen-2xl mx-auto left-1/2 -translate-x-1/2 text-on-surface bg-transparent backdrop-blur-md transition-[background-color,box-shadow] duration-300 <?= $headerOverlapsHero ? 'site-header-nav--over-hero' : '' ?>">
   <a class="site-brand-logo site-brand-logo--header flex flex-col shrink-0 min-w-0 rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/40 pe-2" href="<?= e(site_url('index')) ?>" aria-label="<?= e($siteName) ?>">
     <?php if ($useHeaderLogo): ?>
     <img src="<?= e($siteLogoDarkUrl) ?>" alt="<?= e($siteName) ?>" class="h-10 md:h-11 w-auto max-w-[14rem] object-contain object-left" decoding="async"/>
@@ -79,7 +79,7 @@ $headerOverlapsHero = !empty($GLOBALS['site_header_overlaps_hero']);
     <?php endif; ?>
     <?php endif; ?>
   </a>
-  <div class="hidden md:flex items-center space-x-8 lg:space-x-10">
+  <div class="site-header-desktop-nav hidden md:flex items-center space-x-8 lg:space-x-10">
     <?php foreach ($headerNavLinks as $navRow):
         [$navLabel, $navHref] = $navRow;
         $navPath = parse_url((string) $navHref, PHP_URL_PATH);
@@ -88,10 +88,10 @@ $headerOverlapsHero = !empty($GLOBALS['site_header_overlaps_hero']);
             $navPath = '/';
         }
         $isActive = ($requestPath === $navPath || ($navPath !== '/' && strpos($requestPath, $navPath) === 0));
-        $linkClass = 'font-body uppercase tracking-[0.2em] text-xs font-semibold transition-colors pb-1 border-b-2 ';
+        $linkClass = 'site-header-desktop-link font-body uppercase tracking-[0.2em] text-xs font-semibold transition-colors pb-1 border-b-2 ';
         $linkClass .= $isActive
-            ? 'text-brand-gold border-brand-red/30'
-            : 'text-slate-800 border-transparent hover:text-brand-red';
+            ? 'site-header-desktop-link--active text-brand-gold border-brand-red/30'
+            : 'site-header-desktop-link--inactive border-transparent';
         ?>
     <a class="<?= e($linkClass) ?>" href="<?= e(site_href((string) $navHref)) ?>"><?= e((string) $navLabel) ?></a>
     <?php endforeach; ?>
@@ -100,7 +100,7 @@ $headerOverlapsHero = !empty($GLOBALS['site_header_overlaps_hero']);
     <?php if ($showNavCta): ?>
     <a class="hidden md:inline-flex bg-brand-gold text-on-secondary-fixed px-6 lg:px-8 py-2.5 lg:py-3 font-body uppercase tracking-[0.2em] text-xs font-bold hover:brightness-110 transition-all duration-300 text-center" href="<?= e(site_href($ctaHref)) ?>"><?= e($ctaLabel) ?></a>
     <?php endif; ?>
-    <button class="md:hidden p-2 rounded-lg text-on-surface hover:bg-black/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/40" type="button" id="siteMobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="siteMobileMenuOverlay">
+    <button class="site-header-mobile-trigger md:hidden p-2 rounded-lg text-on-surface hover:bg-black/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/40" type="button" id="siteMobileMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="siteMobileMenuOverlay">
       <span class="material-symbols-outlined text-3xl">menu</span>
     </button>
   </div>
@@ -173,4 +173,53 @@ $headerOverlapsHero = !empty($GLOBALS['site_header_overlaps_hero']);
     if (e.key === 'Escape' && overlay && overlay.classList.contains('open')) closeMenu();
   });
 })();
+
+(function () {
+  var nav = document.querySelector('.site-header-nav--over-hero');
+  if (!nav) return;
+  var threshold = 32;
+  function onScroll() {
+    if (window.scrollY > threshold) {
+      nav.classList.add('site-header-nav--scrolled');
+    } else {
+      nav.classList.remove('site-header-nav--scrolled');
+    }
+  }
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+})();
 </script>
+<style>
+  /* Desktop nav: white on hero at top, dark after scroll */
+  .site-header-nav:not(.site-header-nav--over-hero) .site-header-desktop-link--inactive {
+    color: #1e293b;
+  }
+  .site-header-nav:not(.site-header-nav--over-hero) .site-header-desktop-link--inactive:hover {
+    color: #E31837;
+  }
+  .site-header-nav--over-hero:not(.site-header-nav--scrolled) .site-header-desktop-link--inactive {
+    color: rgba(255, 255, 255, 0.92);
+  }
+  .site-header-nav--over-hero:not(.site-header-nav--scrolled) .site-header-desktop-link--inactive:hover {
+    color: #ffffff;
+  }
+  .site-header-nav--over-hero.site-header-nav--scrolled .site-header-desktop-link--inactive {
+    color: #0f172a;
+  }
+  .site-header-nav--over-hero.site-header-nav--scrolled .site-header-desktop-link--inactive:hover {
+    color: #E31837;
+  }
+  .site-header-nav--over-hero.site-header-nav--scrolled {
+    background-color: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06);
+  }
+  .site-header-nav--over-hero:not(.site-header-nav--scrolled) .site-header-mobile-trigger {
+    color: rgba(255, 255, 255, 0.95);
+  }
+  .site-header-nav--over-hero:not(.site-header-nav--scrolled) .site-header-mobile-trigger:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+  }
+  .site-header-nav--over-hero.site-header-nav--scrolled .site-header-mobile-trigger {
+    color: #1c1c18;
+  }
+</style>

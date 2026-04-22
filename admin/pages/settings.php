@@ -49,19 +49,6 @@ $themeHexPickerValue = static function (string $key) use ($settings, $defaultSet
 
     return $normalize((string) ($settings[$key] ?? $fb), $fb);
 };
-$themeColorFieldMeta = [
-    ['theme_primary_color', 'Primary'],
-    ['theme_primary_light_color', 'Primary light'],
-    ['theme_background_light_color', 'Light background'],
-    ['theme_background_dark_color', 'Dark background'],
-    ['theme_champagne_color', 'Accent light'],
-    ['theme_sand_darker_color', 'Muted surface'],
-    ['theme_text_main_color', 'Main text'],
-    ['theme_text_muted_color', 'Muted text'],
-    ['theme_surface_light_color', 'Light surface'],
-    ['theme_surface_dark_color', 'Dark surface'],
-    ['theme_surface_ink_color', 'Ink surface'],
-];
 ?>
 
 <div class="page-intro">
@@ -286,22 +273,11 @@ $themeColorFieldMeta = [
             <h2>Theme</h2>
         </div>
         <div class="card-body card-body--stack">
-            <p class="form-help" style="margin-top:0;">Swatches reflect the values in the fields below (including unsaved edits).</p>
-            <div class="theme-colors-preview" id="themeColorsPreview" aria-label="Theme color preview">
-                <?php foreach ($themeColorFieldMeta as $themePreviewRow):
-                    $tkey = $themePreviewRow[0];
-                    $tlabel = $themePreviewRow[1];
-                    ?>
-                <div class="theme-colors-preview__item">
-                    <span class="theme-colors-preview__chip" data-color-key="<?= htmlspecialchars($tkey, ENT_QUOTES, 'UTF-8') ?>" style="background-color: <?= htmlspecialchars($themeHexPickerValue($tkey), ENT_QUOTES, 'UTF-8') ?>"></span>
-                    <span class="theme-colors-preview__label"><?= htmlspecialchars($tlabel, ENT_QUOTES, 'UTF-8') ?></span>
-                    <code class="theme-colors-preview__hex" data-hex-for="<?= htmlspecialchars($tkey, ENT_QUOTES, 'UTF-8') ?>"><?= htmlspecialchars($themeHexPickerValue($tkey), ENT_QUOTES, 'UTF-8') ?></code>
-                </div>
-                <?php endforeach; ?>
-            </div>
+            <p class="form-help" style="margin-top:0;">These colors feed the public site (page background, body text, gold-style accents, section tints, buttons that use the primary palette, etc.). Each row has a color picker and a hex field. Save settings, then refresh the public site.</p>
             <div class="form-row">
                 <div class="form-group theme-color-field">
                     <label for="theme_primary_color">Primary color</label>
+                    <p class="form-help" style="margin:0 0 8px;">Main accent on the public site (buttons and highlights that use the gold/primary palette).</p>
                     <div class="theme-color-input-row">
                         <input type="color" class="theme-color-picker" data-hex-target="theme_primary_color" value="<?= htmlspecialchars($themeHexPickerValue('theme_primary_color'), ENT_QUOTES, 'UTF-8') ?>" title="Pick primary color" aria-label="Pick primary color">
                         <input type="text" id="theme_primary_color" name="theme_primary_color" class="theme-color-hex" value="<?= sanitize($settings['theme_primary_color'] ?? $defaultSettings['theme_primary_color']) ?>" placeholder="#411d13" maxlength="7" pattern="^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$" autocomplete="off">
@@ -643,22 +619,6 @@ $themeColorFieldMeta = [
         }
         return null;
     }
-    function syncPreview(key) {
-        var hexInput = document.getElementById(key);
-        if (!hexInput) {
-            return;
-        }
-        var raw = hexInput.value.trim();
-        var solid = expandShortHex(raw) || '#cccccc';
-        var chip = document.querySelector('.theme-colors-preview__chip[data-color-key="' + key + '"]');
-        if (chip) {
-            chip.style.backgroundColor = solid;
-        }
-        var code = document.querySelector('.theme-colors-preview__hex[data-hex-for="' + key + '"]');
-        if (code) {
-            code.textContent = expandShortHex(raw) || raw || solid;
-        }
-    }
     function bindPicker(picker) {
         var tid = picker.getAttribute('data-hex-target');
         var hexInput = document.getElementById(tid);
@@ -667,14 +627,12 @@ $themeColorFieldMeta = [
         }
         picker.addEventListener('input', function () {
             hexInput.value = picker.value.toLowerCase();
-            syncPreview(tid);
         });
         hexInput.addEventListener('input', function () {
             var x = expandShortHex(hexInput.value);
             if (x) {
                 picker.value = x;
             }
-            syncPreview(tid);
         });
         hexInput.addEventListener('change', function () {
             var x = expandShortHex(hexInput.value);
@@ -682,13 +640,9 @@ $themeColorFieldMeta = [
                 hexInput.value = x;
                 picker.value = x;
             }
-            syncPreview(tid);
         });
     }
     document.querySelectorAll('.theme-color-picker').forEach(bindPicker);
-    document.querySelectorAll('.theme-color-picker').forEach(function (p) {
-        syncPreview(p.getAttribute('data-hex-target'));
-    });
 })();
 
 // Social Media Management

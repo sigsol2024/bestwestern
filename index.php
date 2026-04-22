@@ -268,7 +268,7 @@ $home_room_subtitle = static function (array $room): string {
 </section>
 
 <!-- Dining -->
-<section class="py-24 md:py-32 bg-[#1A1A1A] text-surface">
+<section class="py-24 md:py-32 bg-background-dark text-surface">
   <div class="px-6 md:px-12 max-w-screen-2xl mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
     <div class="lg:w-1/2 w-full">
       <?php if (trim($dining_kicker) !== ''): ?>

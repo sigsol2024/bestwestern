@@ -90,6 +90,33 @@ function getSiteSetting($key, $default = '') {
     }
 }
 
+/**
+ * Normalized #rrggbb from site_settings for Tailwind / CSS (invalid values fall back).
+ */
+function site_theme_color(string $settingKey, string $fallbackHex): string {
+    $normalize = static function (string $v): ?string {
+        $v = trim($v);
+        if ($v === '') {
+            return null;
+        }
+        if (preg_match('/^#([0-9a-fA-F]{3})$/', $v, $m)) {
+            $h = $m[1];
+
+            return '#' . $h[0] . $h[0] . $h[1] . $h[1] . $h[2] . $h[2];
+        }
+        if (preg_match('/^#[0-9a-fA-F]{6}$/i', $v)) {
+            return strtolower($v);
+        }
+
+        return null;
+    };
+    $fb = $normalize(trim($fallbackHex)) ?? '#411d13';
+    $raw = getSiteSetting($settingKey, $fb);
+    $out = $normalize((string) $raw);
+
+    return $out ?? $fb;
+}
+
 function site_maintenance_mode_enabled(): bool {
     $raw = trim((string) getSiteSetting('maintenance_mode', cms_default_setting('maintenance_mode')));
     return in_array(strtolower($raw), ['1', 'true', 'yes', 'on'], true);
