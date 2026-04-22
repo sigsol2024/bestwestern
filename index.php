@@ -25,12 +25,6 @@ if ($bookingWrapperId === '') {
 }
 $bookingWrapperSelector = '#' . $bookingWrapperId;
 
-$navCtaLabel = getSiteSetting('nav_cta_label', cms_default_setting('nav_cta_label'));
-$navCtaHref = site_href(getSiteSetting('nav_cta_href', cms_default_setting('nav_cta_href')));
-$showDecorReserve = (!$hasBookingEmbed) && site_is_valid_nav_href($navCtaHref) && site_nav_link_visible($navCtaHref);
-
-$home_booking_guarantee_line = getPageSection('index', 'home_booking_guarantee_line', 'Best Rate Guarantee');
-
 $hp_kicker = getPageSection('index', 'home_philosophy_kicker', 'Our Heritage');
 $hp_title_html = getPageSection('index', 'home_philosophy_title_html', 'Where Heritage Meets Hospitality');
 $hp_body = getPageSection(
@@ -182,26 +176,12 @@ $home_room_subtitle = static function (array $room): string {
     </p>
   </div>
 
-  <?php
-  $showHeroBookingBar = $hasBookingEmbed || $showDecorReserve || trim($home_booking_guarantee_line) !== '';
-  ?>
-  <?php if ($showHeroBookingBar): ?>
+  <?php if ($hasBookingEmbed): ?>
   <div class="absolute bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 w-full max-w-5xl px-4 md:px-6 z-20">
-    <div class="bg-surface/95 backdrop-blur-xl p-2 flex flex-col md:flex-row items-stretch justify-center md:justify-end shadow-[0_35px_60px_-15px_rgba(0,0,0,0.5)]">
-      <?php if ($hasBookingEmbed): ?>
-      <div class="flex-1 min-w-0 p-3 md:p-4" id="home-booking-embed-slot">
+    <div class="bg-surface/95 backdrop-blur-xl p-2 shadow-[0_35px_60px_-15px_rgba(0,0,0,0.5)]">
+      <div class="min-w-0 p-3 md:p-4" id="home-booking-embed-slot">
         <?= $booking_widget_html ?>
       </div>
-      <?php else: ?>
-      <div class="relative flex flex-col min-w-[200px] max-w-md mx-auto md:mx-0 md:ml-auto">
-        <?php if ($showDecorReserve): ?>
-        <a href="<?= e(site_href($navCtaHref)) ?>" class="bg-secondary-container text-on-secondary-fixed px-8 md:px-12 py-5 md:py-6 font-body uppercase tracking-[0.2em] text-sm font-bold hover:brightness-105 transition-colors flex items-center justify-center h-full text-center"><?= e($navCtaLabel) ?></a>
-        <?php endif; ?>
-        <?php if (trim($home_booking_guarantee_line) !== ''): ?>
-        <span class="<?= $showDecorReserve ? 'absolute -bottom-5 md:-bottom-6 right-2 md:right-0' : 'block text-center mt-3' ?> font-body text-[9px] uppercase tracking-widest text-surface/70 italic whitespace-nowrap"><?= e($home_booking_guarantee_line) ?></span>
-        <?php endif; ?>
-      </div>
-      <?php endif; ?>
     </div>
   </div>
   <?php endif; ?>
@@ -211,7 +191,7 @@ $home_room_subtitle = static function (array $room): string {
 <section class="py-24 md:py-32 px-6 md:px-12 max-w-screen-2xl mx-auto bg-surface">
   <div class="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 items-center">
     <div class="md:col-span-7 relative">
-      <img class="w-full aspect-[4/5] object-cover shadow-2xl shadow-brand-ink/5" src="<?= e($hp_main_img) ?>" alt="" width="800" height="1000"/>
+      <img class="w-full aspect-[5/6] max-h-[480px] sm:max-h-[500px] md:max-h-[540px] object-cover shadow-2xl shadow-brand-ink/5" src="<?= e($hp_main_img) ?>" alt="" width="800" height="960"/>
       <div class="absolute -bottom-6 -right-6 md:-bottom-8 md:-right-8 w-48 h-48 md:w-64 md:h-64 bg-surface-container-low -z-10" aria-hidden="true"></div>
     </div>
     <div class="md:col-span-5 flex flex-col">
