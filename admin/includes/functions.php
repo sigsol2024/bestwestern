@@ -101,20 +101,6 @@ function getJsonRequestError() {
     return (int) ($GLOBALS['__cms_json_request_error'] ?? JSON_ERROR_NONE);
 }
 
-function cmsDebugLog($hypothesisId, $location, $message, array $data = [], $runId = 'initial') {
-    $logPath = BASE_PATH . DIRECTORY_SEPARATOR . 'debug-2bd4ec.log';
-    $payload = [
-        'sessionId' => '2bd4ec',
-        'runId' => (string) $runId,
-        'hypothesisId' => (string) $hypothesisId,
-        'location' => (string) $location,
-        'message' => (string) $message,
-        'data' => $data,
-        'timestamp' => round(microtime(true) * 1000),
-    ];
-    @file_put_contents($logPath, json_encode($payload, JSON_UNESCAPED_SLASHES) . PHP_EOL, FILE_APPEND | LOCK_EX);
-}
-
 function getRequestCSRFToken() {
     if (!empty($_POST['csrf_token'])) {
         return trim((string) $_POST['csrf_token']);

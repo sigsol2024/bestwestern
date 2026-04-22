@@ -794,10 +794,6 @@ document.getElementById('settingsForm').addEventListener('submit', function(e) {
     document.getElementById('social_media_json').value = JSON.stringify(socialMediaList);
     
     const formData = new FormData(this);
-    const metaCsrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-    if (metaCsrf) {
-        formData.set('csrf_token', metaCsrf);
-    }
 
     const submitBtn = this.querySelector('button[type="submit"]');
     if (typeof setSaveButtonSavingState === 'function') setSaveButtonSavingState(submitBtn, true);
