@@ -42,11 +42,12 @@ function savePageSection(payload) {
     return Promise.reject(new Error('Security token missing. Refresh the page and try again.'));
   }
   const url = adminApiBase() + 'api/pages.php';
+  const body = Object.assign({}, payload, { csrf_token: csrf });
   return fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
     credentials: 'same-origin',
-    body: JSON.stringify(payload)
+    body: JSON.stringify(body)
   }).then(parseAdminJsonResponse);
 }
 
@@ -56,11 +57,12 @@ function saveSettingsPayload(payload) {
     return Promise.reject(new Error('Security token missing. Refresh the page and try again.'));
   }
   const url = adminApiBase() + 'api/settings.php';
+  const body = Object.assign({}, payload, { csrf_token: csrf });
   return fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
     credentials: 'same-origin',
-    body: JSON.stringify(payload)
+    body: JSON.stringify(body)
   }).then(parseAdminJsonResponse);
 }
 

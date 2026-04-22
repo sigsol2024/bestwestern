@@ -116,6 +116,9 @@ function cmsDebugLog($hypothesisId, $location, $message, array $data = [], $runI
 }
 
 function getRequestCSRFToken() {
+    if (!empty($_SERVER['HTTP_X_CSRF_TOKEN'])) {
+        return trim((string) $_SERVER['HTTP_X_CSRF_TOKEN']);
+    }
     $headers = getAllHeaders();
     foreach ($headers as $name => $value) {
         if (strcasecmp((string) $name, 'X-CSRF-Token') === 0) {
