@@ -139,6 +139,28 @@ $twEncTextMainSvg = rawurlencode(site_theme_color('theme_text_main_color', '#363
   .rooms-fade-overlay {
     background: linear-gradient(to right, transparent, var(--site-surface-container-low));
   }
+
+  /* Homepage rooms slider: exactly 1 / 2 / 3 cards visible (track width = scrollport; gap-5 = 1.25rem) */
+  .home-rooms-slider-track .home-rooms-slider-card {
+    box-sizing: border-box;
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 100%;
+  }
+  @media (min-width: 768px) {
+    .home-rooms-slider-track .home-rooms-slider-card {
+      flex: 0 0 calc((100% - 1.25rem) / 2);
+      width: calc((100% - 1.25rem) / 2);
+      max-width: calc((100% - 1.25rem) / 2);
+    }
+  }
+  @media (min-width: 1024px) {
+    .home-rooms-slider-track .home-rooms-slider-card {
+      flex: 0 0 calc((100% - 2.5rem) / 3);
+      width: calc((100% - 2.5rem) / 3);
+      max-width: calc((100% - 2.5rem) / 3);
+    }
+  }
   .inter,
   .font-inter {
     font-family: Inter, ui-sans-serif, system-ui, "Segoe UI", Roboto, Arial, sans-serif;
