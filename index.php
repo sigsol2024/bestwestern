@@ -219,28 +219,37 @@ $home_room_subtitle = static function (array $room): string {
   </div>
 </section>
 
-<!-- Rooms -->
-<section class="py-24 md:py-32 bg-surface-container-low relative">
-  <div class="px-6 md:px-12 mb-12 md:mb-20 text-center max-w-4xl mx-auto">
-    <h2 class="font-headline text-4xl md:text-5xl text-on-surface mb-4 md:mb-6"><?= e($rooms_title) ?></h2>
-    <?php if (trim($rooms_kicker) !== ''): ?>
-    <p class="font-body text-on-surface-variant uppercase tracking-widest text-xs"><?= e($rooms_kicker) ?></p>
-    <?php endif; ?>
-  </div>
-  <div class="relative w-full min-w-0">
+<!-- Rooms: responsive grid (normal page scroll — no wheel capture; pattern aligned with Lusso / Blue Orange hotel home templates) -->
+<section class="py-24 md:py-32 bg-surface-container-low">
+  <div class="max-w-screen-2xl mx-auto px-6 md:px-12">
     <?php
     $roomsForSlider = is_array($featuredRooms) ? array_slice($featuredRooms, 0, 8) : [];
+    $roomsCount = count($roomsForSlider);
+    $roomsShowArrows = $roomsCount > 1;
     ?>
-    <!-- Full-bleed track: scrollport spans viewport so horizontal scroll works under body clip; padding insets cards from screen edges -->
-    <div class="w-[100vw] max-w-[100vw] relative left-1/2 -translate-x-1/2 min-w-0">
-      <div
-        id="homeRoomsScroller"
-        class="home-rooms-scroller flex flex-nowrap items-stretch gap-5 md:gap-6 overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth snap-x snap-mandatory scroll-px-6 md:scroll-px-10 py-1 pb-5 pt-1 pl-8 pr-8 md:pl-14 md:pr-14 no-scrollbar touch-pan-x [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [-ms-overflow-style:none]"
-        data-home-rooms-scroll
-      >
-      <?php if ($roomsForSlider === []): ?>
-      <p class="font-body text-on-surface-variant py-8 px-2 shrink-0">No rooms to show yet. Mark rooms as <strong>Featured</strong> in Admin → Rooms.</p>
-      <?php else: ?>
+    <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between mb-10 md:mb-14">
+      <div class="text-center md:text-left max-w-3xl md:max-w-none mx-auto md:mx-0">
+        <?php if (trim($rooms_kicker) !== ''): ?>
+        <p class="font-body text-on-surface-variant uppercase tracking-widest text-xs mb-3"><?= e($rooms_kicker) ?></p>
+        <?php endif; ?>
+        <h2 class="font-headline text-3xl sm:text-4xl md:text-5xl text-on-surface leading-tight"><?= e($rooms_title) ?></h2>
+      </div>
+      <?php if ($roomsShowArrows): ?>
+      <div class="flex shrink-0 gap-2 justify-center md:hidden" id="homeRoomsNavWrap" aria-label="Room cards navigation">
+        <button type="button" id="homeRoomsPrev" class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-outline-variant bg-surface text-on-surface transition-colors hover:border-brand-gold hover:text-brand-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold" aria-label="Scroll rooms left">
+          <span class="material-symbols-outlined text-xl" aria-hidden="true">chevron_left</span>
+        </button>
+        <button type="button" id="homeRoomsNext" class="inline-flex h-11 w-11 items-center justify-center rounded-full border border-outline-variant bg-surface text-on-surface transition-colors hover:border-brand-gold hover:text-brand-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold" aria-label="Scroll rooms right">
+          <span class="material-symbols-outlined text-xl" aria-hidden="true">chevron_right</span>
+        </button>
+      </div>
+      <?php endif; ?>
+    </div>
+
+    <?php if ($roomsForSlider === []): ?>
+    <p class="font-body text-on-surface-variant py-6 text-center md:text-left">No rooms to show yet. Mark rooms as <strong>Featured</strong> in Admin → Rooms.</p>
+    <?php else: ?>
+    <div id="homeRoomsScroller" class="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 md:grid md:grid-cols-2 md:gap-8 md:overflow-x-visible md:pb-0 md:snap-none lg:grid-cols-3 lg:gap-8 [-webkit-overflow-scrolling:touch] scroll-smooth">
         <?php foreach ($roomsForSlider as $room):
             $rtitle = (string) ($room['title'] ?? '');
             $rslug = (string) ($room['slug'] ?? '');
@@ -249,44 +258,35 @@ $home_room_subtitle = static function (array $room): string {
             $rimgPath = (string) ($room['main_image'] ?? '');
             $rimg = $rimgPath !== '' ? site_media_url($rimgPath) : site_media_url($detailPlaceholder);
             ?>
-      <a class="snap-start shrink-0 w-[min(calc(100vw-5.5rem),340px)] sm:w-[min(calc(100vw-7rem),380px)] flex group text-left rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-surface-container-low" href="<?= e(site_url('room-details', ['slug' => $rslug])) ?>">
-        <div class="flex w-full min-h-[28rem] sm:min-h-[29rem] flex-col rounded-xl overflow-hidden bg-white shadow-[0_12px_40px_-12px_rgba(0,0,0,0.18)] ring-1 ring-black/[0.06] transition-shadow duration-300 group-hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.22)]">
-          <div class="relative h-44 sm:h-48 md:h-52 shrink-0 overflow-hidden bg-surface-container-high">
-            <img class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" src="<?= e($rimg) ?>" alt="<?= e($rtitle) ?>" width="400" height="260"/>
-            <div class="absolute inset-0 bg-brand-ink/15 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-          </div>
-          <div class="flex flex-1 flex-col justify-end p-4 md:p-5 min-h-0">
-            <div class="flex justify-between items-end gap-3 md:gap-4">
-              <div class="min-w-0 flex-1">
-                <h3 class="font-headline text-lg md:text-xl text-on-surface mb-1 leading-snug line-clamp-3"><?= e($rtitle) ?></h3>
-                <?php if ($rsub !== ''): ?>
-                <span class="font-body text-xs md:text-sm text-on-surface-variant uppercase tracking-widest line-clamp-2"><?= e($rsub) ?></span>
-                <?php endif; ?>
-              </div>
-              <?php if ($rprice !== ''): ?>
-              <span class="font-body text-base md:text-lg text-brand-gold font-semibold shrink-0 tabular-nums self-end"><?= e($currency) ?><?= e($rprice) ?></span>
-              <?php endif; ?>
-            </div>
+      <a class="snap-center shrink-0 w-[min(88vw,340px)] sm:w-[min(42vw,360px)] md:w-auto md:min-w-0 flex h-full min-h-0 flex-col rounded-xl bg-white text-left shadow-[0_8px_30px_-12px_rgba(0,0,0,0.15)] ring-1 ring-black/[0.06] transition-shadow duration-300 hover:shadow-[0_16px_40px_-12px_rgba(0,0,0,0.2)] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-surface-container-low group" href="<?= e(site_url('room-details', ['slug' => $rslug])) ?>">
+        <div class="relative aspect-[4/3] w-full shrink-0 overflow-hidden bg-surface-container-high">
+          <img class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" src="<?= e($rimg) ?>" alt="<?= e($rtitle) ?>" width="480" height="360"/>
+          <div class="pointer-events-none absolute inset-0 bg-brand-ink/0 transition-colors duration-300 group-hover:bg-brand-ink/10"></div>
+        </div>
+        <div class="flex min-h-[9rem] flex-1 flex-col p-5">
+          <h3 class="font-headline text-lg leading-snug text-on-surface line-clamp-2 md:text-xl"><?= e($rtitle) ?></h3>
+          <?php if ($rsub !== ''): ?>
+          <p class="mt-2 font-body text-xs uppercase tracking-widest text-on-surface-variant line-clamp-2"><?= e($rsub) ?></p>
+          <?php endif; ?>
+          <div class="mt-auto flex items-end justify-between gap-3 border-t border-outline-variant/15 pt-4">
+            <?php if ($rprice !== ''): ?>
+            <span class="font-body text-lg font-semibold tabular-nums text-brand-gold"><?= e($currency) ?><?= e($rprice) ?><span class="text-xs font-normal text-on-surface-variant"> / night</span></span>
+            <?php else: ?>
+            <span></span>
+            <?php endif; ?>
+            <span class="material-symbols-outlined shrink-0 text-brand-gold opacity-80 transition-transform group-hover:translate-x-0.5" aria-hidden="true">arrow_forward</span>
           </div>
         </div>
       </a>
         <?php endforeach; ?>
-      <?php endif; ?>
-      </div>
     </div>
-    <?php if ($roomsForSlider !== []): ?>
-    <div class="flex justify-center gap-2 mt-2 md:mt-4" aria-hidden="true">
-      <span class="h-1.5 w-6 rounded-full bg-brand-gold"></span>
-      <span class="h-1.5 w-1.5 rounded-full bg-outline-variant"></span>
-      <span class="h-1.5 w-1.5 rounded-full bg-outline-variant"></span>
-    </div>
-    <?php endif; ?>
-    <div class="absolute top-0 right-0 h-full w-24 md:w-32 rooms-fade-overlay pointer-events-none hidden md:block"></div>
-    <div class="px-6 md:px-12 mt-8 text-right">
-      <a class="font-body text-xs uppercase tracking-[0.2em] font-bold text-brand-gold hover:text-on-surface transition-colors inline-flex items-center gap-2 group" href="<?= e(site_href((string) $rooms_view_all)) ?>">
-        View All Suites <span class="w-1 h-1 bg-brand-red rounded-full opacity-60"></span> <span class="material-symbols-outlined !text-sm">arrow_forward</span>
+    <div class="mt-10 flex justify-center md:justify-end">
+      <a class="font-body inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-brand-gold transition-colors hover:text-on-surface" href="<?= e(site_href((string) $rooms_view_all)) ?>">
+        <span>View all suites</span>
+        <span class="material-symbols-outlined !text-base">arrow_forward</span>
       </a>
     </div>
+    <?php endif; ?>
   </div>
 </section>
 
@@ -425,23 +425,20 @@ $home_room_subtitle = static function (array $room): string {
 
 <script>
 (function () {
-  var el = document.getElementById('homeRoomsScroller');
-  if (!el || el.dataset.roomsWheelBound === '1') return;
-  el.dataset.roomsWheelBound = '1';
-  el.addEventListener(
-    'wheel',
-    function (e) {
-      var maxScroll = el.scrollWidth - el.clientWidth;
-      if (maxScroll <= 0) return;
-      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
-      var next = el.scrollLeft + e.deltaY;
-      var clamped = Math.max(0, Math.min(maxScroll, next));
-      if (clamped === el.scrollLeft && (e.deltaY < 0 ? el.scrollLeft <= 0 : el.scrollLeft >= maxScroll)) return;
-      el.scrollLeft = clamped;
-      e.preventDefault();
-    },
-    { passive: false }
-  );
+  var sc = document.getElementById('homeRoomsScroller');
+  var prev = document.getElementById('homeRoomsPrev');
+  var next = document.getElementById('homeRoomsNext');
+  if (!sc || !prev || !next) return;
+  function step(dir) {
+    var amount = Math.min(360, Math.max(280, sc.clientWidth * 0.85));
+    sc.scrollBy({ left: dir * amount, behavior: 'smooth' });
+  }
+  prev.addEventListener('click', function () {
+    step(-1);
+  });
+  next.addEventListener('click', function () {
+    step(1);
+  });
 })();
 </script>
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
