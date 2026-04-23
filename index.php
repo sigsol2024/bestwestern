@@ -219,9 +219,10 @@ $home_room_subtitle = static function (array $room): string {
     <?php
     $roomsForSlider = is_array($featuredRooms) ? array_slice($featuredRooms, 0, 8) : [];
     ?>
-    <div id="homeRoomsScroller" class="overflow-x-auto no-scrollbar flex space-x-6 md:space-x-8 px-6 md:px-12 pb-10 scroll-smooth">
+    <div class="home-rooms-scroll -mx-1 px-1 sm:mx-0 sm:px-0 md:-mx-2 md:px-2">
+      <div id="homeRoomsScroller" class="flex flex-nowrap gap-5 md:gap-6 overflow-x-auto overflow-y-visible overscroll-x-contain scroll-smooth snap-x snap-mandatory pb-4 pt-1 px-6 md:px-12 no-scrollbar touch-pan-x [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [-ms-overflow-style:none]">
       <?php if ($roomsForSlider === []): ?>
-      <p class="font-body text-on-surface-variant py-8 px-2">No rooms to show yet. Mark rooms as <strong>Featured</strong> in Admin → Rooms.</p>
+      <p class="font-body text-on-surface-variant py-8 px-2 shrink-0">No rooms to show yet. Mark rooms as <strong>Featured</strong> in Admin → Rooms.</p>
       <?php else: ?>
         <?php foreach ($roomsForSlider as $room):
             $rtitle = (string) ($room['title'] ?? '');
@@ -231,25 +232,30 @@ $home_room_subtitle = static function (array $room): string {
             $rimgPath = (string) ($room['main_image'] ?? '');
             $rimg = $rimgPath !== '' ? site_media_url($rimgPath) : site_media_url($detailPlaceholder);
             ?>
-      <a class="flex-shrink-0 w-[min(100vw-3rem,450px)] group text-left" href="<?= e(site_url('room-details', ['slug' => $rslug])) ?>">
-        <div class="relative overflow-hidden mb-6 aspect-[3/4]">
-          <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" src="<?= e($rimg) ?>" alt="<?= e($rtitle) ?>" width="450" height="600"/>
-          <div class="absolute inset-0 bg-brand-ink/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-        </div>
-        <div class="flex justify-between items-end gap-4">
-          <div class="min-w-0">
-            <h3 class="font-headline text-2xl text-on-surface mb-1"><?= e($rtitle) ?></h3>
-            <?php if ($rsub !== ''): ?>
-            <span class="font-body text-sm text-on-surface-variant uppercase tracking-widest line-clamp-2"><?= e($rsub) ?></span>
-            <?php endif; ?>
+      <a class="flex-shrink-0 w-[min(calc(100vw-3.5rem),380px)] sm:w-[min(calc(100vw-4rem),400px)] snap-start group text-left rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-surface-container-low" href="<?= e(site_url('room-details', ['slug' => $rslug])) ?>">
+        <div class="rounded-xl overflow-hidden bg-white shadow-[0_12px_40px_-12px_rgba(0,0,0,0.18)] ring-1 ring-black/[0.06] transition-shadow duration-300 group-hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.22)]">
+          <div class="relative overflow-hidden aspect-[16/10] max-h-[220px] sm:max-h-[240px] md:max-h-[260px]">
+            <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="<?= e($rimg) ?>" alt="<?= e($rtitle) ?>" width="400" height="250"/>
+            <div class="absolute inset-0 bg-brand-ink/15 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
           </div>
-          <?php if ($rprice !== ''): ?>
-          <span class="font-body text-lg text-brand-gold font-semibold shrink-0"><?= e($currency) ?><?= e($rprice) ?></span>
-          <?php endif; ?>
+          <div class="p-4 md:p-5">
+            <div class="flex justify-between items-end gap-3 md:gap-4">
+              <div class="min-w-0">
+                <h3 class="font-headline text-lg md:text-xl text-on-surface mb-1 leading-snug"><?= e($rtitle) ?></h3>
+                <?php if ($rsub !== ''): ?>
+                <span class="font-body text-xs md:text-sm text-on-surface-variant uppercase tracking-widest line-clamp-2"><?= e($rsub) ?></span>
+                <?php endif; ?>
+              </div>
+              <?php if ($rprice !== ''): ?>
+              <span class="font-body text-base md:text-lg text-brand-gold font-semibold shrink-0 tabular-nums"><?= e($currency) ?><?= e($rprice) ?></span>
+              <?php endif; ?>
+            </div>
+          </div>
         </div>
       </a>
         <?php endforeach; ?>
       <?php endif; ?>
+      </div>
     </div>
     <?php if ($roomsForSlider !== []): ?>
     <div class="flex justify-center gap-2 mt-2 md:mt-4" aria-hidden="true">
@@ -267,8 +273,8 @@ $home_room_subtitle = static function (array $room): string {
   </div>
 </section>
 
-<!-- Dining -->
-<section class="py-24 md:py-32 bg-background-dark text-surface">
+<!-- Dining (background hardcoded for brand consistency) -->
+<section class="py-24 md:py-32 text-surface" style="background-color:#1A1A1A;">
   <div class="px-6 md:px-12 max-w-screen-2xl mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
     <div class="lg:w-1/2 w-full">
       <?php if (trim($dining_kicker) !== ''): ?>
