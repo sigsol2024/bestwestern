@@ -134,6 +134,7 @@ $pageSections = [
     ['index', 'home_location_bullets_json', 'json', $jsonEncode($homeLocationBulletsDefault)],
     ['index', 'home_location_address', 'text', 'Oxbow Lake Rd, Yenagoa, Bayelsa'],
     ['index', 'home_location_map_image', 'image', $galleryPlaceholder],
+    ['index', 'home_location_map_embed_url', 'text', ''],
     ['index', 'booking_widget_html', 'html', ''],
 
     ['about', 'page_title', 'text', 'About'],

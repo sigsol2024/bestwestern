@@ -40,6 +40,7 @@ INSERT IGNORE INTO `page_sections` (`page`, `section_key`, `content_type`, `cont
 ('index', 'home_location_bullets_json', 'json', '[\"5 min to Government House\",\"15 min to Airport\",\"Oxbow Lake waterfront\"]', NOW()),
 ('index', 'home_location_address', 'text', 'Oxbow Lake Rd, Yenagoa, Bayelsa', NOW()),
 ('index', 'home_location_map_image', 'image', 'assets/images/placeholders/placeholder-gallery.svg', NOW()),
+('index', 'home_location_map_embed_url', 'text', '', NOW()),
 ('index', 'booking_widget_html', 'html', '', NOW());
 
 -- Site settings used by the new header/footer and placeholders (INSERT IGNORE keeps custom values).

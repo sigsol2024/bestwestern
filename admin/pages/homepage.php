@@ -34,11 +34,27 @@ $bentoDefaultArr = [
 $bulletsDefaultArr = ['5 min to Government House', '15 min to Airport', 'Oxbow Lake waterfront'];
 
 $bentoJsonRaw = trim((string)($sectionsArray['home_facilities_bento_json'] ?? ''));
-if ($bentoJsonRaw === '') {
-    $bentoJsonPretty = json_encode($bentoDefaultArr, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-} else {
-    $bentoJsonPretty = $bentoJsonRaw;
+$bentoTiles = $bentoDefaultArr;
+if ($bentoJsonRaw !== '') {
+    $decoded = json_decode($bentoJsonRaw, true);
+    if (is_array($decoded)) {
+        for ($i = 0; $i < 4; $i++) {
+            if (!isset($decoded[$i]) || !is_array($decoded[$i])) {
+                continue;
+            }
+            $bentoTiles[$i]['image'] = trim((string)($decoded[$i]['image'] ?? $bentoTiles[$i]['image']));
+            $bentoTiles[$i]['title'] = (string)($decoded[$i]['title'] ?? $bentoTiles[$i]['title']);
+            $bentoTiles[$i]['subtitle'] = (string)($decoded[$i]['subtitle'] ?? '');
+        }
+    }
 }
+$bentoJsonSerialized = json_encode($bentoTiles, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+$bentoTileRoleLabels = [
+    'Large left tile',
+    'Top right tile',
+    'Bottom right tile',
+    'Wide bottom tile',
+];
 
 $bulletsJsonRaw = trim((string)($sectionsArray['home_location_bullets_json'] ?? ''));
 if ($bulletsJsonRaw === '') {
@@ -220,11 +236,38 @@ if ($bulletsJsonRaw === '') {
         <label for="home_facilities_blurb">Right blurb (small uppercase)</label>
         <textarea id="home_facilities_blurb" name="home_facilities_blurb" rows="2"><?= hsec($sectionsArray, 'home_facilities_blurb', 'Designed to rejuvenate your senses and enhance your productivity.') ?></textarea>
       </div>
-      <div class="form-group">
-        <label for="home_facilities_bento_json">Four tiles (JSON array)</label>
-        <textarea id="home_facilities_bento_json" name="home_facilities_bento_json" rows="16" style="font-family:monospace;font-size:12px;"><?= htmlspecialchars($bentoJsonPretty, ENT_QUOTES, 'UTF-8') ?></textarea>
-        <p class="form-help">Exactly <strong>four</strong> objects in order: large left tile, top-right, bottom-right, wide bottom. Keys: <code>image</code>, <code>title</code>, <code>subtitle</code> (optional).</p>
+      <p class="form-help" style="margin-bottom:16px;">Four tiles in fixed order (same layout as the homepage bento). Each tile needs an image, title, and optional subtitle.</p>
+      <?php for ($bi = 0; $bi < 4; $bi++):
+          $tile = $bentoTiles[$bi];
+          $imgPath = (string)($tile['image'] ?? '');
+          $tid = 'bento_tile_' . $bi . '_image';
+          $pid = 'bento_tile_' . $bi . '_preview';
+          ?>
+      <div class="form-group" style="border:1px solid #ddd;border-radius:8px;padding:16px;margin-bottom:16px;background:#fafafa;">
+        <strong style="display:block;margin-bottom:12px;"><?= htmlspecialchars($bentoTileRoleLabels[$bi], ENT_QUOTES, 'UTF-8') ?></strong>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label>Image</label>
+          <div style="margin-bottom:8px;">
+            <button type="button" class="btn btn-outline" onclick="openMediaModal('<?= $tid ?>','<?= $pid ?>')">Select image</button>
+          </div>
+          <input type="hidden" id="<?= $tid ?>" value="<?= htmlspecialchars($imgPath, ENT_QUOTES, 'UTF-8') ?>">
+          <div id="<?= $pid ?>" class="image-preview" style="<?= $imgPath !== '' ? 'display:block;margin-top:10px;' : 'display:none;' ?>">
+            <?php if ($imgPath !== ''): ?>
+              <img src="<?= SITE_URL . ltrim($imgPath, '/') ?>" style="max-width:420px;max-height:220px;border-radius:4px;" alt="">
+            <?php endif; ?>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label for="bento_tile_<?= $bi ?>_title">Title</label>
+          <input type="text" id="bento_tile_<?= $bi ?>_title" value="<?= htmlspecialchars((string)($tile['title'] ?? ''), ENT_QUOTES, 'UTF-8') ?>" style="width:100%;max-width:560px;">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label for="bento_tile_<?= $bi ?>_subtitle">Subtitle <span style="font-weight:normal;color:#666;">(optional)</span></label>
+          <input type="text" id="bento_tile_<?= $bi ?>_subtitle" value="<?= htmlspecialchars((string)($tile['subtitle'] ?? ''), ENT_QUOTES, 'UTF-8') ?>" style="width:100%;max-width:560px;" placeholder="e.g. Open Daily • 6AM - 10PM">
+        </div>
       </div>
+      <?php endfor; ?>
+      <textarea id="home_facilities_bento_json" name="home_facilities_bento_json" style="display:none;"><?= htmlspecialchars($bentoJsonSerialized, ENT_QUOTES, 'UTF-8') ?></textarea>
     </div>
   </div>
 
@@ -248,7 +291,12 @@ if ($bulletsJsonRaw === '') {
         <input id="home_location_address" name="home_location_address" type="text" value="<?= hsec($sectionsArray, 'home_location_address', 'Oxbow Lake Rd, Yenagoa, Bayelsa') ?>">
       </div>
       <div class="form-group">
-        <label>Map / location image</label>
+        <label for="home_location_map_embed_url">Custom map embed URL <span style="font-weight:normal;color:#666;">(optional)</span></label>
+        <textarea id="home_location_map_embed_url" name="home_location_map_embed_url" rows="2" style="font-family:monospace;font-size:12px;width:100%;max-width:640px;" placeholder="https://www.google.com/maps/embed?..."><?= htmlspecialchars(trim((string)($sectionsArray['home_location_map_embed_url'] ?? '')), ENT_QUOTES, 'UTF-8') ?></textarea>
+        <p class="form-help">If set, this URL is used for the homepage map <strong>instead of</strong> building one from the address. Paste the <code>src</code> from Google Maps → Share → Embed a map.</p>
+      </div>
+      <div class="form-group">
+        <label>Fallback map image <span style="font-weight:normal;color:#666;">(only if no address / no embed)</span></label>
         <button type="button" class="btn btn-outline" onclick="openMediaModal('home_location_map_image','home_location_map_preview')">Select</button>
         <input type="hidden" id="home_location_map_image" name="home_location_map_image" value="<?= hsec($sectionsArray, 'home_location_map_image') ?>">
         <div id="home_location_map_preview" class="image-preview" style="<?= !empty($sectionsArray['home_location_map_image']) ? 'display:block;' : 'display:none;' ?>">
@@ -256,6 +304,7 @@ if ($bulletsJsonRaw === '') {
             <img src="<?= SITE_URL . ltrim($sectionsArray['home_location_map_image'], '/') ?>" style="max-width:500px;max-height:280px;" alt="">
           <?php endif; ?>
         </div>
+        <p class="form-help">The homepage shows a <strong>live Google Map</strong> from the address above when possible: add your <strong>Google Maps API key</strong> under <a href="<?= ADMIN_URL ?>pages/settings.php">Settings</a> for the official embed, or the site falls back to a basic embed without a key. This image is used only when the address is empty and no custom embed URL is set.</p>
       </div>
     </div>
   </div>
@@ -270,7 +319,11 @@ if ($bulletsJsonRaw === '') {
     home_philosophy_main_img: 'home_philosophy_main_preview',
     home_dining_image_top: 'home_dining_image_top_preview',
     home_dining_image_bottom: 'home_dining_image_bottom_preview',
-    home_location_map_image: 'home_location_map_preview'
+    home_location_map_image: 'home_location_map_preview',
+    bento_tile_0_image: 'bento_tile_0_preview',
+    bento_tile_1_image: 'bento_tile_1_preview',
+    bento_tile_2_image: 'bento_tile_2_preview',
+    bento_tile_3_image: 'bento_tile_3_preview'
   };
   window.insertSelectedMediaOverride = function () {
     var list = mediaModalState.allowMultiple
@@ -296,8 +349,27 @@ if ($bulletsJsonRaw === '') {
 </script>
 
 <script>
+function syncHomeBentoJsonFromTiles() {
+  var out = [];
+  for (var i = 0; i < 4; i++) {
+    var imgEl = document.getElementById('bento_tile_' + i + '_image');
+    var titleEl = document.getElementById('bento_tile_' + i + '_title');
+    var subEl = document.getElementById('bento_tile_' + i + '_subtitle');
+    out.push({
+      image: imgEl ? String(imgEl.value || '').trim() : '',
+      title: titleEl ? String(titleEl.value || '') : '',
+      subtitle: subEl ? String(subEl.value || '') : ''
+    });
+  }
+  var ta = document.getElementById('home_facilities_bento_json');
+  if (ta) ta.value = JSON.stringify(out);
+}
+</script>
+
+<script>
 document.getElementById('homepageForm').addEventListener('submit', function (e) {
   e.preventDefault();
+  syncHomeBentoJsonFromTiles();
   var form = this;
   var typeOverrides = {
     hero_title: 'html',

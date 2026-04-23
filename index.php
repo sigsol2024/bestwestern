@@ -95,6 +95,18 @@ if (!is_array($loc_bullets)) {
 $loc_bullets = array_values(array_filter(array_map('strval', $loc_bullets), static function ($s) { return trim($s) !== ''; }));
 $loc_address = getPageSection('index', 'home_location_address', 'Oxbow Lake Rd, Yenagoa, Bayelsa');
 $loc_map = site_media_url(getPageSection('index', 'home_location_map_image', $galleryPlaceholder));
+$loc_map_embed_custom = trim((string) getPageSection('index', 'home_location_map_embed_url', ''));
+$googleMapsApiKey = trim((string) getSiteSetting('google_maps_api_key', ''));
+$loc_address_trim = trim((string) $loc_address);
+$loc_map_iframe_src = '';
+if ($loc_map_embed_custom !== '') {
+    $loc_map_iframe_src = $loc_map_embed_custom;
+} elseif ($googleMapsApiKey !== '' && $loc_address_trim !== '') {
+    $loc_map_iframe_src = 'https://www.google.com/maps/embed/v1/place?key=' . rawurlencode($googleMapsApiKey) . '&q=' . rawurlencode($loc_address_trim);
+} elseif ($loc_address_trim !== '') {
+    $loc_map_iframe_src = 'https://www.google.com/maps?q=' . rawurlencode($loc_address_trim) . '&output=embed';
+}
+$loc_show_map_embed = ($loc_map_iframe_src !== '');
 
 $currency = getSiteSetting('currency_symbol', '$');
 $featuredRooms = getFeaturedRoomsForHome(8);
@@ -144,7 +156,7 @@ $home_room_subtitle = static function (array $room): string {
   </style>
   <?php endif; ?>
 </head>
-<body class="bg-surface text-on-surface font-body font-light selection:bg-secondary-container selection:text-on-secondary-container antialiased overflow-x-hidden">
+<body class="bg-surface text-on-surface font-body font-light selection:bg-secondary-container selection:text-on-secondary-container antialiased max-w-[100vw] overflow-x-clip">
 <?php require_once __DIR__ . '/includes/header.php'; ?>
 
 <!-- Hero -->
@@ -215,12 +227,17 @@ $home_room_subtitle = static function (array $room): string {
     <p class="font-body text-on-surface-variant uppercase tracking-widest text-xs"><?= e($rooms_kicker) ?></p>
     <?php endif; ?>
   </div>
-  <div class="relative">
+  <div class="relative w-full min-w-0">
     <?php
     $roomsForSlider = is_array($featuredRooms) ? array_slice($featuredRooms, 0, 8) : [];
     ?>
-    <div class="home-rooms-scroll -mx-1 px-1 sm:mx-0 sm:px-0 md:-mx-2 md:px-2">
-      <div id="homeRoomsScroller" class="flex flex-nowrap gap-5 md:gap-6 overflow-x-auto overflow-y-visible overscroll-x-contain scroll-smooth snap-x snap-mandatory pb-4 pt-1 px-6 md:px-12 no-scrollbar touch-pan-x [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [-ms-overflow-style:none]">
+    <!-- Full-bleed track: scrollport spans viewport so horizontal scroll works under body clip; padding insets cards from screen edges -->
+    <div class="w-[100vw] max-w-[100vw] relative left-1/2 -translate-x-1/2 min-w-0">
+      <div
+        id="homeRoomsScroller"
+        class="home-rooms-scroller flex flex-nowrap items-stretch gap-5 md:gap-6 overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth snap-x snap-mandatory scroll-px-6 md:scroll-px-10 py-1 pb-5 pt-1 pl-8 pr-8 md:pl-14 md:pr-14 no-scrollbar touch-pan-x [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [-ms-overflow-style:none]"
+        data-home-rooms-scroll
+      >
       <?php if ($roomsForSlider === []): ?>
       <p class="font-body text-on-surface-variant py-8 px-2 shrink-0">No rooms to show yet. Mark rooms as <strong>Featured</strong> in Admin → Rooms.</p>
       <?php else: ?>
@@ -232,22 +249,22 @@ $home_room_subtitle = static function (array $room): string {
             $rimgPath = (string) ($room['main_image'] ?? '');
             $rimg = $rimgPath !== '' ? site_media_url($rimgPath) : site_media_url($detailPlaceholder);
             ?>
-      <a class="flex-shrink-0 w-[min(calc(100vw-3.5rem),380px)] sm:w-[min(calc(100vw-4rem),400px)] snap-start group text-left rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-surface-container-low" href="<?= e(site_url('room-details', ['slug' => $rslug])) ?>">
-        <div class="rounded-xl overflow-hidden bg-white shadow-[0_12px_40px_-12px_rgba(0,0,0,0.18)] ring-1 ring-black/[0.06] transition-shadow duration-300 group-hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.22)]">
-          <div class="relative overflow-hidden aspect-[16/10] max-h-[220px] sm:max-h-[240px] md:max-h-[260px]">
-            <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="<?= e($rimg) ?>" alt="<?= e($rtitle) ?>" width="400" height="250"/>
+      <a class="snap-start shrink-0 w-[min(calc(100vw-5.5rem),340px)] sm:w-[min(calc(100vw-7rem),380px)] flex group text-left rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-surface-container-low" href="<?= e(site_url('room-details', ['slug' => $rslug])) ?>">
+        <div class="flex w-full min-h-[28rem] sm:min-h-[29rem] flex-col rounded-xl overflow-hidden bg-white shadow-[0_12px_40px_-12px_rgba(0,0,0,0.18)] ring-1 ring-black/[0.06] transition-shadow duration-300 group-hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.22)]">
+          <div class="relative h-44 sm:h-48 md:h-52 shrink-0 overflow-hidden bg-surface-container-high">
+            <img class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" src="<?= e($rimg) ?>" alt="<?= e($rtitle) ?>" width="400" height="260"/>
             <div class="absolute inset-0 bg-brand-ink/15 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
           </div>
-          <div class="p-4 md:p-5">
+          <div class="flex flex-1 flex-col justify-end p-4 md:p-5 min-h-0">
             <div class="flex justify-between items-end gap-3 md:gap-4">
-              <div class="min-w-0">
-                <h3 class="font-headline text-lg md:text-xl text-on-surface mb-1 leading-snug"><?= e($rtitle) ?></h3>
+              <div class="min-w-0 flex-1">
+                <h3 class="font-headline text-lg md:text-xl text-on-surface mb-1 leading-snug line-clamp-3"><?= e($rtitle) ?></h3>
                 <?php if ($rsub !== ''): ?>
                 <span class="font-body text-xs md:text-sm text-on-surface-variant uppercase tracking-widest line-clamp-2"><?= e($rsub) ?></span>
                 <?php endif; ?>
               </div>
               <?php if ($rprice !== ''): ?>
-              <span class="font-body text-base md:text-lg text-brand-gold font-semibold shrink-0 tabular-nums"><?= e($currency) ?><?= e($rprice) ?></span>
+              <span class="font-body text-base md:text-lg text-brand-gold font-semibold shrink-0 tabular-nums self-end"><?= e($currency) ?><?= e($rprice) ?></span>
               <?php endif; ?>
             </div>
           </div>
@@ -278,16 +295,16 @@ $home_room_subtitle = static function (array $room): string {
   <div class="px-6 md:px-12 max-w-screen-2xl mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
     <div class="lg:w-1/2 w-full">
       <?php if (trim($dining_kicker) !== ''): ?>
-      <span class="font-body uppercase tracking-[0.3em] text-brand-gold text-xs mb-6 md:mb-8 block"><?= e($dining_kicker) ?></span>
+      <span class="font-body uppercase tracking-[0.3em] text-white text-xs mb-6 md:mb-8 block"><?= e($dining_kicker) ?></span>
       <?php endif; ?>
       <div class="font-headline text-4xl md:text-6xl lg:text-7xl mb-10 md:mb-12"><?= $dining_heading_html ?></div>
       <div class="space-y-12 md:space-y-16">
         <div class="border-l-2 border-brand-gold/30 pl-6 md:pl-8 py-2">
-          <h4 class="font-body text-xl md:text-2xl font-semibold mb-3 md:mb-4 tracking-tight"><?= e($dining_v1_title) ?></h4>
+          <h4 class="font-body text-xl md:text-2xl font-semibold mb-3 md:mb-4 tracking-tight text-white"><?= e($dining_v1_title) ?></h4>
           <p class="font-body text-surface/60 leading-relaxed font-light"><?= e($dining_v1_body) ?></p>
         </div>
         <div class="border-l-2 border-brand-gold/30 pl-6 md:pl-8 py-2">
-          <h4 class="font-body text-xl md:text-2xl font-semibold mb-3 md:mb-4 tracking-tight"><?= e($dining_v2_title) ?></h4>
+          <h4 class="font-body text-xl md:text-2xl font-semibold mb-3 md:mb-4 tracking-tight text-white"><?= e($dining_v2_title) ?></h4>
           <p class="font-body text-surface/60 leading-relaxed font-light"><?= e($dining_v2_body) ?></p>
         </div>
       </div>
@@ -387,12 +404,44 @@ $home_room_subtitle = static function (array $room): string {
       </div>
       <?php endif; ?>
     </div>
-    <div class="lg:w-2/3 w-full min-h-[320px] md:h-[500px] shadow-xl overflow-hidden grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-700">
-      <div class="w-full h-full min-h-[320px] md:min-h-[500px] bg-surface-container-highest p-2 md:p-3 flex">
+    <div class="lg:w-2/3 w-full min-h-[320px] md:h-[500px] shadow-xl overflow-hidden rounded-sm bg-surface-container-highest <?= $loc_show_map_embed ? '' : 'grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-700' ?>">
+      <div class="relative w-full h-full min-h-[320px] md:min-h-[500px] <?= $loc_show_map_embed ? '' : 'p-2 md:p-3 flex' ?>">
+        <?php if ($loc_show_map_embed): ?>
+        <iframe
+          class="absolute inset-0 h-full w-full border-0"
+          title="<?= e($loc_title) ?> — map"
+          src="<?= e($loc_map_iframe_src) ?>"
+          allowfullscreen
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+        <?php else: ?>
         <img class="w-full h-full object-cover min-h-[280px] md:min-h-[476px] flex-1" src="<?= e($loc_map) ?>" alt="" width="1200" height="800"/>
+        <?php endif; ?>
       </div>
     </div>
   </div>
 </section>
 
+<script>
+(function () {
+  var el = document.getElementById('homeRoomsScroller');
+  if (!el || el.dataset.roomsWheelBound === '1') return;
+  el.dataset.roomsWheelBound = '1';
+  el.addEventListener(
+    'wheel',
+    function (e) {
+      var maxScroll = el.scrollWidth - el.clientWidth;
+      if (maxScroll <= 0) return;
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+      var next = el.scrollLeft + e.deltaY;
+      var clamped = Math.max(0, Math.min(maxScroll, next));
+      if (clamped === el.scrollLeft && (e.deltaY < 0 ? el.scrollLeft <= 0 : el.scrollLeft >= maxScroll)) return;
+      el.scrollLeft = clamped;
+      e.preventDefault();
+    },
+    { passive: false }
+  );
+})();
+</script>
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
