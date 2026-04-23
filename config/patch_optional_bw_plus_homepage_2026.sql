@@ -43,6 +43,42 @@ INSERT IGNORE INTO `page_sections` (`page`, `section_key`, `content_type`, `cont
 ('index', 'home_location_map_embed_url', 'text', '', NOW()),
 ('index', 'booking_widget_html', 'html', '', NOW());
 
+-- Rooms listing page keys for redesigned /rooms (older installs).
+INSERT IGNORE INTO `page_sections` (`page`, `section_key`, `content_type`, `content`, `updated_at`) VALUES
+('rooms', 'hero_title', 'text', 'Rooms & Suites', NOW()),
+('rooms', 'hero_kicker', 'text', 'Accommodations', NOW()),
+('rooms', 'hero_subtitle', 'text', 'Sanctuaries of comfort on the shores of Oxbow Lake', NOW()),
+('rooms', 'compare_label', 'text', 'Compare all rooms', NOW()),
+('rooms', 'booking_checkin_label', 'text', 'Check-in', NOW()),
+('rooms', 'booking_checkin_value', 'text', 'Dec 14, 2024', NOW()),
+('rooms', 'booking_checkout_label', 'text', 'Check-out', NOW()),
+('rooms', 'booking_checkout_value', 'text', 'Dec 18, 2024', NOW()),
+('rooms', 'booking_guests_label', 'text', 'Guests', NOW()),
+('rooms', 'booking_guests_value', 'text', '2 Adults, 1 Room', NOW()),
+('rooms', 'booking_cta_label', 'text', 'Check Availability', NOW()),
+('rooms', 'signature_badge', 'text', 'Signature Suite', NOW()),
+('rooms', 'signature_kicker', 'text', 'The Pinnacle of Living', NOW()),
+('rooms', 'amenities_reminder_title', 'text', 'All suites include:', NOW()),
+('rooms', 'amenities_reminder_items_json', 'json', '["WIFI","BREAKFAST","TOILETRIES","TURNDOWN"]', NOW()),
+('rooms', 'final_cta_title', 'text', 'Need help choosing?', NOW()),
+('rooms', 'final_cta_body', 'text', 'Our dedicated concierge is available 24/7 to help you select the perfect sanctuary for your stay in Yenagoa.', NOW()),
+('rooms', 'final_cta_label', 'text', 'Contact Reservations', NOW()),
+('rooms', 'final_cta_href', 'text', '/contact', NOW());
+
+-- If hero_title was stored as HTML in legacy seeds, normalize to plain text for the new template.
+UPDATE `page_sections`
+SET `content_type` = 'text', `updated_at` = NOW()
+WHERE `page` = 'rooms' AND `section_key` = 'hero_title' AND `content_type` = 'html';
+
+-- Amenities page: bottom CTA copy (public page reads these; sections_json remains for modules).
+INSERT IGNORE INTO `page_sections` (`page`, `section_key`, `content_type`, `content`, `updated_at`) VALUES
+('amenities', 'cta_title', 'text', 'Ready to Experience Our Facilities?', NOW()),
+('amenities', 'cta_btn_label', 'text', 'Book Your Stay', NOW()),
+('amenities', 'cta_btn_href', 'text', '/contact', NOW()),
+('amenities', 'services_kicker', 'text', 'Impeccable Care', NOW()),
+('amenities', 'services_title', 'text', 'Signature Guest Services', NOW()),
+('amenities', 'services_items_json', 'json', '[{"title":"24h Concierge","subtitle":"Dedicated to your every whim"},{"title":"Airport Transfer","subtitle":"Luxury chauffeur fleet"},{"title":"Laundry & Press","subtitle":"Same-day valet service"},{"title":"High-Speed WiFi","subtitle":"Gigabit fiber throughout"},{"title":"Secure Parking","subtitle":"24/7 guarded premises"},{"title":"Room Service","subtitle":"Global dining 24/7"}]', NOW());
+
 -- Site settings used by the new header/footer and placeholders (INSERT IGNORE keeps custom values).
 INSERT IGNORE INTO `site_settings` (`setting_key`, `setting_value`, `updated_at`) VALUES
 ('site_brand_collection_line', 'Part of Best Western Plus Collection', NOW()),

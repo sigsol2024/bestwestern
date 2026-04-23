@@ -29,12 +29,104 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
         <input type="text" id="page_title" name="page_title" value="<?= sanitize($sectionsArray['page_title'] ?? 'Rooms & Suites') ?>">
       </div>
       <div class="form-group">
-        <label for="hero_title">Hero title (HTML)</label>
-        <textarea id="hero_title" name="hero_title" rows="3"><?= htmlspecialchars($sectionsArray['hero_title'] ?? 'Sanctuaries of <br/><span class="font-bold italic font-serif">Serenity</span>', ENT_QUOTES, 'UTF-8') ?></textarea>
+        <label for="hero_title">Hero title</label>
+        <input type="text" id="hero_title" name="hero_title" value="<?= sanitize($sectionsArray['hero_title'] ?? 'Rooms & Suites') ?>">
       </div>
       <div class="form-group">
         <label for="hero_subtitle">Hero subtitle</label>
         <textarea id="hero_subtitle" name="hero_subtitle" rows="3"><?= sanitize($sectionsArray['hero_subtitle'] ?? '') ?></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="hero_kicker">Hero/listing kicker</label>
+          <input type="text" id="hero_kicker" name="hero_kicker" value="<?= sanitize($sectionsArray['hero_kicker'] ?? 'Accommodations') ?>">
+        </div>
+        <div class="form-group">
+          <label for="compare_label">Filter bar compare label</label>
+          <input type="text" id="compare_label" name="compare_label" value="<?= sanitize($sectionsArray['compare_label'] ?? 'Compare all rooms') ?>">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="amenities_reminder_title">Amenities reminder title</label>
+        <input type="text" id="amenities_reminder_title" name="amenities_reminder_title" value="<?= sanitize($sectionsArray['amenities_reminder_title'] ?? 'All suites include:') ?>">
+      </div>
+      <div class="form-group">
+        <label for="amenities_reminder_items_json">Amenities reminder items (JSON array)</label>
+        <textarea id="amenities_reminder_items_json" name="amenities_reminder_items_json" rows="4" style="font-family:monospace;font-size:12px;"><?= htmlspecialchars($sectionsArray['amenities_reminder_items_json'] ?? '["WIFI","BREAKFAST","TOILETRIES","TURNDOWN"]', ENT_QUOTES, 'UTF-8') ?></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="final_cta_title">Final CTA title</label>
+          <input type="text" id="final_cta_title" name="final_cta_title" value="<?= sanitize($sectionsArray['final_cta_title'] ?? 'Need help choosing?') ?>">
+        </div>
+        <div class="form-group">
+          <label for="final_cta_label">Final CTA button label</label>
+          <input type="text" id="final_cta_label" name="final_cta_label" value="<?= sanitize($sectionsArray['final_cta_label'] ?? 'Contact Reservations') ?>">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="final_cta_href">Final CTA URL</label>
+          <input type="text" id="final_cta_href" name="final_cta_href" value="<?= sanitize($sectionsArray['final_cta_href'] ?? '/contact') ?>">
+        </div>
+        <div class="form-group">
+          <label for="final_cta_body">Final CTA body</label>
+          <textarea id="final_cta_body" name="final_cta_body" rows="2"><?= sanitize($sectionsArray['final_cta_body'] ?? 'Our dedicated concierge is available 24/7 to help you select the perfect sanctuary for your stay in Yenagoa.') ?></textarea>
+        </div>
+      </div>
+      <div class="card card--nested" style="margin-top:12px;">
+        <div class="card-header"><h3>Hero booking strip</h3></div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="booking_checkin_label">Check-in label</label>
+              <input type="text" id="booking_checkin_label" name="booking_checkin_label" value="<?= sanitize($sectionsArray['booking_checkin_label'] ?? 'Check-in') ?>">
+            </div>
+            <div class="form-group">
+              <label for="booking_checkin_value">Check-in value</label>
+              <input type="text" id="booking_checkin_value" name="booking_checkin_value" value="<?= sanitize($sectionsArray['booking_checkin_value'] ?? 'Dec 14, 2024') ?>">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="booking_checkout_label">Check-out label</label>
+              <input type="text" id="booking_checkout_label" name="booking_checkout_label" value="<?= sanitize($sectionsArray['booking_checkout_label'] ?? 'Check-out') ?>">
+            </div>
+            <div class="form-group">
+              <label for="booking_checkout_value">Check-out value</label>
+              <input type="text" id="booking_checkout_value" name="booking_checkout_value" value="<?= sanitize($sectionsArray['booking_checkout_value'] ?? 'Dec 18, 2024') ?>">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="booking_guests_label">Guests label</label>
+              <input type="text" id="booking_guests_label" name="booking_guests_label" value="<?= sanitize($sectionsArray['booking_guests_label'] ?? 'Guests') ?>">
+            </div>
+            <div class="form-group">
+              <label for="booking_guests_value">Guests value</label>
+              <input type="text" id="booking_guests_value" name="booking_guests_value" value="<?= sanitize($sectionsArray['booking_guests_value'] ?? '2 Adults, 1 Room') ?>">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="booking_cta_label">Booking button label</label>
+            <input type="text" id="booking_cta_label" name="booking_cta_label" value="<?= sanitize($sectionsArray['booking_cta_label'] ?? 'Check Availability') ?>">
+          </div>
+        </div>
+      </div>
+      <div class="card card--nested" style="margin-top:12px;">
+        <div class="card-header"><h3>Signature suite highlight</h3></div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="signature_badge">Badge</label>
+              <input type="text" id="signature_badge" name="signature_badge" value="<?= sanitize($sectionsArray['signature_badge'] ?? 'Signature Suite') ?>">
+            </div>
+            <div class="form-group">
+              <label for="signature_kicker">Kicker</label>
+              <input type="text" id="signature_kicker" name="signature_kicker" value="<?= sanitize($sectionsArray['signature_kicker'] ?? 'The Pinnacle of Living') ?>">
+            </div>
+          </div>
+        </div>
       </div>
       <div class="form-group">
         <label>Hero background</label>
@@ -73,7 +165,7 @@ window.insertSelectedMediaOverride = function () {
 };
 document.getElementById('roomsPageForm').addEventListener('submit', function (e) {
   e.preventDefault();
-  savePageForm(this, 'rooms', { hero_title: 'html' }, { pageActiveSettingKey: 'page_active_rooms' })
+  savePageForm(this, 'rooms', { amenities_reminder_items_json: 'json' }, { pageActiveSettingKey: 'page_active_rooms' })
     .then(function () { showToast('Saved', 'success'); })
     .catch(function (err) { showToast(err.message || 'Save failed', 'error'); });
 });

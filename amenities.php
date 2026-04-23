@@ -2,53 +2,49 @@
 require_once __DIR__ . '/includes/content-loader.php';
 
 $cmsDefaults = require __DIR__ . '/includes/cms-defaults.php';
-$pageTitle = getPageSection('amenities', 'page_title', 'Hotel Amenities');
-
+$pageTitle = getPageSection('amenities', 'page_title', 'Facilities & Amenities');
+$ctaTitle = getPageSection('amenities', 'cta_title', 'Ready to Experience Our Facilities?');
+$ctaBtnLabel = getPageSection('amenities', 'cta_btn_label', 'Book Your Stay');
+$ctaBtnHref = getPageSection('amenities', 'cta_btn_href', '/contact');
+$servicesTitle = getPageSection('amenities', 'services_title', 'Signature Guest Services');
+$servicesKicker = getPageSection('amenities', 'services_kicker', 'Impeccable Care');
+$servicesRaw = (string)getPageSection('amenities', 'services_items_json', '');
+$servicesItems = json_decode($servicesRaw, true);
+if (!is_array($servicesItems) || $servicesItems === []) {
+    $servicesItems = [
+        ['title' => '24h Concierge', 'subtitle' => 'Dedicated to your every whim'],
+        ['title' => 'Airport Transfer', 'subtitle' => 'Luxury chauffeur fleet'],
+        ['title' => 'Laundry & Press', 'subtitle' => 'Same-day valet service'],
+        ['title' => 'High-Speed WiFi', 'subtitle' => 'Gigabit fiber throughout'],
+        ['title' => 'Secure Parking', 'subtitle' => '24/7 guarded premises'],
+        ['title' => 'Room Service', 'subtitle' => 'Global dining 24/7'],
+    ];
+}
 $raw = getPageSection('amenities', 'sections_json', '');
 $sections = json_decode($raw, true);
-if (!is_array($sections) || count($sections) === 0) {
+if (!is_array($sections) || $sections === []) {
     $sections = $cmsDefaults['amenities_sections'];
 }
 
-function amenities_inner_wrap_class($layout) {
-    switch ($layout) {
-        case 'right':
-            return 'flex-col justify-center items-end text-right max-w-[1920px] mx-auto';
-        case 'top':
-            return 'flex-col justify-start items-start max-w-[1920px] mx-auto pt-32 md:pt-40';
-        case 'center':
-            return 'flex-col justify-end items-center text-center max-w-[1920px] mx-auto';
-        default:
-            return 'flex-col justify-end items-start max-w-[1920px] mx-auto';
-    }
-}
+$pickSection = static function (int $idx) use ($sections): array {
+    return isset($sections[$idx]) && is_array($sections[$idx]) ? $sections[$idx] : [];
+};
 
-function amenities_kicker_row_class($layout) {
-    if ($layout === 'right') {
-        return 'flex items-center gap-4 text-white/60 mb-2 flex-row-reverse';
-    }
-    if ($layout === 'center') {
-        return 'flex items-center gap-4 text-white/60 mb-2';
-    }
-    return 'flex items-center gap-4 text-white/60 mb-2';
-}
+$hero = $pickSection(0);
+$dining1 = $pickSection(1);
+$dining2 = $pickSection(2);
+$wellness1 = $pickSection(3);
+$wellness2 = $pickSection(4);
+$wellness3 = $pickSection(5);
+$business = $pickSection(6);
 
-function amenities_title_wrap_class($layout) {
-    return $layout === 'right' ? 'flex-col items-end gap-2' : 'flex-col gap-2';
-}
-
-function amenities_body_class($layout) {
-    if ($layout === 'right') {
-        return 'text-white/90 text-lg md:text-xl font-light leading-relaxed max-w-md border-r-2 border-primary pr-6 mt-4';
-    }
-    if ($layout === 'center') {
-        return 'text-white/80 text-lg md:text-xl font-light leading-relaxed max-w-lg';
-    }
-    if ($layout === 'top') {
-        return 'text-white/90 text-lg md:text-xl font-light leading-relaxed max-w-md mt-4';
-    }
-    return 'text-white/90 text-lg md:text-xl font-light leading-relaxed max-w-md border-l-2 border-primary pl-6 mt-4';
-}
+$sectionImage = static function (array $sec, string $fallback = ''): string {
+    $bg = trim((string)($sec['bg'] ?? ''));
+    if ($bg !== '') return $bg;
+    if (!empty($sec['gallery'][0]) && is_string($sec['gallery'][0])) return trim((string)$sec['gallery'][0]);
+    if (!empty($sec['gallery_images'][0]) && is_string($sec['gallery_images'][0])) return trim((string)$sec['gallery_images'][0]);
+    return $fallback;
+};
 ?>
 <!DOCTYPE html>
 <html class="light" lang="en">
@@ -57,201 +53,108 @@ function amenities_body_class($layout) {
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title><?= e($pageTitle) ?></title>
   <?php require_once __DIR__ . '/includes/head-header.php'; ?>
-  <style>
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: #221d10; }
-    ::-webkit-scrollbar-thumb { background: #411d13; border-radius: 4px; }
-    .amenity-section { scroll-snap-align: start; scroll-snap-stop: normal; }
-    html { scroll-snap-type: y proximity; scroll-behavior: smooth; }
-    .text-outline { text-shadow: 0px 0px 1px rgba(255,255,255,0.3); }
-    .site-modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.72); backdrop-filter: blur(8px); display:none; z-index: 9999; }
-    .site-modal-backdrop.open { display: flex; }
-    /* Prevent modal from exceeding viewport height.
-       Use an explicit height so the main image area doesn't collapse (absolute children don't size parents). */
-    .site-amenities-modal-panel { height: 90vh; max-height: 90vh; }
-    .site-amenities-modal-body { min-height: 280px; }
-  </style>
+  <style>.editorial-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:3rem;}</style>
 </head>
-<body class="bg-background-light dark:bg-background-dark font-display antialiased overflow-x-hidden">
+<body class="bg-surface text-on-surface font-body selection:bg-secondary-fixed selection:text-on-secondary-fixed">
 <?php require_once __DIR__ . '/includes/header.php'; ?>
-
-<main class="w-full flex flex-col">
-  <?php foreach ($sections as $sec):
-    $bg = (string)($sec['bg'] ?? '');
-    $gradient = (string)($sec['gradient'] ?? 'linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7))');
-    $kicker = (string)($sec['kicker'] ?? '');
-    $kickerDisplay = preg_replace('/^\s*\d+\s*\/\s*/', '', $kicker);
-    $icon = (string)($sec['icon'] ?? 'star');
-    $titleHtml = (string)($sec['title_html'] ?? '');
-    $body = (string)($sec['body'] ?? '');
-    $btnHref = (string)($sec['btn_href'] ?? '#');
-    $gallery = $sec['gallery'] ?? ($sec['gallery_images'] ?? []);
-    if (!is_array($gallery)) { $gallery = []; }
-    $gallery = array_values(array_filter(array_map(static function ($p) {
-        return is_string($p) ? trim($p) : '';
-    }, $gallery), static function ($p) { return $p !== ''; }));
-    $galleryJsonAttr = htmlspecialchars(json_encode($gallery, JSON_UNESCAPED_SLASHES), ENT_QUOTES, 'UTF-8');
-    $layout = (string)($sec['layout'] ?? 'bottom');
-    $inner = amenities_inner_wrap_class($layout);
-    $zPad = ($layout === 'top') ? 'p-8 md:p-20 pt-32 md:pt-40 md:pb-[85px]' : 'p-8 md:p-20 md:pb-[85px]';
-    ?>
-  <section class="amenity-section relative w-full h-screen min-h-[700px] flex group overflow-hidden">
-    <div class="absolute inset-0 z-0 transition-transform duration-1000 group-hover:scale-105 bg-cover bg-center bg-no-repeat"
-         style="background-image: <?= e($gradient) ?>, url('<?= e($bg) ?>');">
+<main>
+  <section class="relative h-[85vh] flex items-center overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <img class="w-full h-full object-cover brightness-[0.85]" src="<?= e($sectionImage($hero)) ?>" alt="<?= e((string)($hero['kicker'] ?? 'Amenities')) ?>">
+      <div class="absolute inset-0 bg-gradient-to-t from-[#0B1F3A]/30 to-transparent"></div>
     </div>
-    <div class="relative z-10 w-full h-full <?= $zPad ?> flex <?= $inner ?>">
-      <div class="flex flex-col gap-6 max-w-2xl <?= $layout === 'center' ? 'items-center max-w-3xl' : ($layout === 'right' ? 'items-end' : ($layout === 'top' ? 'items-start' : '')) ?>">
-        <div class="<?= e(amenities_kicker_row_class($layout)) ?>">
-          <span class="text-xs font-bold tracking-[0.3em] uppercase"><?= e((string)$kickerDisplay) ?></span>
-          <div class="h-[1px] w-12 bg-white/40"></div>
-        </div>
-        <div class="<?= e(amenities_title_wrap_class($layout)) ?>">
-          <span class="material-symbols-outlined text-5xl md:text-6xl text-white/90 font-light mb-4"><?= e($icon) ?></span>
-          <h1 class="text-white text-6xl md:text-8xl font-light leading-[0.9] tracking-tighter">
-            <?= $titleHtml ?>
-          </h1>
-        </div>
-        <p class="<?= e(amenities_body_class($layout)) ?>">
-          <?= e($body) ?>
-        </p>
-        <?php
-          $btnIcon = ($layout === 'center') ? 'arrow_outward' : (($layout === 'top') ? 'water_drop' : 'arrow_forward');
-          $btnBaseClass = ($layout === 'center')
-            ? 'inline-flex w-fit items-center gap-3 px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/30 text-white rounded font-bold hover:bg-white/20 transition-all duration-300'
-            : 'mt-[-3px] inline-flex w-fit items-center gap-3 px-8 py-4 bg-white/10 backdrop-blur-sm border border-white/30 text-white rounded hover:bg-white/20 transition-all duration-300 group/btn';
-        ?>
-        <button class="<?= e($btnBaseClass) ?> js-amenity-gallery-btn"
-                type="button"
-                data-gallery="<?= $galleryJsonAttr ?>"
-                data-fallback-href="<?= e(site_href($btnHref)) ?>">
-          <span class="text-sm font-bold tracking-[0.1em] uppercase">View Gallery</span>
-          <span class="material-symbols-outlined text-lg <?= $layout === 'center' ? '' : 'group-hover/btn:translate-x-1 transition-transform' ?>"><?= e($btnIcon) ?></span>
-        </button>
+    <div class="relative z-10 w-full px-12 max-w-screen-2xl mx-auto py-24">
+      <div class="max-w-4xl">
+        <span class="text-secondary uppercase tracking-[0.4em] text-[10px] mb-8 block"><?= e((string)($hero['kicker'] ?? 'The Sovereign Experience')) ?></span>
+        <h1 class="text-white font-headline text-7xl md:text-9xl font-light leading-tight mb-10"><?= (string)($hero['title_html'] ?? 'Facilities & Amenities') ?></h1>
+        <p class="text-white/90 text-xl max-w-xl leading-relaxed font-light"><?= e((string)($hero['body'] ?? 'Everything you need for business, leisure, and wellness.')) ?></p>
       </div>
     </div>
   </section>
-  <?php endforeach; ?>
-</main>
 
-<!-- Gallery modal (per section) -->
-<div id="amenitiesGalleryModal" class="site-modal-backdrop items-center justify-center p-4" role="dialog" aria-modal="true" aria-hidden="true">
-  <div class="site-amenities-modal-panel w-full max-w-5xl bg-black/70 border border-white/10 rounded-2xl overflow-hidden shadow-2xl flex flex-col">
-    <div class="flex items-center justify-between px-5 py-4 border-b border-white/10">
-      <div class="text-white/80 text-xs font-bold tracking-[0.25em] uppercase">
-        Gallery <span id="amenitiesGalleryCount" class="text-white/60"></span>
+  <section class="py-40 px-12 max-w-screen-2xl mx-auto" id="dining">
+    <div class="editorial-grid mb-48 gap-20">
+      <div class="col-span-12 lg:col-span-7"><img class="w-full aspect-[4/3] object-cover" src="<?= e($sectionImage($dining1)) ?>" alt="<?= e((string)($dining1['kicker'] ?? 'Dining')) ?>"></div>
+      <div class="col-span-12 lg:col-span-5 flex flex-col justify-center md:px-8">
+        <span class="text-secondary text-[10px] tracking-[0.3em] uppercase mb-6"><?= e((string)($dining1['kicker'] ?? 'Native Flavors')) ?></span>
+        <h2 class="font-headline text-4xl md:text-5xl mb-6 font-light"><?= (string)($dining1['title_html'] ?? 'Dining Experience') ?></h2>
+        <p class="text-on-surface-variant text-lg leading-relaxed mb-8"><?= e((string)($dining1['body'] ?? '')) ?></p>
       </div>
-      <button type="button" id="amenitiesGalleryClose" class="text-white/70 hover:text-white transition-colors">
-        <span class="material-symbols-outlined">close</span>
-      </button>
     </div>
-    <div class="site-amenities-modal-body relative w-full bg-black flex-1">
-      <img id="amenitiesGalleryImg" src="" alt="Gallery image" class="absolute inset-0 w-full h-full object-contain"/>
-      <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent pointer-events-none"></div>
-      <button type="button" id="amenitiesGalleryPrev" class="absolute left-3 top-1/2 -translate-y-1/2 size-12 rounded-full bg-white/10 border border-white/15 text-white hover:bg-white/20 backdrop-blur-sm transition-colors flex items-center justify-center">
-        <span class="material-symbols-outlined">chevron_left</span>
-      </button>
-      <button type="button" id="amenitiesGalleryNext" class="absolute right-3 top-1/2 -translate-y-1/2 size-12 rounded-full bg-white/10 border border-white/15 text-white hover:bg-white/20 backdrop-blur-sm transition-colors flex items-center justify-center">
-        <span class="material-symbols-outlined">chevron_right</span>
-      </button>
+
+    <div class="editorial-grid items-center mb-48 gap-20">
+      <div class="col-span-12 lg:col-span-5 flex flex-col md:px-8">
+        <span class="text-secondary text-[10px] tracking-[0.3em] uppercase mb-6"><?= e((string)($dining2['kicker'] ?? 'Oriental Mastery')) ?></span>
+        <h2 class="font-headline text-4xl md:text-5xl mb-6 font-light"><?= (string)($dining2['title_html'] ?? 'Red Lotus') ?></h2>
+        <p class="text-on-surface-variant text-lg leading-relaxed mb-8"><?= e((string)($dining2['body'] ?? '')) ?></p>
+      </div>
+      <div class="col-span-12 lg:col-span-7"><img class="w-full aspect-[16/9] object-cover" src="<?= e($sectionImage($dining2)) ?>" alt="<?= e((string)($dining2['kicker'] ?? 'Dining')) ?>"></div>
     </div>
-    <div class="px-5 py-4 bg-black/50 border-t border-white/10 shrink-0">
-      <div id="amenitiesGalleryThumbs" class="flex gap-3 overflow-x-auto pb-1 max-h-24"></div>
+  </section>
+
+  <section class="bg-[#0B1F3A] text-white py-40" id="wellness">
+    <div class="max-w-screen-2xl mx-auto px-12">
+      <div class="mb-32 text-center">
+        <span class="text-secondary uppercase tracking-[0.4em] text-[10px] mb-6 block"><?= e((string)($wellness1['kicker'] ?? 'Rejuvenation')) ?></span>
+        <h2 class="font-headline text-5xl md:text-7xl font-light italic"><?= (string)($wellness1['title_html'] ?? 'The Vitality Sanctuary') ?></h2>
+      </div>
+      <div class="space-y-40">
+        <?php foreach ([$wellness1, $wellness2, $wellness3] as $wi => $sec): ?>
+        <div class="editorial-grid items-center">
+          <div class="col-span-12 lg:col-span-7 <?= $wi % 2 ? 'lg:order-2' : '' ?>">
+            <img class="w-full aspect-video object-cover" src="<?= e($sectionImage($sec)) ?>" alt="<?= e((string)($sec['kicker'] ?? 'Wellness')) ?>">
+          </div>
+          <div class="col-span-12 lg:col-span-5 <?= $wi % 2 ? 'lg:order-1' : 'lg:pl-12' ?>">
+            <h3 class="font-headline text-4xl mb-6 font-light"><?= (string)($sec['title_html'] ?? 'Feature') ?></h3>
+            <p class="text-white/70 font-light text-lg leading-relaxed"><?= e((string)($sec['body'] ?? '')) ?></p>
+          </div>
+        </div>
+        <?php endforeach; ?>
+      </div>
     </div>
-  </div>
-</div>
+  </section>
 
-<script>
-(function () {
-  var modal = document.getElementById('amenitiesGalleryModal');
-  var imgEl = document.getElementById('amenitiesGalleryImg');
-  var thumbsEl = document.getElementById('amenitiesGalleryThumbs');
-  var countEl = document.getElementById('amenitiesGalleryCount');
-  var closeBtn = document.getElementById('amenitiesGalleryClose');
-  var prevBtn = document.getElementById('amenitiesGalleryPrev');
-  var nextBtn = document.getElementById('amenitiesGalleryNext');
+  <section class="py-40 bg-surface" id="business">
+    <div class="max-w-screen-2xl mx-auto px-12">
+      <div class="flex flex-col md:flex-row justify-between items-end mb-32 gap-12">
+        <div class="max-w-xl">
+          <span class="text-secondary uppercase tracking-[0.4em] text-[10px] mb-6 block"><?= e((string)($business['kicker'] ?? 'Corporate Excellence')) ?></span>
+          <h2 class="font-headline text-5xl font-light"><?= (string)($business['title_html'] ?? 'Meetings & Events') ?></h2>
+        </div>
+        <p class="text-on-surface-variant max-w-sm text-lg leading-relaxed font-light"><?= e((string)($business['body'] ?? 'Host with confidence in our versatile meeting spaces.')) ?></p>
+      </div>
+      <img class="w-full aspect-[21/9] object-cover" src="<?= e($sectionImage($business)) ?>" alt="<?= e((string)($business['kicker'] ?? 'Business')) ?>">
+    </div>
+  </section>
 
-  if (!modal || !imgEl || !thumbsEl || !closeBtn || !prevBtn || !nextBtn) return;
+  <section class="py-40 bg-surface-container-low" id="services">
+    <div class="max-w-screen-2xl mx-auto px-12">
+      <div class="text-center mb-32">
+        <span class="text-secondary uppercase tracking-[0.4em] text-[10px] mb-6 block"><?= e($servicesKicker) ?></span>
+        <h2 class="font-headline text-4xl md:text-5xl font-light italic"><?= e($servicesTitle) ?></h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-x-24 gap-y-24">
+        <?php foreach ($servicesItems as $srv):
+          $st = trim((string)($srv['title'] ?? ''));
+          if ($st === '') { continue; }
+          $sb = trim((string)($srv['subtitle'] ?? $srv['body'] ?? ''));
+        ?>
+        <div class="text-center">
+          <span class="font-headline text-2xl mb-4 block"><?= e($st) ?></span>
+          <?php if ($sb !== ''): ?>
+          <p class="text-[10px] text-on-surface-variant uppercase tracking-[0.3em] leading-relaxed"><?= e($sb) ?></p>
+          <?php endif; ?>
+        </div>
+        <?php endforeach; ?>
+      </div>
+    </div>
+  </section>
 
-  var images = [];
-  var idx = 0;
-
-  function normSrc(p) {
-    if (!p) return '';
-    if (String(p).indexOf('http') === 0) return String(p);
-    return '<?= rtrim((string)(defined('SITE_URL') ? SITE_URL : ''), '/') ?>/' + String(p).replace(/^\/+/, '');
-  }
-
-  function render() {
-    if (!images.length) {
-      imgEl.removeAttribute('src');
-      imgEl.style.display = 'none';
-      prevBtn.style.display = 'none';
-      nextBtn.style.display = 'none';
-      countEl.textContent = '';
-      thumbsEl.innerHTML = '<div style="color: rgba(255,255,255,0.7); font-size: 14px; padding: 18px 4px;">No gallery images yet.</div>';
-      return;
-    }
-    imgEl.style.display = 'block';
-    prevBtn.style.display = '';
-    nextBtn.style.display = '';
-    idx = (idx + images.length) % images.length;
-    imgEl.src = normSrc(images[idx]);
-    countEl.textContent = (idx + 1) + ' / ' + images.length;
-    Array.prototype.forEach.call(thumbsEl.querySelectorAll('button[data-i]'), function (b) {
-      b.classList.toggle('ring-2', parseInt(b.getAttribute('data-i'), 10) === idx);
-      b.classList.toggle('ring-white/70', parseInt(b.getAttribute('data-i'), 10) === idx);
-    });
-  }
-
-  function open(gallery, fallbackHref) {
-    images = Array.isArray(gallery) ? gallery.filter(Boolean) : [];
-    idx = 0;
-    thumbsEl.innerHTML = '';
-    images.forEach(function (p, i) {
-      var btn = document.createElement('button');
-      btn.type = 'button';
-      btn.setAttribute('data-i', String(i));
-      btn.className = 'shrink-0 rounded-lg overflow-hidden border border-white/10 ring-offset-0';
-      btn.style.width = '84px';
-      btn.style.height = '56px';
-      btn.innerHTML = '<img src="' + normSrc(p).replace(/"/g, '&quot;') + '" alt="" style="width:100%;height:100%;object-fit:cover;display:block;" />';
-      btn.addEventListener('click', function () { idx = i; render(); });
-      thumbsEl.appendChild(btn);
-    });
-
-    modal.classList.add('open');
-    modal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-    render();
-  }
-
-  function close() {
-    modal.classList.remove('open');
-    modal.setAttribute('aria-hidden', 'true');
-    document.body.style.overflow = '';
-  }
-
-  document.querySelectorAll('.js-amenity-gallery-btn').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var raw = btn.getAttribute('data-gallery') || '[]';
-      var fallbackHref = btn.getAttribute('data-fallback-href') || '';
-      var g;
-      try { g = JSON.parse(raw); } catch (e) { g = []; }
-      open(g, fallbackHref);
-    });
-  });
-
-  closeBtn.addEventListener('click', close);
-  modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
-  prevBtn.addEventListener('click', function () { idx--; render(); });
-  nextBtn.addEventListener('click', function () { idx++; render(); });
-  document.addEventListener('keydown', function (e) {
-    if (!modal.classList.contains('open')) return;
-    if (e.key === 'Escape') close();
-    if (e.key === 'ArrowLeft') { idx--; render(); }
-    if (e.key === 'ArrowRight') { idx++; render(); }
-  });
-})();
-</script>
-
+  <section class="py-60 bg-surface text-center">
+    <div class="max-w-3xl mx-auto px-6">
+      <h2 class="font-headline text-5xl md:text-6xl font-light mb-10"><?= e($ctaTitle) ?></h2>
+      <a class="inline-block bg-secondary text-on-secondary px-16 py-6 uppercase tracking-[0.3em] text-[10px] hover:bg-primary hover:text-white transition-all" href="<?= e(site_href($ctaBtnHref)) ?>"><?= e($ctaBtnLabel) ?></a>
+    </div>
+  </section>
+</main>
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

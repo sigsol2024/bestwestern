@@ -111,6 +111,9 @@ function shouldAllowMultipleSelection(targetInputId) {
     'gallery_images',
     'hero_bg_slides_pick'
   ];
+  if (targetInputId.includes('_gallery_images')) {
+    return true;
+  }
   return multipleFields.some(field => targetInputId === field || targetInputId.includes(field));
 }
 

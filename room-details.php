@@ -94,7 +94,33 @@ $includedItems = array_values(array_filter(array_map(function ($i) {
     return is_string($i) ? trim($i) : '';
 }, $includedItems), fn ($x) => $x !== ''));
 
-// Legacy guest info (good_to_know) removed from public page.
+$gk = $room['good_to_know'] ?? [];
+if (is_string($gk)) {
+    $decodedGk = json_decode($gk, true);
+    $gk = is_array($decodedGk) ? $decodedGk : [];
+} elseif (!is_array($gk)) {
+    $gk = [];
+}
+
+$expHeading = trim((string)($gk['experience_heading'] ?? '')) ?: 'The Experience';
+$whoHeading = trim((string)($gk['who_heading'] ?? '')) ?: "Who it's for";
+$viewHeading = trim((string)($gk['view_heading'] ?? '')) ?: 'The View';
+$whoBody = trim((string)($gk['who_body'] ?? ''));
+$viewBody = trim((string)($gk['view_body'] ?? ''));
+$testimonialQuote = trim((string)($gk['testimonial_quote'] ?? ''));
+$testimonialBy = trim((string)($gk['testimonial_by'] ?? ''));
+$floorPlanUrl = trim((string)($gk['floor_plan_url'] ?? ''));
+$bookingBadge = trim((string)($gk['booking_badge'] ?? ''));
+$rateLabel = trim((string)($gk['rate_label'] ?? '')) ?: 'Standard Rate';
+$panelFootnote = trim((string)($gk['panel_footnote'] ?? ''));
+$trendingMessage = trim((string)($gk['trending_message'] ?? ''));
+$bookingCheckinDefault = trim((string)($gk['booking_checkin_default'] ?? ''));
+$bookingCheckoutDefault = trim((string)($gk['booking_checkout_default'] ?? ''));
+$bookingGuestsDefault = trim((string)($gk['booking_guests_default'] ?? ''));
+$bookingTrustLine = trim((string)($gk['booking_trust_line'] ?? ''));
+$bookingTrustSubline = trim((string)($gk['booking_trust_subline'] ?? ''));
+
+$urgencyMessage = trim((string)($room['urgency_message'] ?? ''));
 
 $amenitiesRaw = is_array($room['amenities'] ?? null) ? $room['amenities'] : [];
 $amenityCards = [];
@@ -139,220 +165,274 @@ $occupancyLabel = $maxGuests > 0
   <title><?= e($pageTitle) ?></title>
   <?php require_once __DIR__ . '/includes/head-header.php'; ?>
   <style>
-    .glass-panel {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-top: 1px solid rgba(255, 255, 255, 0.3);
-    }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .slider-dot.active { background-color: #fff; width: 2rem; }
   </style>
 </head>
-<body class="bg-background-light dark:bg-background-dark text-text-main font-display antialiased overflow-x-hidden selection:bg-primary/30">
+<body class="bg-surface text-on-surface font-body selection:bg-secondary-container selection:text-on-secondary-container overflow-x-hidden">
 <?php require_once __DIR__ . '/includes/header.php'; ?>
 
-<main class="w-full pt-20 pb-32">
-  <section class="relative w-full h-[85vh] min-h-[600px] bg-background-light overflow-hidden flex items-center justify-center">
-    <div class="absolute inset-0 w-full h-full z-0">
-      <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60 z-10"></div>
-      <div class="w-full h-full bg-cover bg-center bg-no-repeat transform scale-105"
-           data-alt="<?= e($title) ?>"
-           style="background-image: url('<?= e($images[0] ?? '') ?>');"></div>
+<main class="pt-20">
+  <section class="relative h-[85vh] w-full overflow-hidden group">
+    <div class="flex h-full w-full overflow-x-auto snap-x snap-mandatory hide-scrollbar" id="hero-slider">
+      <?php foreach ($images as $img): ?>
+      <div class="flex-none w-full h-full snap-start relative">
+        <img class="w-full h-full object-cover" src="<?= e($img) ?>" alt="<?= e($title) ?>">
+        <div class="absolute inset-0 bg-black/35"></div>
+      </div>
+      <?php endforeach; ?>
     </div>
 
-    <div class="relative z-20 text-center px-6 max-w-5xl mx-auto flex flex-col items-center gap-6">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/30 bg-white/10 backdrop-blur-sm text-white mb-2">
-        <span class="text-xs font-bold tracking-[0.15em] uppercase"><?= e($heroBadge) ?></span>
-      </div>
-      <h1 class="text-white text-5xl md:text-7xl lg:text-8xl font-medium tracking-tight leading-[1.1]">
-        <?= e($title) ?><?php if ($roomType !== ''): ?><br/><span class="font-serif italic text-primary"><?= e($roomType) ?></span><?php endif; ?>
-      </h1>
-      <div class="mt-8 flex flex-col md:flex-row gap-4 items-center">
-        <?php if (count($images) > 1): ?>
-        <a class="h-12 px-8 bg-primary hover:bg-primary-light text-white rounded-lg text-sm font-bold tracking-wide transition-all transform hover:scale-105 flex items-center gap-2"
-           href="#gallery">
-          <span>View Gallery</span>
-          <span class="material-symbols-outlined text-lg">arrow_forward</span>
-        </a>
-        <?php endif; ?>
-      </div>
-    </div>
-    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 animate-bounce text-white/70">
-      <a href="#concept" class="inline-flex" aria-label="Scroll to details">
-        <span class="material-symbols-outlined text-3xl">keyboard_arrow_down</span>
-      </a>
-    </div>
-  </section>
+    <?php if (count($images) > 1): ?>
+    <button type="button" class="absolute left-10 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center text-white/50 hover:text-white transition-colors z-20 group-hover:opacity-100 opacity-0 duration-500" id="heroPrevBtn">
+      <span class="material-symbols-outlined !text-4xl font-extralight">west</span>
+    </button>
+    <button type="button" class="absolute right-10 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center text-white/50 hover:text-white transition-colors z-20 group-hover:opacity-100 opacity-0 duration-500" id="heroNextBtn">
+      <span class="material-symbols-outlined !text-4xl font-extralight">east</span>
+    </button>
+    <div class="absolute bottom-12 left-1/2 -translate-x-1/2 flex gap-4 z-20" id="heroDotsWrap"></div>
+    <?php endif; ?>
 
-  <?php if ($conceptQuote !== ''): ?>
-  <section id="concept" class="px-6 py-20 md:py-32 max-w-4xl mx-auto text-center">
-    <span class="block text-primary text-sm font-bold tracking-[0.2em] uppercase mb-6">The Concept</span>
-    <h2 class="text-3xl md:text-5xl font-light leading-tight text-text-main font-serif">
-      <?= e($conceptQuote) ?>
-    </h2>
-  </section>
-  <?php endif; ?>
-
-  <section class="max-w-[1440px] mx-auto px-6 lg:px-12 pb-24">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24">
-      <div class="lg:col-span-5 relative min-w-0 w-full">
-        <div class="sticky top-24 md:top-32 min-h-[300px] h-[52vh] max-h-[600px] md:h-[600px] w-full rounded-2xl overflow-hidden shadow-2xl">
-          <div class="w-full min-h-[300px] h-full bg-cover bg-center"
-               data-alt="<?= e($title) ?>"
-               style="background-image: url('<?= e($stickyImage) ?>');"></div>
-        </div>
-      </div>
-
-      <div class="lg:col-span-7 flex flex-col gap-20 py-8 lg:py-0">
-        <div class="flex flex-col gap-6">
-          <div class="flex items-center gap-4 mb-2">
-            <span class="h-[1px] w-12 bg-primary"></span>
-            <span class="text-xs font-bold tracking-[0.2em] text-text-muted uppercase">Architecture</span>
-          </div>
-          <h3 class="text-4xl font-medium text-text-main">The Space</h3>
-          <?php if ($spacePara !== ''): ?>
-          <p class="text-lg leading-relaxed text-[#5a5445]"><?= nl2br(e($spacePara)) ?></p>
-          <?php endif; ?>
-
-          <?php if (!empty($featureChips)): ?>
-          <div class="mt-6 flex flex-wrap gap-2">
-            <?php foreach (array_slice($featureChips, 0, 10) as $chip): ?>
-              <span class="text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-[#e5e5e5] bg-white/70"><?= e($chip) ?></span>
-            <?php endforeach; ?>
-          </div>
-          <?php endif; ?>
-          <ul class="grid grid-cols-2 gap-y-4 gap-x-8 mt-4 border-t border-[#e5e5e5] pt-6">
-            <li class="flex flex-col gap-1">
-              <span class="text-xs text-text-muted uppercase tracking-wide">Size</span>
-              <span class="font-bold text-text-main"><?= e($size !== '' ? $size : '—') ?></span>
-            </li>
-            <li class="flex flex-col gap-1">
-              <span class="text-xs text-text-muted uppercase tracking-wide">Occupancy</span>
-              <span class="font-bold text-text-main"><?= e($occupancyLabel) ?></span>
-            </li>
-            <li class="flex flex-col gap-1">
-              <span class="text-xs text-text-muted uppercase tracking-wide">View</span>
-              <span class="font-bold text-text-main"><?= e($view !== '' ? $view : '—') ?></span>
-            </li>
-            <li class="flex flex-col gap-1">
-              <span class="text-xs text-text-muted uppercase tracking-wide">Bed</span>
-              <span class="font-bold text-text-main"><?= e($bed !== '' ? $bed : '—') ?></span>
-            </li>
-          </ul>
-        </div>
-
-        <?php if ($mobileDividerImage !== ''): ?>
-        <div class="block lg:hidden h-[300px] w-full rounded-xl overflow-hidden my-4">
-          <div class="w-full h-full bg-cover bg-center"
-               style="background-image: url('<?= e($mobileDividerImage) ?>');"></div>
-        </div>
-        <?php endif; ?>
-
-        <div class="flex flex-col gap-6">
-          <div class="flex items-center gap-4 mb-2">
-            <span class="h-[1px] w-12 bg-primary"></span>
-            <span class="text-xs font-bold tracking-[0.2em] text-text-muted uppercase">Service</span>
-          </div>
-          <h3 class="text-4xl font-medium text-text-main">The Experience</h3>
-          <?php if ($experiencePara !== ''): ?>
-          <p class="text-lg leading-relaxed text-[#5a5445]"><?= nl2br(e($experiencePara)) ?></p>
-          <?php endif; ?>
-
-          <?php if (!empty($includedItems)): ?>
-          <div class="bg-[#f4f3f0] p-6 rounded-xl mt-4 border border-[#e5e4e0]">
-            <h4 class="font-bold text-text-main mb-2 flex items-center gap-2">
-              <span class="material-symbols-outlined text-primary">verified</span>
-              Included Privileges
-            </h4>
-            <ul class="space-y-3 mt-4 text-sm text-[#5a5445]">
-              <?php foreach ($includedItems as $item): ?>
-              <li class="flex items-start gap-3">
-                <span class="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0"></span>
-                <span><?= e($item) ?></span>
-              </li>
-              <?php endforeach; ?>
-            </ul>
-          </div>
-          <?php endif; ?>
+    <div class="absolute inset-0 pointer-events-none flex items-end pb-32 px-6 md:px-12 max-w-screen-2xl mx-auto left-0 right-0">
+      <div class="max-w-3xl text-white pointer-events-auto">
+        <span class="font-body uppercase tracking-[0.5em] text-[10px] font-bold mb-6 block opacity-80"><?= e($heroBadge) ?></span>
+        <h1 class="font-headline text-5xl md:text-7xl lg:text-8xl leading-[1.1] mb-8"><?= e($title) ?></h1>
+        <div class="flex items-center gap-8">
+          <a class="text-[10px] font-bold tracking-[0.3em] uppercase border-b border-white/30 pb-1 hover:border-white transition-all" href="#suiteDetails">View Details</a>
+          <a class="text-[10px] font-bold tracking-[0.3em] uppercase border-b border-white/30 pb-1 hover:border-white transition-all" href="<?= e($bookUrl) ?>">Reserve</a>
         </div>
       </div>
     </div>
   </section>
 
-  <?php if (!empty($amenityCards)): ?>
-  <section class="w-full bg-background-dark text-white py-24">
-    <div class="max-w-[1440px] mx-auto px-6 lg:px-12">
-      <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+  <div id="suiteDetails" class="max-w-screen-2xl mx-auto px-6 md:px-12 py-24 grid grid-cols-12 gap-16">
+    <div class="col-span-12 lg:col-span-8 space-y-24">
+      <div class="flex flex-wrap items-center gap-x-8 gap-y-4 py-8 border-y border-outline-variant/20">
+        <div class="text-[11px] uppercase tracking-[0.3em] font-bold text-primary"><?= e($size !== '' ? $size : 'Suite') ?></div>
+        <div class="w-px h-4 bg-outline-variant/50 hidden md:block"></div>
+        <div class="text-[11px] uppercase tracking-[0.3em] font-bold text-primary"><?= e($view !== '' ? $view : 'Premium View') ?></div>
+        <div class="w-px h-4 bg-outline-variant/50 hidden md:block"></div>
+        <div class="text-[11px] uppercase tracking-[0.3em] font-bold text-primary"><?= e($occupancyLabel) ?></div>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-12">
         <div>
-          <span class="text-primary text-xs font-bold tracking-[0.2em] uppercase block mb-3">Curated Comforts</span>
-          <h3 class="text-4xl md:text-5xl font-light">Refined Amenities</h3>
+          <h3 class="font-headline text-2xl mb-4 italic text-primary"><?= e($expHeading) ?></h3>
+          <p class="text-on-surface-variant text-[14px] leading-relaxed font-light"><?= nl2br(e($experiencePara !== '' ? $experiencePara : $spacePara)) ?></p>
+        </div>
+        <div>
+          <h3 class="font-headline text-2xl mb-4 italic text-primary">The Space</h3>
+          <p class="text-on-surface-variant text-[14px] leading-relaxed font-light"><?= nl2br(e($spacePara !== '' ? $spacePara : $description)) ?></p>
+        </div>
+        <div>
+          <h3 class="font-headline text-2xl mb-4 italic text-primary"><?= e($viewBody !== '' ? $viewHeading : 'Essentials') ?></h3>
+          <?php if ($viewBody !== ''): ?>
+          <p class="text-on-surface-variant text-[14px] leading-relaxed font-light"><?= nl2br(e($viewBody)) ?></p>
+          <?php else: ?>
+          <p class="text-on-surface-variant text-[14px] leading-relaxed font-light"><?= e($bed !== '' ? $bed : 'King Bed') ?> • <?= e($size !== '' ? $size : 'Luxury Suite') ?></p>
+          <?php endif; ?>
         </div>
       </div>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-12">
-        <?php foreach (array_slice($amenityCards, 0, 12) as $card): ?>
-        <div class="group flex flex-col gap-4 p-4 border border-white/5 hover:border-primary/30 rounded-lg transition-all hover:bg-white/5">
-          <span class="material-symbols-outlined text-4xl text-primary font-light group-hover:scale-110 transition-transform origin-left"><?= e($card['icon']) ?></span>
-          <div>
-            <h4 class="font-bold text-lg mb-1"><?= e($card['title']) ?></h4>
-            <p class="text-xs text-white/50 leading-relaxed"><?= e($card['desc'] !== '' ? $card['desc'] : 'Included') ?></p>
+
+      <?php if ($whoBody !== '' || $floorPlanUrl !== ''): ?>
+      <div class="grid md:grid-cols-2 gap-10 items-start">
+        <?php if ($whoBody !== ''): ?>
+        <div>
+          <h3 class="font-headline text-2xl mb-4 italic text-primary"><?= e($whoHeading) ?></h3>
+          <p class="text-on-surface-variant text-[14px] leading-relaxed font-light"><?= nl2br(e($whoBody)) ?></p>
+        </div>
+        <?php endif; ?>
+        <?php if ($floorPlanUrl !== ''): ?>
+        <div class="md:text-right">
+          <a class="inline-flex items-center gap-2 text-[10px] font-bold tracking-[0.3em] uppercase border-b border-primary pb-1 text-primary hover:text-secondary hover:border-secondary transition-colors" href="<?= e($floorPlanUrl) ?>" target="_blank" rel="noopener noreferrer">
+            <span class="material-symbols-outlined text-[18px]">download</span>
+            Floor plan
+          </a>
+        </div>
+        <?php endif; ?>
+      </div>
+      <?php endif; ?>
+
+      <?php if ($testimonialQuote !== ''): ?>
+      <blockquote class="border-l-2 border-primary pl-8 py-2">
+        <p class="font-headline text-2xl md:text-3xl italic text-primary leading-snug"><?= nl2br(e($testimonialQuote)) ?></p>
+        <?php if ($testimonialBy !== ''): ?>
+        <footer class="mt-6 text-[11px] uppercase tracking-[0.25em] text-secondary font-bold"><?= e($testimonialBy) ?></footer>
+        <?php endif; ?>
+      </blockquote>
+      <?php endif; ?>
+
+      <?php if (!empty($amenityCards)): ?>
+      <div class="bg-primary/5 p-12">
+        <div class="flex justify-between items-end mb-10">
+          <h3 class="font-headline text-3xl italic text-primary">Refined Essentials</h3>
+          <div class="text-[10px] uppercase tracking-widest text-secondary font-bold"><?= e($bookingBadge !== '' ? $bookingBadge : 'Best Western Plus Collection') ?></div>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-10">
+          <?php foreach (array_slice($amenityCards, 0, 12) as $card): ?>
+          <div class="space-y-4">
+            <h4 class="text-[10px] uppercase tracking-[0.2em] font-bold text-secondary"><?= e($card['title']) ?></h4>
+            <p class="text-xs text-on-surface-variant font-light"><?= e($card['desc'] !== '' ? $card['desc'] : 'Included') ?></p>
+          </div>
+          <?php endforeach; ?>
+        </div>
+      </div>
+      <?php endif; ?>
+    </div>
+
+    <div class="col-span-12 lg:col-span-4">
+      <div class="sticky top-32 bg-white border border-outline-variant/20 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] p-10">
+        <?php if ($bookingBadge !== ''): ?>
+        <div class="mb-4 text-[10px] uppercase tracking-[0.35em] font-bold text-secondary"><?= e($bookingBadge) ?></div>
+        <?php endif; ?>
+        <div class="mb-8">
+          <div class="flex justify-between items-start mb-2">
+            <span class="text-on-surface-variant text-[10px] uppercase tracking-[0.2em] font-bold"><?= e($rateLabel) ?></span>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <span class="font-headline text-4xl font-bold text-primary"><?= e($currency) ?><?= e($price !== '' ? $price : '—') ?></span>
+            <span class="text-[10px] text-on-surface-variant uppercase tracking-widest font-bold">/ night</span>
           </div>
         </div>
+        <?php if ($urgencyMessage !== ''): ?>
+        <div class="mb-8 flex items-center gap-2 text-error text-[11px] font-bold italic">
+          <span class="material-symbols-outlined text-[16px]">error</span>
+          <?= e($urgencyMessage) ?>
+        </div>
+        <?php endif; ?>
+        <?php if ($trendingMessage !== ''): ?>
+        <div class="mb-8 flex items-center gap-2 text-primary/60 text-[11px] font-medium">
+          <span class="material-symbols-outlined text-[16px]">trending_up</span>
+          <?= e($trendingMessage) ?>
+        </div>
+        <?php endif; ?>
+        <form class="space-y-6 mb-6" onsubmit="event.preventDefault(); window.location.href='<?= e($bookUrl) ?>';">
+          <div class="grid grid-cols-2 gap-px bg-outline-variant/30 border border-outline-variant/30 overflow-hidden">
+            <div class="bg-white p-5">
+              <label class="block text-[9px] uppercase tracking-widest font-bold mb-2 opacity-50">Check In</label>
+              <input class="w-full text-xs border-none p-0 focus:ring-0 font-medium" type="date" value="<?= e($bookingCheckinDefault) ?>">
+            </div>
+            <div class="bg-white p-5">
+              <label class="block text-[9px] uppercase tracking-widest font-bold mb-2 opacity-50">Check Out</label>
+              <input class="w-full text-xs border-none p-0 focus:ring-0 font-medium" type="date" value="<?= e($bookingCheckoutDefault) ?>">
+            </div>
+          </div>
+          <div class="border border-outline-variant/30 p-5 bg-white">
+            <label class="block text-[9px] uppercase tracking-widest font-bold mb-2 opacity-50">Guests</label>
+            <input class="w-full text-xs border-none p-0 focus:ring-0 font-medium" type="text" value="<?= e($bookingGuestsDefault !== '' ? $bookingGuestsDefault : ($maxGuests > 0 ? ($maxGuests . ' Adults') : '2 Adults')) ?>">
+          </div>
+          <button class="w-full inline-flex items-center justify-center bg-primary text-white py-5 text-[11px] font-bold tracking-[0.4em] hover:bg-secondary transition-all uppercase shadow-lg shadow-primary/20" type="submit">Reserve Suite</button>
+        </form>
+        <?php if ($bookingTrustLine !== '' || $bookingTrustSubline !== ''): ?>
+        <div class="pt-4 border-t border-outline-variant/10 space-y-2">
+          <?php if ($bookingTrustLine !== ''): ?>
+          <div class="flex items-center justify-center gap-2 text-[10px] text-on-surface-variant font-medium">
+            <span class="material-symbols-outlined text-[14px] text-green-600">check_circle</span>
+            <?= e($bookingTrustLine) ?>
+          </div>
+          <?php endif; ?>
+          <?php if ($bookingTrustSubline !== ''): ?>
+          <p class="text-[10px] text-center text-on-surface-variant/60 italic"><?= e($bookingTrustSubline) ?></p>
+          <?php endif; ?>
+        </div>
+        <?php endif; ?>
+        <?php if ($panelFootnote !== ''): ?>
+        <p class="mt-6 text-[11px] text-on-surface-variant leading-relaxed font-light"><?= nl2br(e($panelFootnote)) ?></p>
+        <?php endif; ?>
+      </div>
+    </div>
+  </div>
+
+  <?php
+    $similarRooms = getFeaturedRoomsForHome(6);
+    if (!is_array($similarRooms)) {
+        $similarRooms = [];
+    }
+    $similarRooms = array_values(array_filter($similarRooms, static function ($r) use ($slug) {
+        return (string)($r['slug'] ?? '') !== (string)$slug;
+    }));
+  ?>
+  <?php if ($similarRooms !== []): ?>
+  <section class="bg-surface-container-low py-24 px-6 md:px-12 border-t border-outline-variant/20">
+    <div class="max-w-screen-2xl mx-auto">
+      <div class="flex justify-between items-end mb-12">
+        <div>
+          <span class="text-secondary text-[10px] uppercase tracking-[0.5em] font-bold mb-4 block">Selection</span>
+          <h2 class="font-headline text-4xl md:text-5xl italic text-primary">Similar Accommodations</h2>
+        </div>
+        <a class="text-[10px] font-bold tracking-[0.3em] border-b border-primary pb-1 text-primary hover:text-secondary hover:border-secondary transition-colors" href="<?= e(site_url('rooms')) ?>">VIEW ALL ROOMS</a>
+      </div>
+      <div class="grid md:grid-cols-3 gap-10">
+        <?php foreach (array_slice($similarRooms, 0, 3) as $sr):
+            $st = (string)($sr['title'] ?? '');
+            $ss = (string)($sr['slug'] ?? '');
+            $sp = is_numeric($sr['price'] ?? null) ? number_format((float)$sr['price'], 0) : '';
+            $si = (string)($sr['main_image'] ?? '');
+            if ($si === '') { continue; }
+        ?>
+        <a class="group cursor-pointer" href="<?= e(site_url('room-details', ['slug' => $ss])) ?>">
+          <div class="aspect-[4/5] overflow-hidden mb-6 relative">
+            <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" src="<?= e($si) ?>" alt="<?= e($st) ?>">
+            <div class="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors"></div>
+            <div class="absolute bottom-8 left-8 right-8 text-white">
+              <h4 class="font-headline text-3xl mb-2"><?= e($st) ?></h4>
+              <span class="text-[10px] uppercase tracking-widest font-light opacity-80">From <?= e($currency) ?><?= e($sp) ?></span>
+            </div>
+          </div>
+          <span class="text-[10px] font-bold tracking-[0.3em] text-secondary border-b border-transparent hover:border-secondary transition-all">DISCOVER ROOM</span>
+        </a>
         <?php endforeach; ?>
       </div>
     </div>
   </section>
   <?php endif; ?>
-
-  <?php if (count($images) > 1): ?>
-  <section id="gallery" class="max-w-[1440px] mx-auto px-6 lg:px-12 py-24">
-    <h3 class="text-4xl font-medium text-text-main mb-12 text-center md:text-left">Details</h3>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[300px]">
-      <?php
-      $g = array_values($images);
-      $n = count($g);
-      if ($n >= 4) {
-          ?>
-      <div class="md:col-span-2 row-span-1 min-h-[300px] h-full rounded-lg overflow-hidden relative group cursor-zoom-in">
-        <div class="w-full min-h-[300px] h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style="background-image:url('<?= e($g[0]) ?>');"></div>
-      </div>
-      <div class="md:col-span-1 row-span-2 min-h-[300px] h-full rounded-lg overflow-hidden relative group cursor-zoom-in">
-        <div class="w-full min-h-[300px] h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style="background-image:url('<?= e($g[1]) ?>');"></div>
-      </div>
-      <div class="md:col-span-1 row-span-1 min-h-[300px] h-full rounded-lg overflow-hidden relative group cursor-zoom-in">
-        <div class="w-full min-h-[300px] h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style="background-image:url('<?= e($g[2]) ?>');"></div>
-      </div>
-      <div class="md:col-span-1 row-span-1 min-h-[300px] h-full rounded-lg overflow-hidden relative group cursor-zoom-in">
-        <div class="w-full min-h-[300px] h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style="background-image:url('<?= e($g[3]) ?>');"></div>
-      </div>
-          <?php
-      } else {
-          foreach (array_slice($g, 0, 5) as $idx => $img) {
-              $span = ($idx === 0 && $n > 1) ? 'md:col-span-2' : 'md:col-span-1';
-              echo '<div class="' . $span . ' rounded-lg overflow-hidden relative group cursor-zoom-in">';
-              echo '<div class="w-full h-full min-h-[260px] bg-cover bg-center transition-transform duration-700 group-hover:scale-105" style="background-image:url(\'' . e($img) . '\');"></div>';
-              echo '</div>';
-          }
-      }
-      ?>
-    </div>
-  </section>
-  <?php endif; ?>
 </main>
 
-<div class="fixed bottom-0 left-0 w-full z-40 glass-panel shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
-  <div class="max-w-[1440px] mx-auto px-6 lg:px-12 h-20 md:h-24 flex items-center justify-between gap-4">
-    <div class="flex flex-col min-w-0">
-      <p class="text-xs text-text-muted font-bold uppercase tracking-widest mb-1">Best Rate</p>
-      <div class="flex items-baseline gap-1">
-        <span class="text-xl md:text-2xl font-bold text-primary"><?= e($currency) ?><?= e($price !== '' ? $price : '—') ?></span>
-        <span class="text-sm text-text-muted">/ Night</span>
-      </div>
-    </div>
-    <a class="h-12 px-6 md:px-10 shrink-0 bg-primary hover:bg-primary-light text-white rounded-lg text-sm md:text-base font-bold tracking-wide transition-all shadow-lg shadow-primary/20 flex items-center gap-2"
-       href="<?= e($bookUrl) ?>">
-      <span>Reserve</span>
-      <span class="material-symbols-outlined text-lg">arrow_forward</span>
-    </a>
-  </div>
-</div>
+<script>
+(function () {
+  var slider = document.getElementById('hero-slider');
+  if (!slider) return;
+  var slides = slider.children.length;
+  if (slides < 2) return;
+  var dotsWrap = document.getElementById('heroDotsWrap');
+  var prev = document.getElementById('heroPrevBtn');
+  var next = document.getElementById('heroNextBtn');
+  var idx = 0;
+  var autoMs = 6000;
+  var timer = null;
+  var dots = [];
+  function go(i) {
+    idx = ((i % slides) + slides) % slides;
+    slider.scrollTo({ left: slider.clientWidth * idx, behavior: 'smooth' });
+    dots.forEach(function (d, di) { d.classList.toggle('active', di === idx); });
+  }
+  function restartAuto() {
+    if (timer) {
+      clearInterval(timer);
+    }
+    timer = setInterval(function () { go(idx + 1); }, autoMs);
+  }
+  for (var i = 0; i < slides; i++) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'slider-dot w-2 h-2 rounded-full bg-white/40 transition-all duration-300';
+    (function (j) { b.addEventListener('click', function () { go(j); }); })(i);
+    dotsWrap.appendChild(b);
+    dots.push(b);
+  }
+  if (prev) prev.addEventListener('click', function () { go(idx - 1); restartAuto(); });
+  if (next) next.addEventListener('click', function () { go(idx + 1); restartAuto(); });
+  slider.addEventListener('scroll', function () {
+    var current = Math.round(slider.scrollLeft / Math.max(1, slider.clientWidth));
+    if (current !== idx) {
+      idx = current;
+      dots.forEach(function (d, di) { d.classList.toggle('active', di === idx); });
+    }
+  });
+  go(0);
+  restartAuto();
+})();
+</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

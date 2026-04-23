@@ -61,6 +61,7 @@ if ($id) {
   } catch (PDOException $e) {}
 }
 
+$gk = is_array($room['good_to_know'] ?? null) ? $room['good_to_know'] : [];
 
 require_once dirname(__DIR__, 3) . '/includes/url.php';
 $roomPublicUrlBase = rtrim((string)(defined('SITE_URL') ? SITE_URL : ''), '/');
@@ -127,6 +128,10 @@ $roomPublicUrlBase = rtrim((string)(defined('SITE_URL') ? SITE_URL : ''), '/');
       <div class="form-group">
         <label for="book_url">Book URL</label>
         <input id="book_url" name="book_url" type="text" value="<?= sanitize($room['book_url']) ?>">
+      </div>
+      <div class="form-group">
+        <label for="urgency_message">Urgency line (booking panel)</label>
+        <input id="urgency_message" name="urgency_message" type="text" value="<?= sanitize($room['urgency_message']) ?>" placeholder="Only 2 suites left for your dates">
       </div>
 
       <div class="form-group">
@@ -197,6 +202,93 @@ $roomPublicUrlBase = rtrim((string)(defined('SITE_URL') ? SITE_URL : ''), '/');
             <?php } ?>
           </div>
           <button type="button" class="btn btn-outline btn-sm" onclick="addFeatureRow()">Add feature</button>
+        </div>
+      </div>
+
+      <div class="card card--nested">
+        <div class="card-header"><h3>Detail page editorial (optional)</h3></div>
+        <div class="card-body card-body--stack">
+          <p class="form-help">Stored in <code>good_to_know</code> JSON. Leave blank to use defaults from description blocks.</p>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="gk_experience_heading">“The Experience” heading</label>
+              <input type="text" id="gk_experience_heading" class="form-control" value="<?= sanitize((string)($gk['experience_heading'] ?? '')) ?>" placeholder="The Experience">
+            </div>
+            <div class="form-group">
+              <label for="gk_who_heading">“Who it’s for” heading</label>
+              <input type="text" id="gk_who_heading" class="form-control" value="<?= sanitize((string)($gk['who_heading'] ?? '')) ?>" placeholder="Who it's for">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="gk_view_heading">“The View” heading</label>
+              <input type="text" id="gk_view_heading" class="form-control" value="<?= sanitize((string)($gk['view_heading'] ?? '')) ?>" placeholder="The View">
+            </div>
+            <div class="form-group">
+              <label for="gk_floor_plan_url">Floor plan URL (optional)</label>
+              <input type="text" id="gk_floor_plan_url" class="form-control" value="<?= sanitize((string)($gk['floor_plan_url'] ?? '')) ?>" placeholder="/assets/uploads/floorplan.pdf">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="gk_who_body">“Who it’s for” body</label>
+            <textarea id="gk_who_body" class="form-control" rows="3"><?= sanitize((string)($gk['who_body'] ?? '')) ?></textarea>
+          </div>
+          <div class="form-group">
+            <label for="gk_view_body">“The View” body</label>
+            <textarea id="gk_view_body" class="form-control" rows="3"><?= sanitize((string)($gk['view_body'] ?? '')) ?></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="gk_testimonial_quote">Testimonial quote</label>
+              <textarea id="gk_testimonial_quote" class="form-control" rows="2"><?= sanitize((string)($gk['testimonial_quote'] ?? '')) ?></textarea>
+            </div>
+            <div class="form-group">
+              <label for="gk_testimonial_by">Testimonial attribution</label>
+              <input type="text" id="gk_testimonial_by" class="form-control" value="<?= sanitize((string)($gk['testimonial_by'] ?? '')) ?>" placeholder="— Guest name">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="gk_booking_badge">Booking panel badge</label>
+              <input type="text" id="gk_booking_badge" class="form-control" value="<?= sanitize((string)($gk['booking_badge'] ?? '')) ?>" placeholder="Plus Collection">
+            </div>
+            <div class="form-group">
+              <label for="gk_rate_label">Rate label</label>
+              <input type="text" id="gk_rate_label" class="form-control" value="<?= sanitize((string)($gk['rate_label'] ?? '')) ?>" placeholder="Standard Rate">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="gk_trending_message">Trending line (secondary urgency)</label>
+            <input type="text" id="gk_trending_message" class="form-control" value="<?= sanitize((string)($gk['trending_message'] ?? '')) ?>" placeholder="Booked 4 times in the last 24 hours">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="gk_booking_checkin_default">Default check-in date (YYYY-MM-DD)</label>
+              <input type="text" id="gk_booking_checkin_default" class="form-control" value="<?= sanitize((string)($gk['booking_checkin_default'] ?? '')) ?>" placeholder="2026-07-15">
+            </div>
+            <div class="form-group">
+              <label for="gk_booking_checkout_default">Default check-out date (YYYY-MM-DD)</label>
+              <input type="text" id="gk_booking_checkout_default" class="form-control" value="<?= sanitize((string)($gk['booking_checkout_default'] ?? '')) ?>" placeholder="2026-07-17">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="gk_booking_guests_default">Default guests value</label>
+            <input type="text" id="gk_booking_guests_default" class="form-control" value="<?= sanitize((string)($gk['booking_guests_default'] ?? '')) ?>" placeholder="2 Adults, 1 Child">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="gk_booking_trust_line">Booking trust line</label>
+              <input type="text" id="gk_booking_trust_line" class="form-control" value="<?= sanitize((string)($gk['booking_trust_line'] ?? '')) ?>" placeholder="Free cancellation up to 48 hours">
+            </div>
+            <div class="form-group">
+              <label for="gk_booking_trust_subline">Booking trust subline</label>
+              <input type="text" id="gk_booking_trust_subline" class="form-control" value="<?= sanitize((string)($gk['booking_trust_subline'] ?? '')) ?>" placeholder="Secure your booking. No immediate payment required.">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="gk_panel_footnote">Booking panel footnote</label>
+            <textarea id="gk_panel_footnote" class="form-control" rows="2"><?= sanitize((string)($gk['panel_footnote'] ?? '')) ?></textarea>
+          </div>
         </div>
       </div>
 
@@ -410,6 +502,37 @@ function collectIncluded() {
   return out;
 }
 
+function collectGoodToKnow() {
+  var g = {};
+  function v(id) {
+    var el = document.getElementById(id);
+    return el ? String(el.value || '').trim() : '';
+  }
+  [
+    ['experience_heading', 'gk_experience_heading'],
+    ['who_heading', 'gk_who_heading'],
+    ['view_heading', 'gk_view_heading'],
+    ['who_body', 'gk_who_body'],
+    ['view_body', 'gk_view_body'],
+    ['testimonial_quote', 'gk_testimonial_quote'],
+    ['testimonial_by', 'gk_testimonial_by'],
+    ['floor_plan_url', 'gk_floor_plan_url'],
+    ['booking_badge', 'gk_booking_badge'],
+    ['rate_label', 'gk_rate_label'],
+    ['trending_message', 'gk_trending_message'],
+    ['booking_checkin_default', 'gk_booking_checkin_default'],
+    ['booking_checkout_default', 'gk_booking_checkout_default'],
+    ['booking_guests_default', 'gk_booking_guests_default'],
+    ['booking_trust_line', 'gk_booking_trust_line'],
+    ['booking_trust_subline', 'gk_booking_trust_subline'],
+    ['panel_footnote', 'gk_panel_footnote']
+  ].forEach(function (pair) {
+    var val = v(pair[1]);
+    if (val) g[pair[0]] = val;
+  });
+  return g;
+}
+
 window.insertSelectedMediaOverride = function() {
   const selected = mediaModalState.allowMultiple ? mediaModalState.selectedMediaMultiple : (mediaModalState.selectedMedia ? [mediaModalState.selectedMedia] : []);
   if (!selected.length) return false;
@@ -563,6 +686,7 @@ document.getElementById('roomForm').addEventListener('submit', function(e){
     size: document.getElementById('size').value,
     max_guests: document.getElementById('max_guests').value,
     book_url: document.getElementById('book_url').value,
+    urgency_message: document.getElementById('urgency_message').value,
     short_description: document.getElementById('short_description').value,
     description: document.getElementById('description').value,
     main_image: document.getElementById('main_image').value,
@@ -570,7 +694,7 @@ document.getElementById('roomForm').addEventListener('submit', function(e){
     features: collectFeatures(),
     amenities: collectAmenities(),
     included_items: collectIncluded(),
-    good_to_know: {},
+    good_to_know: collectGoodToKnow(),
     is_active: document.getElementById('is_active').checked ? 1 : 0,
     is_featured: document.getElementById('is_featured').checked ? 1 : 0
   };

@@ -15,12 +15,33 @@ try {
 } catch (PDOException $e) {
     error_log($e->getMessage());
 }
+
 $cmsDefaults = require __DIR__ . '/../../includes/cms-defaults.php';
 $defaultJson = json_encode($cmsDefaults['amenities_sections'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 $raw = $sections['sections_json'] ?? '';
 if (trim($raw) === '') {
     $raw = $defaultJson;
 }
+
+$decoded = json_decode($raw, true);
+if (!is_array($decoded)) {
+    $decoded = $cmsDefaults['amenities_sections'];
+}
+$amenitiesItems = [];
+for ($i = 0; $i < 7; $i++) {
+    $amenitiesItems[$i] = isset($decoded[$i]) && is_array($decoded[$i]) ? $decoded[$i] : [];
+}
+
+$amenitiesSlotHelp = [
+    'Shown as the full-screen hero on /amenities (kicker, title HTML, body, hero image).',
+    'Dining row 1: large image left, copy right.',
+    'Dining row 2: copy left, wide image right.',
+    'Wellness band intro + first wellness row (image alternates on the public page).',
+    'Wellness row 2.',
+    'Wellness row 3.',
+    'Meetings & events band (headline + supporting copy + wide image).',
+];
+
 $pageActiveSettingKey = 'page_active_amenities';
 $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting($pageActiveSettingKey, '1'))) === '1';
 ?>
@@ -37,15 +58,132 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
   </div>
 
   <div class="card">
-    <div class="card-header"><h2>Full-screen sections</h2></div>
+    <div class="card-header"><h2>Bottom CTA</h2></div>
     <div style="padding:20px;">
-      <p class="form-help" style="margin-top:0;">Visual editor. Add/remove sections and edit content below (saved as JSON behind the scenes).</p>
+      <p class="form-help" style="margin-top:0;">This closing block is separate from <code>sections_json</code> so it is easy to edit as plain text.</p>
+      <div class="form-group">
+        <label for="cta_title">CTA title</label>
+        <input type="text" id="cta_title" name="cta_title" value="<?= sanitize($sections['cta_title'] ?? 'Ready to Experience Our Facilities?') ?>">
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:1;">
+          <label for="cta_btn_label">Button label</label>
+          <input type="text" id="cta_btn_label" name="cta_btn_label" value="<?= sanitize($sections['cta_btn_label'] ?? 'Book Your Stay') ?>">
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label for="cta_btn_href">Button URL</label>
+          <input type="text" id="cta_btn_href" name="cta_btn_href" value="<?= sanitize($sections['cta_btn_href'] ?? '/contact') ?>">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Services Section</h2></div>
+    <div style="padding:20px;">
+      <div class="form-row">
+        <div class="form-group" style="flex:1;">
+          <label for="services_kicker">Services kicker</label>
+          <input type="text" id="services_kicker" name="services_kicker" value="<?= sanitize($sections['services_kicker'] ?? 'Impeccable Care') ?>">
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label for="services_title">Services title</label>
+          <input type="text" id="services_title" name="services_title" value="<?= sanitize($sections['services_title'] ?? 'Signature Guest Services') ?>">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="services_items_json">Service cards JSON</label>
+        <textarea id="services_items_json" name="services_items_json" rows="8" style="font-family:monospace;font-size:12px;"><?= htmlspecialchars($sections['services_items_json'] ?? '[{"title":"24h Concierge","subtitle":"Dedicated to your every whim"},{"title":"Airport Transfer","subtitle":"Luxury chauffeur fleet"},{"title":"Laundry & Press","subtitle":"Same-day valet service"},{"title":"High-Speed WiFi","subtitle":"Gigabit fiber throughout"},{"title":"Secure Parking","subtitle":"24/7 guarded premises"},{"title":"Room Service","subtitle":"Global dining 24/7"}]', ENT_QUOTES, 'UTF-8') ?></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Page modules (saved as JSON)</h2></div>
+    <div style="padding:20px;">
+      <p class="form-help" style="margin-top:0;">
+        The public amenities page reads <strong>7 fixed slots</strong> from <code>sections_json</code> (indexes 0-6). Extra legacy sections (index 7+) are preserved when you save, but only appear in Advanced JSON.
+      </p>
 
       <textarea id="sections_json" name="sections_json" style="display:none;"><?= htmlspecialchars($raw, ENT_QUOTES, 'UTF-8') ?></textarea>
-      <div id="amenitiesSectionsEditor"></div>
-      <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
-        <button type="button" class="btn btn-outline btn-sm" id="amenitiesAddSectionBtn">Add section</button>
+
+      <?php for ($i = 0; $i < 7; $i++):
+          $slot = $amenitiesItems[$i];
+          $bg = sanitize((string)($slot['bg'] ?? ''));
+          $kicker = sanitize((string)($slot['kicker'] ?? ''));
+          $titleHtml = (string)($slot['title_html'] ?? '');
+          $body = (string)($slot['body'] ?? '');
+          $gradient = sanitize((string)($slot['gradient'] ?? ''));
+          $icon = sanitize((string)($slot['icon'] ?? ''));
+          $layout = sanitize((string)($slot['layout'] ?? 'bottom'));
+          $btn = sanitize((string)($slot['btn'] ?? ''));
+          $btnHref = sanitize((string)($slot['btn_href'] ?? ''));
+          $gallery = $slot['gallery'] ?? ($slot['gallery_images'] ?? []);
+          if (!is_array($gallery)) {
+              $gallery = [];
+          }
+          $galleryJson = htmlspecialchars(json_encode($gallery, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8');
+          $slotLabel = 'Module ' . ($i + 1);
+          $help = $amenitiesSlotHelp[$i] ?? '';
+          $bgId = 'amenity_slot_' . $i . '_bg';
+          $bgPrevId = 'amenity_slot_' . $i . '_bg_preview';
+          $galId = 'amenity_slot_' . $i . '_gallery_images';
+          $galPrevId = 'amenity_slot_' . $i . '_gallery_preview';
+      ?>
+      <div class="card js-amenity-slot" data-slot="<?= (int)$i ?>" style="margin-bottom: 14px;">
+        <div class="card-header">
+          <h3 style="margin:0;"><?= sanitize($slotLabel) ?></h3>
+        </div>
+        <div class="card-body card-body--stack" style="padding: 14px 16px;">
+          <?php if ($help !== ''): ?>
+            <p class="form-help" style="margin-top:0;"><?= sanitize($help) ?></p>
+          <?php endif; ?>
+
+          <input type="hidden" class="js-meta-gradient" value="<?= $gradient ?>">
+          <input type="hidden" class="js-meta-icon" value="<?= $icon ?>">
+          <input type="hidden" class="js-meta-layout" value="<?= $layout ?>">
+          <input type="hidden" class="js-meta-btn" value="<?= $btn ?>">
+          <input type="hidden" class="js-meta-btn-href" value="<?= $btnHref ?>">
+
+          <div class="form-row">
+            <div class="form-group" style="flex:1;">
+              <label for="amenity_slot_<?= (int)$i ?>_kicker">Kicker</label>
+              <input type="text" id="amenity_slot_<?= (int)$i ?>_kicker" class="form-control js-kicker" value="<?= $kicker ?>">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="amenity_slot_<?= (int)$i ?>_title_html">Title (HTML)</label>
+            <textarea id="amenity_slot_<?= (int)$i ?>_title_html" class="form-control js-title-html" rows="3" style="font-family:monospace;font-size:12px;"><?= htmlspecialchars($titleHtml, ENT_QUOTES, 'UTF-8') ?></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="amenity_slot_<?= (int)$i ?>_body">Body</label>
+            <textarea id="amenity_slot_<?= (int)$i ?>_body" class="form-control js-body" rows="4"><?= htmlspecialchars($body, ENT_QUOTES, 'UTF-8') ?></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Primary image</label>
+            <div style="display:flex; gap: 10px; align-items:center; flex-wrap:wrap;">
+              <button type="button" class="btn btn-outline js-pick-bg">Select from media</button>
+              <input type="text" id="<?= sanitize($bgId) ?>" class="form-control js-bg" value="<?= $bg ?>" placeholder="/assets/uploads/... or https://...">
+            </div>
+            <div id="<?= sanitize($bgPrevId) ?>" class="image-preview" style="display:none;margin-top:10px;"></div>
+          </div>
+
+          <div class="form-group" style="margin-top:10px;">
+            <label>Extra images (optional)</label>
+            <div style="display:flex; gap: 10px; align-items:center; flex-wrap:wrap;">
+              <button type="button" class="btn btn-outline js-pick-gallery">Select images</button>
+              <button type="button" class="btn btn-outline btn-sm js-clear-gallery">Clear</button>
+            </div>
+            <input type="hidden" id="<?= sanitize($galId) ?>" class="js-gallery" value="<?= $galleryJson ?>">
+            <div id="<?= sanitize($galPrevId) ?>" class="image-preview" style="display:block;margin-top:10px;"></div>
+            <p class="form-help" style="margin-top:8px;">Not used by the new public layout unless you switch back to a gallery-driven design; kept for data compatibility.</p>
+          </div>
+        </div>
       </div>
+      <?php endfor; ?>
 
       <details style="margin-top:14px;">
         <summary style="cursor:pointer; color: var(--text-muted);">Advanced JSON (optional)</summary>
@@ -71,6 +209,8 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
 </form>
 
 <script>
+var AMENITIES_SLOT_COUNT = 7;
+
 function amenitiesSafeParseJson(text, fallback) {
   try { return JSON.parse(text || ''); } catch (e) { return fallback; }
 }
@@ -86,32 +226,81 @@ function amenitiesNormalizeImgUrl(val) {
   return '<?= SITE_URL ?>' + v.replace(/^\/+/, '');
 }
 
+function amenitiesParseGalleryHidden(input) {
+  var raw = (input && input.value ? input.value : '').trim();
+  if (!raw) return [];
+  try {
+    var v = JSON.parse(raw);
+    if (Array.isArray(v)) return v.map(function (x) { return String(x || '').trim(); }).filter(Boolean);
+    if (typeof v === 'string' && v) return [v];
+  } catch (e) {
+    return [raw];
+  }
+  return [];
+}
+
+function amenitiesRenderBgPreview(wrap) {
+  var inp = wrap.querySelector('.js-bg');
+  var prev = wrap.querySelector('[id$="_bg_preview"]');
+  if (!inp || !prev) return;
+  var u = amenitiesNormalizeImgUrl(inp.value);
+  if (!u) {
+    prev.style.display = 'none';
+    prev.innerHTML = '';
+    return;
+  }
+  prev.style.display = 'block';
+  prev.innerHTML = '<img src="' + amenitiesEscHtml(u) + '" style="max-width:420px;max-height:240px;border-radius:6px;">';
+}
+
+function amenitiesRenderGalleryPreview(wrap) {
+  var inp = wrap.querySelector('.js-gallery');
+  var prev = wrap.querySelector('[id$="_gallery_preview"]');
+  if (!inp || !prev) return;
+  var items = amenitiesParseGalleryHidden(inp);
+  prev.innerHTML = items.length
+    ? items.map(function (p) {
+        var u = amenitiesNormalizeImgUrl(p);
+        return u ? ('<img src="' + amenitiesEscHtml(u) + '" style="max-width:120px;max-height:90px;display:inline-block;margin:5px;object-fit:cover;border-radius:6px;">') : '';
+      }).join('')
+    : '<span style="color: var(--text-muted); font-size: 12px;">No extra images selected.</span>';
+}
+
 function amenitiesGetItemsFromDom() {
+  var existing = amenitiesSafeParseJson(document.getElementById('sections_json')?.value || '[]', []);
+  if (!Array.isArray(existing)) existing = [];
+  var tail = existing.length > AMENITIES_SLOT_COUNT ? existing.slice(AMENITIES_SLOT_COUNT) : [];
+
   var out = [];
-  document.querySelectorAll('#amenitiesSectionsEditor .js-amen-sec').forEach(function (card) {
-    var bg = (card.querySelector('.js-bg')?.value || '').trim();
-    var gradient = (card.querySelector('.js-gradient')?.value || '').trim();
-    var kicker = (card.querySelector('.js-kicker')?.value || '').trim();
-    var icon = (card.querySelector('.js-icon')?.value || '').trim();
-    var title_html = (card.querySelector('.js-title-html')?.value || '').trim();
-    var body = (card.querySelector('.js-body')?.value || '').trim();
-    var btn = 'View Gallery';
-    var btn_href = '';
-    var galleryRaw = (card.querySelector('.js-gallery')?.value || '').trim();
-    var gallery = [];
-    if (galleryRaw) {
-      try {
-        var parsed = JSON.parse(galleryRaw);
-        if (Array.isArray(parsed)) gallery = parsed;
-        else if (typeof parsed === 'string' && parsed) gallery = [parsed];
-      } catch (e) {
-        gallery = [galleryRaw];
-      }
-    }
-    var layout = (card.querySelector('.js-layout')?.value || 'bottom').trim() || 'bottom';
-    out.push({ bg: bg, gradient: gradient, kicker: kicker, icon: icon, title_html: title_html, body: body, btn: btn, btn_href: btn_href, gallery: gallery, layout: layout });
+  document.querySelectorAll('#amenitiesPageForm .js-amenity-slot').forEach(function (wrap) {
+    var bg = (wrap.querySelector('.js-bg')?.value || '').trim();
+    var kicker = (wrap.querySelector('.js-kicker')?.value || '').trim();
+    var title_html = (wrap.querySelector('.js-title-html')?.value || '').trim();
+    var body = (wrap.querySelector('.js-body')?.value || '').trim();
+    var gradient = (wrap.querySelector('.js-meta-gradient')?.value || '').trim();
+    var icon = (wrap.querySelector('.js-meta-icon')?.value || '').trim();
+    var layout = (wrap.querySelector('.js-meta-layout')?.value || '').trim() || 'bottom';
+    var btn = (wrap.querySelector('.js-meta-btn')?.value || '').trim();
+    var btn_href = (wrap.querySelector('.js-meta-btn-href')?.value || '').trim();
+    var gallery = amenitiesParseGalleryHidden(wrap.querySelector('.js-gallery'));
+    out.push({
+      bg: bg,
+      gradient: gradient,
+      kicker: kicker,
+      icon: icon,
+      title_html: title_html,
+      body: body,
+      btn: btn,
+      btn_href: btn_href,
+      gallery: gallery,
+      layout: layout
+    });
   });
-  return out;
+
+  while (out.length < AMENITIES_SLOT_COUNT) {
+    out.push({ bg: '', gradient: '', kicker: '', icon: '', title_html: '', body: '', btn: '', btn_href: '', gallery: [], layout: 'bottom' });
+  }
+  return out.slice(0, AMENITIES_SLOT_COUNT).concat(tail);
 }
 
 function amenitiesSyncHiddenJson() {
@@ -122,181 +311,10 @@ function amenitiesSyncHiddenJson() {
   if (adv) adv.value = JSON.stringify(items, null, 2);
 }
 
-function amenitiesRender(items) {
-  var host = document.getElementById('amenitiesSectionsEditor');
-  if (!host) return;
-  host.innerHTML = '';
-
-  (items || []).forEach(function (it, idx) {
-    var bg = (it && it.bg) || '';
-    var gradient = (it && it.gradient) || 'linear-gradient(rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.75) 100%)';
-    var kicker = (it && it.kicker) || '';
-    var icon = (it && it.icon) || 'star';
-    var titleHtml = (it && it.title_html) || '';
-    var body = (it && it.body) || '';
-    var btn = 'View Gallery';
-    var btnHref = '';
-    var gallery = (it && (it.gallery || it.gallery_images)) || [];
-    if (!Array.isArray(gallery)) gallery = [];
-    var layout = (it && it.layout) || 'bottom';
-
-    var inputId = 'amenity_section_' + idx + '_bg';
-    var prevId = 'amenity_section_' + idx + '_bg_preview';
-    var imgUrl = amenitiesNormalizeImgUrl(bg);
-
-    var galInputId = 'amenity_section_' + idx + '_gallery_images';
-    var galPrevId = 'amenity_section_' + idx + '_gallery_preview';
-
-    var wrap = document.createElement('div');
-    wrap.className = 'card js-amen-sec';
-    wrap.style.cssText = 'margin-bottom: 14px;';
-    wrap.innerHTML =
-      '<div class="card-header card-header--split" style="display:flex; justify-content:space-between; align-items:center; gap: 10px;">' +
-        '<h3 style="margin:0;">Section ' + (idx + 1) + '</h3>' +
-        '<div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">' +
-          '<button type="button" class="btn btn-outline btn-sm js-up">Up</button>' +
-          '<button type="button" class="btn btn-outline btn-sm js-down">Down</button>' +
-          '<button type="button" class="btn btn-outline btn-sm js-remove">Remove</button>' +
-        '</div>' +
-      '</div>' +
-      '<div class="card-body card-body--stack" style="padding: 14px 16px;">' +
-        '<div class="form-group">' +
-          '<label>Background image</label>' +
-          '<div style="display:flex; gap: 10px; align-items:center; flex-wrap:wrap;">' +
-            '<button type="button" class="btn btn-outline js-pick">Select from media</button>' +
-            '<input type="text" id="' + amenitiesEscHtml(inputId) + '" class="form-control js-bg" value="' + amenitiesEscHtml(bg) + '" placeholder="/assets/uploads/... or https://...">' +
-          '</div>' +
-          '<div id="' + amenitiesEscHtml(prevId) + '" class="image-preview" style="' + (imgUrl ? 'display:block;margin-top:10px;' : 'display:none;margin-top:10px;') + '">' +
-            (imgUrl ? ('<img src="' + amenitiesEscHtml(imgUrl) + '" style="max-width:420px;max-height:240px;border-radius:6px;">') : '') +
-          '</div>' +
-        '</div>' +
-        '<div class="form-group" style="margin-top:10px;">' +
-          '<label>Section gallery (shown in modal when button is clicked)</label>' +
-          '<div style="display:flex; gap: 10px; align-items:center; flex-wrap:wrap;">' +
-            '<button type="button" class="btn btn-outline js-gal-pick">Select images</button>' +
-            '<button type="button" class="btn btn-outline btn-sm js-gal-clear">Clear</button>' +
-          '</div>' +
-          '<input type="hidden" id="' + amenitiesEscHtml(galInputId) + '" class="js-gallery" value="' + amenitiesEscHtml(JSON.stringify(gallery || [])) + '">' +
-          '<div id="' + amenitiesEscHtml(galPrevId) + '" class="image-preview" style="display:block;margin-top:10px;"></div>' +
-          '<p class="form-help" style="margin-top:8px;">Tip: you can paste a JSON array of paths into Advanced JSON if needed.</p>' +
-        '</div>' +
-        '<div class="form-row">' +
-          '<div class="form-group" style="flex:1;">' +
-            '<label>Gradient overlay (CSS)</label>' +
-            '<input type="text" class="form-control js-gradient" value="' + amenitiesEscHtml(gradient) + '" placeholder="linear-gradient(...)">' +
-          '</div>' +
-        '</div>' +
-        '<div class="form-row">' +
-          '<div class="form-group" style="flex:1;">' +
-            '<label>Kicker</label>' +
-            '<input type="text" class="form-control js-kicker" value="' + amenitiesEscHtml(kicker) + '" placeholder="01 / Dining">' +
-          '</div>' +
-          '<div class="form-group" style="flex:1;">' +
-            '<label>Icon (Material symbol name)</label>' +
-            '<input type="text" class="form-control js-icon" value="' + amenitiesEscHtml(icon) + '" placeholder="restaurant">' +
-          '</div>' +
-          '<div class="form-group" style="flex:1;">' +
-            '<label>Layout</label>' +
-            '<select class="form-control js-layout">' +
-              '<option value="bottom"' + (layout === 'bottom' ? ' selected' : '') + '>bottom</option>' +
-              '<option value="right"' + (layout === 'right' ? ' selected' : '') + '>right</option>' +
-              '<option value="top"' + (layout === 'top' ? ' selected' : '') + '>top</option>' +
-              '<option value="center"' + (layout === 'center' ? ' selected' : '') + '>center</option>' +
-            '</select>' +
-          '</div>' +
-        '</div>' +
-        '<div class="form-group">' +
-          '<label>Title (HTML)</label>' +
-          '<textarea class="form-control js-title-html" rows="3" style="font-family:monospace;font-size:12px;">' + amenitiesEscHtml(titleHtml) + '</textarea>' +
-        '</div>' +
-        '<div class="form-group">' +
-          '<label>Body</label>' +
-          '<textarea class="form-control js-body" rows="3">' + amenitiesEscHtml(body) + '</textarea>' +
-        '</div>' +
-        '<div class="form-group">' +
-          '<label>Button</label>' +
-          '<div class="form-help" style="margin-top:0;">Buttons on the public page always say <strong>View Gallery</strong> and open the section gallery modal.</div>' +
-        '</div>' +
-      '</div>';
-
-    wrap.querySelector('.js-pick').addEventListener('click', function () {
-      openMediaModal(inputId, prevId, false);
-    });
-    // Gallery thumbnails
-    (function () {
-      var prev = wrap.querySelector('#' + CSS.escape(galPrevId));
-      function renderThumbs(list) {
-        if (!prev) return;
-        var items = Array.isArray(list) ? list : [];
-        prev.innerHTML = items.map(function (p) {
-          var u = amenitiesNormalizeImgUrl(p);
-          if (!u) return '';
-          return '<img src="' + amenitiesEscHtml(u) + '" style="max-width:120px;max-height:90px;display:inline-block;margin:5px;object-fit:cover;border-radius:6px;">';
-        }).join('') || '<span style="color: var(--text-muted); font-size: 12px;">No gallery images selected.</span>';
-      }
-      renderThumbs(gallery);
-      wrap.querySelector('.js-gal-pick').addEventListener('click', function () {
-        openMediaModal(galInputId, galPrevId, true);
-      });
-      wrap.querySelector('.js-gal-clear').addEventListener('click', function () {
-        var inp = wrap.querySelector('.js-gallery');
-        if (inp) inp.value = '[]';
-        renderThumbs([]);
-        amenitiesSyncHiddenJson();
-      });
-      wrap.addEventListener('input', function () {
-        var inp = wrap.querySelector('.js-gallery');
-        if (!inp) return;
-        var raw = (inp.value || '').trim();
-        var arr = [];
-        if (raw) { try { var v = JSON.parse(raw); if (Array.isArray(v)) arr = v; else if (typeof v === 'string' && v) arr = [v]; } catch (e) { arr = [raw]; } }
-        renderThumbs(arr);
-      });
-    })();
-    wrap.querySelector('.js-remove').addEventListener('click', function () {
-      wrap.remove();
-      amenitiesSyncHiddenJson();
-      // Re-render to fix indexes + media ids
-      amenitiesRender(amenitiesGetItemsFromDom());
-      amenitiesSyncHiddenJson();
-    });
-    wrap.querySelector('.js-up').addEventListener('click', function () {
-      var all = amenitiesGetItemsFromDom();
-      if (idx <= 0) return;
-      var tmp = all[idx - 1];
-      all[idx - 1] = all[idx];
-      all[idx] = tmp;
-      amenitiesRender(all);
-      amenitiesSyncHiddenJson();
-    });
-    wrap.querySelector('.js-down').addEventListener('click', function () {
-      var all = amenitiesGetItemsFromDom();
-      if (idx >= all.length - 1) return;
-      var tmp = all[idx + 1];
-      all[idx + 1] = all[idx];
-      all[idx] = tmp;
-      amenitiesRender(all);
-      amenitiesSyncHiddenJson();
-    });
-    wrap.addEventListener('input', function () {
-      // Update preview if user pastes URL/path
-      var v = (wrap.querySelector('.js-bg')?.value || '').trim();
-      var p = document.getElementById(prevId);
-      if (p) {
-        var u = amenitiesNormalizeImgUrl(v);
-        if (!u) { p.style.display = 'none'; p.innerHTML = ''; }
-        else { p.style.display = 'block'; p.innerHTML = '<img src="' + amenitiesEscHtml(u) + '" style="max-width:420px;max-height:240px;border-radius:6px;">'; }
-      }
-      amenitiesSyncHiddenJson();
-    });
-    wrap.addEventListener('change', function () { amenitiesSyncHiddenJson(); });
-    host.appendChild(wrap);
-  });
-}
-
 document.getElementById('amenitiesPageForm').addEventListener('submit', function (e) {
   e.preventDefault();
-  savePageForm(this, 'amenities', {}, { pageActiveSettingKey: 'page_active_amenities' })
+  amenitiesSyncHiddenJson();
+  savePageForm(this, 'amenities', { sections_json: 'json', services_items_json: 'json' }, { pageActiveSettingKey: 'page_active_amenities' })
     .then(function () { showToast('Saved', 'success'); })
     .catch(function (err) { showToast(err.message || 'Save failed', 'error'); });
 });
@@ -309,7 +327,7 @@ document.getElementById('amenitiesPageForm').addEventListener('submit', function
     if (!selected.length) return false;
     var tid = mediaModalState.targetInputId || '';
 
-    if (tid.indexOf('amenity_section_') === 0 && tid.indexOf('_gallery_images') !== -1) {
+    if (tid.indexOf('amenity_slot_') === 0 && tid.indexOf('_gallery_images') !== -1) {
       var paths = selected.map(function (s) { return s.path; });
       var input = document.getElementById(tid);
       if (input) input.value = JSON.stringify(paths);
@@ -322,7 +340,23 @@ document.getElementById('amenitiesPageForm').addEventListener('submit', function
       }
       closeMediaModal();
       if (typeof showToast === 'function') showToast(paths.length + ' images selected', 'success');
-      // Sync into sections_json
+      if (typeof amenitiesSyncHiddenJson === 'function') amenitiesSyncHiddenJson();
+      return true;
+    }
+
+    if (tid.indexOf('amenity_section_') === 0 && tid.indexOf('_gallery_images') !== -1) {
+      var paths2 = selected.map(function (s) { return s.path; });
+      var input2 = document.getElementById(tid);
+      if (input2) input2.value = JSON.stringify(paths2);
+      var prev2 = mediaModalState.targetPreviewId ? document.getElementById(mediaModalState.targetPreviewId) : null;
+      if (prev2) {
+        prev2.style.display = 'block';
+        prev2.innerHTML = paths2.map(function (p) {
+          return '<img src="<?= SITE_URL ?>' + String(p).replace(/^\/+/, '') + '" style="max-width:120px;max-height:90px;display:inline-block;margin:5px;object-fit:cover;border-radius:6px;">';
+        }).join('');
+      }
+      closeMediaModal();
+      if (typeof showToast === 'function') showToast(paths2.length + ' images selected', 'success');
       if (typeof amenitiesSyncHiddenJson === 'function') amenitiesSyncHiddenJson();
       return true;
     }
@@ -335,40 +369,56 @@ document.getElementById('amenitiesPageForm').addEventListener('submit', function
 })();
 
 document.addEventListener('DOMContentLoaded', function () {
-  var raw = document.getElementById('sections_json')?.value || '[]';
-  var items = amenitiesSafeParseJson(raw, []);
-  if (!Array.isArray(items)) items = [];
-  if (items.length === 0) items = [{
-    bg: '',
-    gradient: 'linear-gradient(rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.75) 100%)',
-    kicker: '',
-    icon: 'star',
-    title_html: '',
-    body: '',
-    btn: '',
-    btn_href: '',
-    layout: 'bottom'
-  }];
-  amenitiesRender(items);
-  amenitiesSyncHiddenJson();
+  document.querySelectorAll('#amenitiesPageForm .js-amenity-slot').forEach(function (wrap) {
+    var bgBtn = wrap.querySelector('.js-pick-bg');
+    var galBtn = wrap.querySelector('.js-pick-gallery');
+    var galClr = wrap.querySelector('.js-clear-gallery');
+    var bgInput = wrap.querySelector('.js-bg');
+    var galInput = wrap.querySelector('.js-gallery');
 
-  var addBtn = document.getElementById('amenitiesAddSectionBtn');
-  if (addBtn) addBtn.addEventListener('click', function () {
-    var cur = amenitiesGetItemsFromDom();
-    cur.push({
-      bg: '',
-      gradient: 'linear-gradient(rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.75) 100%)',
-      kicker: '',
-      icon: 'star',
-      title_html: '',
-      body: '',
-      btn: '',
-      btn_href: '',
-      layout: 'bottom'
-    });
-    amenitiesRender(cur);
-    amenitiesSyncHiddenJson();
+    var bgId = bgInput ? bgInput.id : '';
+    var bgPrevId = wrap.querySelector('[id$="_bg_preview"]') ? wrap.querySelector('[id$="_bg_preview"]').id : '';
+    var galId = galInput ? galInput.id : '';
+    var galPrevId = wrap.querySelector('[id$="_gallery_preview"]') ? wrap.querySelector('[id$="_gallery_preview"]').id : '';
+
+    if (bgBtn && bgId && bgPrevId) {
+      bgBtn.addEventListener('click', function () {
+        openMediaModal(bgId, bgPrevId, false);
+      });
+    }
+    if (galBtn && galId && galPrevId) {
+      galBtn.addEventListener('click', function () {
+        openMediaModal(galId, galPrevId, true);
+      });
+    }
+    if (galClr && galInput) {
+      galClr.addEventListener('click', function () {
+        galInput.value = '[]';
+        amenitiesRenderGalleryPreview(wrap);
+        amenitiesSyncHiddenJson();
+      });
+    }
+    if (bgInput) {
+      bgInput.addEventListener('input', function () {
+        amenitiesRenderBgPreview(wrap);
+        amenitiesSyncHiddenJson();
+      });
+    }
+    if (galInput) {
+      galInput.addEventListener('input', function () {
+        amenitiesRenderGalleryPreview(wrap);
+        amenitiesSyncHiddenJson();
+      });
+    }
+
+    amenitiesRenderBgPreview(wrap);
+    amenitiesRenderGalleryPreview(wrap);
+
+    wrap.addEventListener('input', function () { amenitiesSyncHiddenJson(); });
+    wrap.addEventListener('change', function () { amenitiesSyncHiddenJson(); });
   });
+
+  amenitiesSyncHiddenJson();
 
   var applyBtn = document.getElementById('amenitiesApplyJsonBtn');
   if (applyBtn) applyBtn.addEventListener('click', function () {
@@ -378,9 +428,9 @@ document.addEventListener('DOMContentLoaded', function () {
       showToast('Sections JSON must be an array', 'error');
       return;
     }
-    amenitiesRender(v);
-    amenitiesSyncHiddenJson();
-    showToast('Sections applied', 'success');
+    var hidden = document.getElementById('sections_json');
+    if (hidden) hidden.value = JSON.stringify(v);
+    window.location.reload();
   });
 });
 </script>
