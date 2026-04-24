@@ -116,7 +116,6 @@ $bookingBadge = trim((string)($gk['booking_badge'] ?? ''));
 $rateLabel = trim((string)($gk['rate_label'] ?? '')) ?: 'Standard Rate';
 $panelFootnote = trim((string)($gk['panel_footnote'] ?? ''));
 $trendingMessage = trim((string)($gk['trending_message'] ?? ''));
-$bookingGuestsDefault = trim((string)($gk['booking_guests_default'] ?? ''));
 $bookingTrustLine = trim((string)($gk['booking_trust_line'] ?? ''));
 $bookingTrustSubline = trim((string)($gk['booking_trust_subline'] ?? ''));
 
@@ -174,12 +173,12 @@ $occupancyLabel = $maxGuests > 0
 <?php require_once __DIR__ . '/includes/header.php'; ?>
 
 <main>
-  <section class="relative min-h-[70vh] h-[80vh] max-h-[900px] w-full overflow-hidden group">
+  <section class="relative min-h-[78vh] h-[88vh] max-h-[960px] w-full overflow-hidden group">
     <div class="flex h-full w-full overflow-x-auto snap-x snap-mandatory hide-scrollbar" id="hero-slider">
       <?php foreach ($images as $img): ?>
       <div class="flex-none w-full h-full snap-start relative">
         <img class="w-full h-full object-cover" src="<?= e($img) ?>" alt="<?= e($title) ?>">
-        <div class="absolute inset-0 bg-black/35"></div>
+        <div class="absolute inset-0 bg-black/35 px-0 my-px mx-0"></div>
       </div>
       <?php endforeach; ?>
     </div>
@@ -205,7 +204,7 @@ $occupancyLabel = $maxGuests > 0
     </div>
   </section>
 
-  <div id="suiteDetails" class="max-w-screen-2xl mx-auto px-6 md:px-12 py-24 grid grid-cols-12 gap-16">
+  <div id="suiteDetails" class="max-w-screen-2xl mx-auto px-6 md:px-[48px] py-[11px] grid grid-cols-12 gap-16">
     <div class="col-span-12 lg:col-span-8 space-y-24">
       <div class="flex flex-wrap items-center gap-x-8 gap-y-4 py-8 border-y border-outline-variant/20">
         <div class="text-[11px] uppercase tracking-[0.3em] font-bold text-primary"><?= e($size !== '' ? $size : 'Suite') ?></div>
@@ -306,11 +305,7 @@ $occupancyLabel = $maxGuests > 0
           <?= e($trendingMessage) ?>
         </div>
         <?php endif; ?>
-        <form class="space-y-6 mb-6" onsubmit="event.preventDefault(); window.location.href='<?= e($bookUrl) ?>';">
-          <div class="border border-outline-variant/30 p-5 bg-white">
-            <label class="block text-[9px] uppercase tracking-widest font-bold mb-2 opacity-50">Guests</label>
-            <input class="w-full text-xs border-none p-0 focus:ring-0 font-medium" type="text" value="<?= e($bookingGuestsDefault !== '' ? $bookingGuestsDefault : ($maxGuests > 0 ? ($maxGuests . ' Adults') : '2 Adults')) ?>">
-          </div>
+        <form class="mb-6" onsubmit="event.preventDefault(); window.location.href='<?= e($bookUrl) ?>';">
           <button class="w-full inline-flex items-center justify-center bg-primary text-white py-5 text-[11px] font-bold tracking-[0.4em] hover:bg-secondary transition-all uppercase shadow-lg shadow-primary/20" type="submit">Reserve Suite</button>
         </form>
         <?php if ($bookingTrustLine !== '' || $bookingTrustSubline !== ''): ?>
@@ -343,7 +338,7 @@ $occupancyLabel = $maxGuests > 0
     }));
   ?>
   <?php if ($similarRooms !== []): ?>
-  <section class="bg-surface-container-low py-24 px-6 md:px-12 border-t border-outline-variant/20">
+  <section class="bg-surface-container-low py-[26px] px-6 md:px-12 border-t border-outline-variant/20">
     <div class="max-w-screen-2xl mx-auto">
       <div class="flex justify-between items-end mb-12">
         <div>

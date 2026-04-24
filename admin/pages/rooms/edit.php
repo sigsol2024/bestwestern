@@ -256,7 +256,7 @@ $roomPublicUrlBase = rtrim((string)(defined('SITE_URL') ? SITE_URL : ''), '/');
           </div>
 
           <p style="margin:1.25rem 0 0.35rem;font-weight:600;font-size:13px;color:var(--text-main, #1a1a1a);">Sticky reserve panel (right column)</p>
-          <p class="form-help" style="margin-top:0;">Shown next to amenities. “Reserve Suite” sends guests to the booking URL from this room’s <strong>Book URL</strong> field above. Check-in/out fields were removed from the public page.</p>
+          <p class="form-help" style="margin-top:0;">Shown next to room copy on the site. <strong>Reserve Suite</strong> uses this room’s <strong>Book URL</strong> field above.</p>
           <div class="form-row">
             <div class="form-group">
               <label for="gk_booking_badge">Panel badge (also near “Refined Essentials”)</label>
@@ -270,10 +270,6 @@ $roomPublicUrlBase = rtrim((string)(defined('SITE_URL') ? SITE_URL : ''), '/');
           <div class="form-group">
             <label for="gk_trending_message">Trending line (optional)</label>
             <input type="text" id="gk_trending_message" class="form-control" value="<?= sanitize((string)($gk['trending_message'] ?? '')) ?>" placeholder="Booked 4 times in the last 24 hours">
-          </div>
-          <div class="form-group">
-            <label for="gk_booking_guests_default">Guests line (decorative; reserve still uses Book URL)</label>
-            <input type="text" id="gk_booking_guests_default" class="form-control" value="<?= sanitize((string)($gk['booking_guests_default'] ?? '')) ?>" placeholder="2 Adults, 1 Child">
           </div>
           <div class="form-row">
             <div class="form-group">
@@ -520,7 +516,6 @@ function collectGoodToKnow() {
     ['booking_badge', 'gk_booking_badge'],
     ['rate_label', 'gk_rate_label'],
     ['trending_message', 'gk_trending_message'],
-    ['booking_guests_default', 'gk_booking_guests_default'],
     ['booking_trust_line', 'gk_booking_trust_line'],
     ['booking_trust_subline', 'gk_booking_trust_subline'],
     ['panel_footnote', 'gk_panel_footnote']

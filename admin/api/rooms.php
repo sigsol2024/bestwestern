@@ -84,7 +84,8 @@ function normalizeRoomMetaObject($input) {
 function stripLegacyRoomGoodToKnowKeys(array $g): array {
     unset(
         $g['booking_checkin_default'],
-        $g['booking_checkout_default']
+        $g['booking_checkout_default'],
+        $g['booking_guests_default']
     );
     return $g;
 }
