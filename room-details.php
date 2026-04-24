@@ -168,6 +168,17 @@ $occupancyLabel = $maxGuests > 0
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .slider-dot.active { background-color: #fff; width: 2rem; }
+    @keyframes suiteFadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .suite-amenity-card {
+      animation: suiteFadeUp 0.55s ease-out backwards;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .suite-amenity-card { animation: none; }
+      .suite-story-col-inner { transition: none !important; }
+    }
   </style>
 </head>
 <body class="bg-surface text-on-surface font-body selection:bg-secondary-container selection:text-on-secondary-container overflow-x-hidden">
@@ -215,43 +226,67 @@ $occupancyLabel = $maxGuests > 0
         <div class="text-[11px] uppercase tracking-[0.3em] font-bold text-primary"><?= e($occupancyLabel) ?></div>
       </div>
 
-      <div class="grid md:grid-cols-3 gap-12">
-        <div>
-          <h3 class="font-headline text-2xl mb-4 italic text-primary"><?= e($expHeading) ?></h3>
-          <p class="text-on-surface-variant text-[14px] leading-relaxed font-light"><?= nl2br(e($experienceBody)) ?></p>
+      <?php $hasWhoBlock = $whoBody !== ''; ?>
+      <div class="rounded-2xl border border-outline-variant/25 bg-gradient-to-b from-surface-container-low/90 via-surface/40 to-surface-container-low/60 shadow-[0_10px_40px_-18px_rgba(0,0,0,0.12)] overflow-hidden transition-[box-shadow,transform] duration-500 hover:shadow-[0_20px_48px_-14px_rgba(0,0,0,0.16)] motion-reduce:transition-none">
+        <div class="grid md:grid-cols-3 md:divide-x md:divide-outline-variant/25 divide-y divide-outline-variant/20 md:divide-y-0 md:items-stretch">
+          <div class="suite-story-col group relative p-8 md:p-10 flex flex-col min-h-0 md:min-h-[14rem]">
+            <div class="suite-story-col-inner h-full flex flex-col transition-transform duration-300 ease-out group-hover:-translate-y-0.5 motion-reduce:transform-none">
+              <h3 class="font-headline text-2xl md:text-[1.65rem] mb-4 italic text-primary tracking-tight"><?= e($expHeading) ?></h3>
+              <p class="text-on-surface-variant text-[14px] leading-relaxed font-light grow"><?= nl2br(e($experienceBody)) ?></p>
+            </div>
+          </div>
+          <div class="suite-story-col group relative p-8 md:p-10 flex flex-col min-h-0 md:min-h-[14rem]">
+            <div class="suite-story-col-inner h-full flex flex-col transition-transform duration-300 ease-out group-hover:-translate-y-0.5 motion-reduce:transform-none">
+              <h3 class="font-headline text-2xl md:text-[1.65rem] mb-4 italic text-primary tracking-tight"><?= e($spaceHeading) ?></h3>
+              <p class="text-on-surface-variant text-[14px] leading-relaxed font-light grow"><?= nl2br(e($spaceBody)) ?></p>
+            </div>
+          </div>
+          <div class="suite-story-col group relative p-8 md:p-10 flex flex-col min-h-0 md:min-h-[14rem]">
+            <div class="suite-story-col-inner h-full flex flex-col transition-transform duration-300 ease-out group-hover:-translate-y-0.5 motion-reduce:transform-none">
+              <h3 class="font-headline text-2xl md:text-[1.65rem] mb-4 italic text-primary tracking-tight"><?= e($viewBody !== '' ? $viewHeading : 'Essentials') ?></h3>
+              <?php if ($viewBody !== ''): ?>
+              <p class="text-on-surface-variant text-[14px] leading-relaxed font-light grow"><?= nl2br(e($viewBody)) ?></p>
+              <?php else: ?>
+              <p class="text-on-surface-variant text-[14px] leading-relaxed font-light grow"><?= e($bed !== '' ? $bed : 'King Bed') ?> • <?= e($size !== '' ? $size : 'Luxury Suite') ?></p>
+              <?php endif; ?>
+            </div>
+          </div>
         </div>
-        <div>
-          <h3 class="font-headline text-2xl mb-4 italic text-primary"><?= e($spaceHeading) ?></h3>
-          <p class="text-on-surface-variant text-[14px] leading-relaxed font-light"><?= nl2br(e($spaceBody)) ?></p>
+        <?php if ($hasWhoBlock): ?>
+        <div class="border-t border-outline-variant/25 bg-surface-container-low/50 px-8 py-8 md:px-10 md:py-10">
+          <div class="grid md:grid-cols-2 md:gap-0 gap-6 md:divide-x md:divide-outline-variant/20 md:items-stretch">
+            <div class="md:pr-10 flex flex-col justify-center">
+              <h3 class="font-headline text-2xl md:text-[1.65rem] italic text-primary tracking-tight"><?= e($whoHeading) ?></h3>
+            </div>
+            <div class="md:pl-10 flex flex-col justify-center">
+              <p class="text-on-surface-variant text-[14px] leading-relaxed font-light"><?= nl2br(e($whoBody)) ?></p>
+            </div>
+          </div>
         </div>
-        <div>
-          <h3 class="font-headline text-2xl mb-4 italic text-primary"><?= e($viewBody !== '' ? $viewHeading : 'Essentials') ?></h3>
-          <?php if ($viewBody !== ''): ?>
-          <p class="text-on-surface-variant text-[14px] leading-relaxed font-light"><?= nl2br(e($viewBody)) ?></p>
-          <?php else: ?>
-          <p class="text-on-surface-variant text-[14px] leading-relaxed font-light"><?= e($bed !== '' ? $bed : 'King Bed') ?> • <?= e($size !== '' ? $size : 'Luxury Suite') ?></p>
-          <?php endif; ?>
-        </div>
+        <?php endif; ?>
       </div>
-
-      <?php if ($whoBody !== ''): ?>
-      <div>
-        <h3 class="font-headline text-2xl mb-4 italic text-primary"><?= e($whoHeading) ?></h3>
-        <p class="text-on-surface-variant text-[14px] leading-relaxed font-light"><?= nl2br(e($whoBody)) ?></p>
-      </div>
-      <?php endif; ?>
 
       <?php if (!empty($amenityCards)): ?>
-      <div class="bg-primary/5 p-12">
-        <div class="flex justify-between items-end mb-10">
-          <h3 class="font-headline text-3xl italic text-primary">Refined Essentials</h3>
-          <div class="text-[10px] uppercase tracking-widest text-secondary font-bold"><?= e($bookingBadge !== '' ? $bookingBadge : 'Best Western Plus Collection') ?></div>
+      <div class="rounded-2xl border border-outline-variant/25 bg-gradient-to-br from-primary/[0.07] via-surface-container-low/40 to-primary/[0.05] p-8 md:p-12 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] overflow-hidden">
+        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8 md:mb-10 pb-6 border-b border-outline-variant/20">
+          <h3 class="font-headline text-3xl md:text-4xl italic text-primary tracking-tight">Refined Essentials</h3>
+          <div class="text-[10px] uppercase tracking-[0.35em] text-secondary font-bold shrink-0"><?= e($bookingBadge !== '' ? $bookingBadge : 'Best Western Plus Collection') ?></div>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-10">
-          <?php foreach (array_slice($amenityCards, 0, 12) as $card): ?>
-          <div class="space-y-4">
-            <h4 class="text-[10px] uppercase tracking-[0.2em] font-bold text-secondary"><?= e($card['title']) ?></h4>
-            <p class="text-xs text-on-surface-variant font-light"><?= e($card['desc'] !== '' ? $card['desc'] : 'Included') ?></p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+          <?php foreach (array_values(array_slice($amenityCards, 0, 12)) as $i => $card):
+              $amIcon = trim((string)($card['icon'] ?? 'check_circle'));
+              if ($amIcon === '') {
+                  $amIcon = 'check_circle';
+              }
+          ?>
+          <div class="suite-amenity-card group rounded-xl border border-outline-variant/20 bg-white/75 backdrop-blur-[2px] p-5 md:p-6 shadow-sm transition-all duration-300 ease-out hover:border-primary/30 hover:shadow-md hover:-translate-y-0.5 motion-reduce:hover:transform-none" style="animation-delay: <?= min((int)$i * 45, 400) ?>ms">
+            <div class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-[20px] text-primary/40 group-hover:text-primary/70 transition-colors shrink-0" aria-hidden="true"><?= e($amIcon) ?></span>
+              <div class="space-y-2 min-w-0">
+                <h4 class="text-[10px] uppercase tracking-[0.22em] font-bold text-secondary"><?= e($card['title']) ?></h4>
+                <p class="text-xs text-on-surface-variant font-light leading-relaxed"><?= e($card['desc'] !== '' ? $card['desc'] : 'Included') ?></p>
+              </div>
+            </div>
           </div>
           <?php endforeach; ?>
         </div>
