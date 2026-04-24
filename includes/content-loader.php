@@ -68,6 +68,17 @@ function sanitize_tailwind_utilities(string $classes): string {
 }
 
 /**
+ * Drop good_to_know keys removed from the room detail template.
+ *
+ * @param array<string, mixed> $g
+ * @return array<string, mixed>
+ */
+function strip_legacy_room_good_to_know(array $g): array {
+    unset($g['booking_checkin_default'], $g['booking_checkout_default']);
+    return $g;
+}
+
+/**
  * Homepage hero title: replace legacy boxed span (border/rounded) with the current accent class.
  * Stored DB content may still contain the older markup.
  */
@@ -288,7 +299,8 @@ function getRooms($filters = []) {
             $roomItem['amenities'] = json_decode($roomItem['amenities'] ?? '[]', true);
             $roomItem['tags'] = json_decode($roomItem['tags'] ?? '[]', true);
             $roomItem['included_items'] = json_decode($roomItem['included_items'] ?? '[]', true);
-            $roomItem['good_to_know'] = json_decode($roomItem['good_to_know'] ?? '{}', true);
+            $gtk = json_decode($roomItem['good_to_know'] ?? '{}', true);
+            $roomItem['good_to_know'] = strip_legacy_room_good_to_know(is_array($gtk) ? $gtk : []);
         }
         unset($roomItem);
         
@@ -339,7 +351,8 @@ function getRoomBySlug($slug) {
             $room['amenities'] = json_decode($room['amenities'] ?? '[]', true);
             $room['tags'] = json_decode($room['tags'] ?? '[]', true);
             $room['included_items'] = json_decode($room['included_items'] ?? '[]', true);
-            $room['good_to_know'] = json_decode($room['good_to_know'] ?? '{}', true);
+            $gtk = json_decode($room['good_to_know'] ?? '{}', true);
+            $room['good_to_know'] = strip_legacy_room_good_to_know(is_array($gtk) ? $gtk : []);
         }
         
         return $room ? $room : null;

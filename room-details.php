@@ -13,6 +13,8 @@ if (!$room) {
     exit;
 }
 
+$GLOBALS['site_header_overlaps_hero'] = true;
+
 $siteName = getSiteSetting('site_name', cms_default_setting('site_name'));
 $whatsappLink = getSiteSetting('whatsapp_link', '');
 $whatsappNumber = preg_replace('/[^0-9]/', '', (string)getSiteSetting('whatsapp_number', ''));
@@ -114,8 +116,6 @@ $bookingBadge = trim((string)($gk['booking_badge'] ?? ''));
 $rateLabel = trim((string)($gk['rate_label'] ?? '')) ?: 'Standard Rate';
 $panelFootnote = trim((string)($gk['panel_footnote'] ?? ''));
 $trendingMessage = trim((string)($gk['trending_message'] ?? ''));
-$bookingCheckinDefault = trim((string)($gk['booking_checkin_default'] ?? ''));
-$bookingCheckoutDefault = trim((string)($gk['booking_checkout_default'] ?? ''));
 $bookingGuestsDefault = trim((string)($gk['booking_guests_default'] ?? ''));
 $bookingTrustLine = trim((string)($gk['booking_trust_line'] ?? ''));
 $bookingTrustSubline = trim((string)($gk['booking_trust_subline'] ?? ''));
@@ -173,8 +173,8 @@ $occupancyLabel = $maxGuests > 0
 <body class="bg-surface text-on-surface font-body selection:bg-secondary-container selection:text-on-secondary-container overflow-x-hidden">
 <?php require_once __DIR__ . '/includes/header.php'; ?>
 
-<main class="pt-20">
-  <section class="relative h-[85vh] w-full overflow-hidden group">
+<main>
+  <section class="relative min-h-[70vh] h-[80vh] max-h-[900px] w-full overflow-hidden group">
     <div class="flex h-full w-full overflow-x-auto snap-x snap-mandatory hide-scrollbar" id="hero-slider">
       <?php foreach ($images as $img): ?>
       <div class="flex-none w-full h-full snap-start relative">
@@ -194,13 +194,12 @@ $occupancyLabel = $maxGuests > 0
     <div class="absolute bottom-12 left-1/2 -translate-x-1/2 flex gap-4 z-20" id="heroDotsWrap"></div>
     <?php endif; ?>
 
-    <div class="absolute inset-0 pointer-events-none flex items-end pb-32 px-6 md:px-12 max-w-screen-2xl mx-auto left-0 right-0">
-      <div class="max-w-3xl text-white pointer-events-auto">
-        <span class="font-body uppercase tracking-[0.5em] text-[10px] font-bold mb-6 block opacity-80"><?= e($heroBadge) ?></span>
-        <h1 class="font-headline text-5xl md:text-7xl lg:text-8xl leading-[1.1] mb-8"><?= e($title) ?></h1>
+    <div class="absolute inset-0 pointer-events-none flex items-end pb-16 md:pb-24 pt-24 md:pt-28 px-6 md:px-12 max-w-screen-2xl mx-auto left-0 right-0">
+      <div class="max-w-2xl text-white pointer-events-auto">
+        <span class="font-body uppercase tracking-[0.5em] text-[10px] font-bold mb-4 block opacity-80"><?= e($heroBadge) ?></span>
+        <h1 class="font-headline text-3xl sm:text-4xl md:text-5xl leading-tight mb-6"><?= e($title) ?></h1>
         <div class="flex items-center gap-8">
           <a class="text-[10px] font-bold tracking-[0.3em] uppercase border-b border-white/30 pb-1 hover:border-white transition-all" href="#suiteDetails">View Details</a>
-          <a class="text-[10px] font-bold tracking-[0.3em] uppercase border-b border-white/30 pb-1 hover:border-white transition-all" href="<?= e($bookUrl) ?>">Reserve</a>
         </div>
       </div>
     </div>
@@ -308,16 +307,6 @@ $occupancyLabel = $maxGuests > 0
         </div>
         <?php endif; ?>
         <form class="space-y-6 mb-6" onsubmit="event.preventDefault(); window.location.href='<?= e($bookUrl) ?>';">
-          <div class="grid grid-cols-2 gap-px bg-outline-variant/30 border border-outline-variant/30 overflow-hidden">
-            <div class="bg-white p-5">
-              <label class="block text-[9px] uppercase tracking-widest font-bold mb-2 opacity-50">Check In</label>
-              <input class="w-full text-xs border-none p-0 focus:ring-0 font-medium" type="date" value="<?= e($bookingCheckinDefault) ?>">
-            </div>
-            <div class="bg-white p-5">
-              <label class="block text-[9px] uppercase tracking-widest font-bold mb-2 opacity-50">Check Out</label>
-              <input class="w-full text-xs border-none p-0 focus:ring-0 font-medium" type="date" value="<?= e($bookingCheckoutDefault) ?>">
-            </div>
-          </div>
           <div class="border border-outline-variant/30 p-5 bg-white">
             <label class="block text-[9px] uppercase tracking-widest font-bold mb-2 opacity-50">Guests</label>
             <input class="w-full text-xs border-none p-0 focus:ring-0 font-medium" type="text" value="<?= e($bookingGuestsDefault !== '' ? $bookingGuestsDefault : ($maxGuests > 0 ? ($maxGuests . ' Adults') : '2 Adults')) ?>">

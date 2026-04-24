@@ -78,6 +78,17 @@ function normalizeRoomMetaObject($input) {
     return $normalized;
 }
 
+/**
+ * Remove keys no longer used by the public room template (editor/API may omit them).
+ */
+function stripLegacyRoomGoodToKnowKeys(array $g): array {
+    unset(
+        $g['booking_checkin_default'],
+        $g['booking_checkout_default']
+    );
+    return $g;
+}
+
 try {
     switch ($method) {
         case 'GET':
@@ -99,6 +110,7 @@ try {
                     if (!is_array($room['good_to_know'])) {
                         $room['good_to_know'] = [];
                     }
+                    $room['good_to_know'] = stripLegacyRoomGoodToKnowKeys($room['good_to_know']);
                     jsonResponse(['success' => true, 'room' => $room]);
                 }
                 jsonResponse(['success' => false, 'message' => 'Room not found'], 404);
@@ -192,6 +204,12 @@ try {
                 $src['slug'] = $candidate;
                 $src['is_active'] = 0;
                 $src['is_featured'] = 0;
+                $gtkDup = json_decode((string)($src['good_to_know'] ?? '{}'), true);
+                $gtkDup = is_array($gtkDup) ? $gtkDup : [];
+                $src['good_to_know'] = json_encode(
+                    stripLegacyRoomGoodToKnowKeys(normalizeRoomMetaObject($gtkDup)),
+                    JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+                );
                 $pdo->beginTransaction();
                 $src['display_order'] = resolveUniqueDisplayOrder($pdo, 0, null);
                 $cols = array_keys($src);
@@ -215,8 +233,8 @@ try {
             $features = json_encode($data['features'] ?? []);
             $amenities = json_encode($data['amenities'] ?? []);
             $includedItems = json_encode($data['included_items'] ?? []);
-            $goodToKnow = normalizeRoomMetaObject($data['good_to_know'] ?? []);
-            $goodToKnowJson = json_encode($goodToKnow);
+            $goodToKnow = stripLegacyRoomGoodToKnowKeys(normalizeRoomMetaObject($data['good_to_know'] ?? []));
+            $goodToKnowJson = json_encode($goodToKnow, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
             $urgencyMessage = trim((string)($data['urgency_message'] ?? ''));
             $size = trim((string)($data['size'] ?? ''));
             $maxGuests = (int)($data['max_guests'] ?? 0);
@@ -273,8 +291,8 @@ try {
             $features = json_encode($data['features'] ?? []);
             $amenities = json_encode($data['amenities'] ?? []);
             $includedItems = json_encode($data['included_items'] ?? []);
-            $goodToKnow = normalizeRoomMetaObject($data['good_to_know'] ?? []);
-            $goodToKnowJson = json_encode($goodToKnow);
+            $goodToKnow = stripLegacyRoomGoodToKnowKeys(normalizeRoomMetaObject($data['good_to_know'] ?? []));
+            $goodToKnowJson = json_encode($goodToKnow, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
             $urgencyMessage = trim((string)($data['urgency_message'] ?? ''));
             $size = trim((string)($data['size'] ?? ''));
             $maxGuests = (int)($data['max_guests'] ?? 0);
