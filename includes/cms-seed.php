@@ -251,6 +251,8 @@ $pageSections = [
     ['rooms', 'signature_kicker', 'text', 'The Pinnacle of Living'],
     ['rooms', 'amenities_reminder_title', 'text', 'All suites include:'],
     ['rooms', 'amenities_reminder_items_json', 'json', '["WIFI","BREAKFAST","TOILETRIES","TURNDOWN"]'],
+    ['rooms', 'amenities_reminder_section_classes', 'text', 'bg-surface-container py-[54px]'],
+    ['rooms', 'final_cta_section_classes', 'text', 'py-7 my-0 text-center bg-white'],
     ['rooms', 'final_cta_title', 'text', 'Need help choosing?'],
     ['rooms', 'final_cta_body', 'text', 'Our dedicated concierge is available 24/7 to help you select the perfect sanctuary for your stay in Yenagoa.'],
     ['rooms', 'final_cta_label', 'text', 'Contact Reservations'],

@@ -15,6 +15,18 @@ $amenitiesReminderItems = json_decode($amenitiesReminderItemsRaw, true);
 if (!is_array($amenitiesReminderItems) || $amenitiesReminderItems === []) {
     $amenitiesReminderItems = ['WIFI', 'BREAKFAST', 'TOILETRIES', 'TURNDOWN'];
 }
+$defAmenitiesReminderSectionClasses = 'bg-surface-container py-[54px]';
+$defFinalCtaSectionClasses = 'py-7 my-0 text-center bg-white';
+$rawAmenitiesReminderSectionClasses = trim((string) getPageSection('rooms', 'amenities_reminder_section_classes', $defAmenitiesReminderSectionClasses));
+$amenitiesReminderSectionClasses = sanitize_tailwind_utilities($rawAmenitiesReminderSectionClasses !== '' ? $rawAmenitiesReminderSectionClasses : $defAmenitiesReminderSectionClasses);
+if ($amenitiesReminderSectionClasses === '') {
+    $amenitiesReminderSectionClasses = $defAmenitiesReminderSectionClasses;
+}
+$rawFinalCtaSectionClasses = trim((string) getPageSection('rooms', 'final_cta_section_classes', $defFinalCtaSectionClasses));
+$finalCtaSectionClasses = sanitize_tailwind_utilities($rawFinalCtaSectionClasses !== '' ? $rawFinalCtaSectionClasses : $defFinalCtaSectionClasses);
+if ($finalCtaSectionClasses === '') {
+    $finalCtaSectionClasses = $defFinalCtaSectionClasses;
+}
 $finalCtaTitle = getPageSection('rooms', 'final_cta_title', 'Need help choosing?');
 $finalCtaBody = getPageSection('rooms', 'final_cta_body', 'Our dedicated concierge is available 24/7 to help you select the perfect sanctuary for your stay in Yenagoa.');
 $finalCtaLabel = getPageSection('rooms', 'final_cta_label', 'Contact Reservations');
@@ -135,9 +147,9 @@ $listRooms = array_values(array_filter($rooms, static function ($room) use ($sig
         $img = $img !== '' ? $img : $heroPlaceholder;
         $reverse = ($idx % 2) === 1;
     ?>
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-10 items-center">
-      <div class="md:col-span-7 aspect-[16/10] overflow-hidden <?= $reverse ? 'md:order-2' : '' ?>">
-        <img class="w-full h-full object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-700" src="<?= e($img) ?>" alt="<?= e($title) ?>">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-10 md:items-stretch">
+      <div class="md:col-span-7 aspect-[16/10] md:aspect-auto md:h-full min-h-0 overflow-hidden <?= $reverse ? 'md:order-2' : '' ?>">
+        <img class="w-full h-full min-h-[200px] md:min-h-0 object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-700" src="<?= e($img) ?>" alt="<?= e($title) ?>">
       </div>
       <div class="md:col-span-5 space-y-6 <?= $reverse ? 'md:order-1' : '' ?>">
         <div class="space-y-1">
@@ -148,7 +160,7 @@ $listRooms = array_values(array_filter($rooms, static function ($room) use ($sig
         <p class="text-on-surface-variant font-light leading-relaxed max-w-md"><?= e($desc) ?></p>
         <div class="text-2xl font-headline text-primary"><?= e($currency) ?><?= e($price) ?> <span class="text-[10px] font-body text-outline tracking-widest uppercase align-middle ml-2">/night</span></div>
         <div class="pt-4">
-          <a class="inline-block bg-secondary text-white px-10 py-4 uppercase tracking-[0.2em] text-[10px] font-bold hover:bg-primary transition-all" href="<?= e(site_url('room-details', ['slug' => $slug])) ?>">View Suite</a>
+          <a class="inline-block bg-primary text-on-primary px-10 py-4 uppercase tracking-[0.2em] text-[10px] font-bold hover:brightness-110 transition-all" href="<?= e(site_url('room-details', ['slug' => $slug])) ?>">View Suite</a>
         </div>
       </div>
     </div>
@@ -198,7 +210,7 @@ $listRooms = array_values(array_filter($rooms, static function ($room) use ($sig
     <?php endif; ?>
   </section>
 
-  <section class="bg-surface-container py-24">
+  <section class="<?= e($amenitiesReminderSectionClasses) ?>">
     <div class="max-w-[1440px] mx-auto px-12">
       <div class="flex flex-col md:flex-row items-baseline gap-10 md:gap-20">
         <h3 class="font-headline italic text-3xl text-primary whitespace-nowrap"><?= e($amenitiesReminderTitle) ?></h3>
@@ -211,7 +223,7 @@ $listRooms = array_values(array_filter($rooms, static function ($room) use ($sig
     </div>
   </section>
 
-  <section class="py-40 text-center bg-white">
+  <section class="<?= e($finalCtaSectionClasses) ?>">
     <div class="max-w-2xl mx-auto px-6 space-y-8">
       <h3 class="text-4xl font-headline text-primary"><?= e($finalCtaTitle) ?></h3>
       <p class="text-on-surface-variant font-light tracking-wide leading-relaxed"><?= e($finalCtaBody) ?></p>

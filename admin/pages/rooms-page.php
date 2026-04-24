@@ -54,6 +54,20 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
         <label for="amenities_reminder_items_json">Amenities reminder items (JSON array)</label>
         <textarea id="amenities_reminder_items_json" name="amenities_reminder_items_json" rows="4" style="font-family:monospace;font-size:12px;"><?= htmlspecialchars($sectionsArray['amenities_reminder_items_json'] ?? '["WIFI","BREAKFAST","TOILETRIES","TURNDOWN"]', ENT_QUOTES, 'UTF-8') ?></textarea>
       </div>
+      <div class="card card--nested" style="margin-top:12px;">
+        <div class="card-header"><h3>Bottom section shells (public /rooms)</h3></div>
+        <div class="card-body">
+          <p class="form-help">Tailwind classes on the outer <code>section</code> for the amenities strip and the closing CTA. Matches the live template defaults; clear a field and save to reset spacing to the coded defaults.</p>
+          <div class="form-group">
+            <label for="amenities_reminder_section_classes">Amenities reminder section classes</label>
+            <input type="text" id="amenities_reminder_section_classes" name="amenities_reminder_section_classes" value="<?= sanitize($sectionsArray['amenities_reminder_section_classes'] ?? 'bg-surface-container py-[54px]') ?>" style="font-family:monospace;font-size:12px;width:100%;max-width:640px;">
+          </div>
+          <div class="form-group">
+            <label for="final_cta_section_classes">Final CTA section classes</label>
+            <input type="text" id="final_cta_section_classes" name="final_cta_section_classes" value="<?= sanitize($sectionsArray['final_cta_section_classes'] ?? 'py-7 my-0 text-center bg-white') ?>" style="font-family:monospace;font-size:12px;width:100%;max-width:640px;">
+          </div>
+        </div>
+      </div>
       <div class="form-row">
         <div class="form-group">
           <label for="final_cta_title">Final CTA title</label>

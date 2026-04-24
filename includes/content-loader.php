@@ -53,6 +53,21 @@ function getPageSection($page, $sectionKey, $default = '') {
 }
 
 /**
+ * Strip characters that are unsafe or invalid inside an HTML class attribute (Tailwind utilities).
+ *
+ * @return string trimmed utility string (may be empty if input contained only invalid characters)
+ */
+function sanitize_tailwind_utilities(string $classes): string {
+    $classes = trim($classes);
+    if ($classes === '') {
+        return '';
+    }
+    $clean = preg_replace('/[^a-zA-Z0-9_\-\[\]\/\s:.%()+,=]/', '', $classes);
+    $clean = is_string($clean) ? $clean : '';
+    return trim(preg_replace('/\s+/', ' ', $clean));
+}
+
+/**
  * Homepage hero title: replace legacy boxed span (border/rounded) with the current accent class.
  * Stored DB content may still contain the older markup.
  */

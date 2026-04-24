@@ -60,6 +60,8 @@ INSERT IGNORE INTO `page_sections` (`page`, `section_key`, `content_type`, `cont
 ('rooms', 'signature_kicker', 'text', 'The Pinnacle of Living', NOW()),
 ('rooms', 'amenities_reminder_title', 'text', 'All suites include:', NOW()),
 ('rooms', 'amenities_reminder_items_json', 'json', '["WIFI","BREAKFAST","TOILETRIES","TURNDOWN"]', NOW()),
+('rooms', 'amenities_reminder_section_classes', 'text', 'bg-surface-container py-[54px]', NOW()),
+('rooms', 'final_cta_section_classes', 'text', 'py-7 my-0 text-center bg-white', NOW()),
 ('rooms', 'final_cta_title', 'text', 'Need help choosing?', NOW()),
 ('rooms', 'final_cta_body', 'text', 'Our dedicated concierge is available 24/7 to help you select the perfect sanctuary for your stay in Yenagoa.', NOW()),
 ('rooms', 'final_cta_label', 'text', 'Contact Reservations', NOW()),
