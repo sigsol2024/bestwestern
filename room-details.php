@@ -104,7 +104,15 @@ if (is_string($gk)) {
     $gk = [];
 }
 
+$experienceBodyGk = trim((string)($gk['experience_body'] ?? ''));
+$spaceHeadingGk = trim((string)($gk['space_heading'] ?? ''));
+$spaceBodyGk = trim((string)($gk['space_body'] ?? ''));
+
 $expHeading = trim((string)($gk['experience_heading'] ?? '')) ?: 'The Experience';
+$spaceHeading = $spaceHeadingGk !== '' ? $spaceHeadingGk : 'The Space';
+$experienceBody = $experienceBodyGk !== '' ? $experienceBodyGk : ($experiencePara !== '' ? $experiencePara : $spacePara);
+$spaceBody = $spaceBodyGk !== '' ? $spaceBodyGk : ($spacePara !== '' ? $spacePara : $description);
+
 $whoHeading = trim((string)($gk['who_heading'] ?? '')) ?: "Who it's for";
 $viewHeading = trim((string)($gk['view_heading'] ?? '')) ?: 'The View';
 $whoBody = trim((string)($gk['who_body'] ?? ''));
@@ -210,11 +218,11 @@ $occupancyLabel = $maxGuests > 0
       <div class="grid md:grid-cols-3 gap-12">
         <div>
           <h3 class="font-headline text-2xl mb-4 italic text-primary"><?= e($expHeading) ?></h3>
-          <p class="text-on-surface-variant text-[14px] leading-relaxed font-light"><?= nl2br(e($experiencePara !== '' ? $experiencePara : $spacePara)) ?></p>
+          <p class="text-on-surface-variant text-[14px] leading-relaxed font-light"><?= nl2br(e($experienceBody)) ?></p>
         </div>
         <div>
-          <h3 class="font-headline text-2xl mb-4 italic text-primary">The Space</h3>
-          <p class="text-on-surface-variant text-[14px] leading-relaxed font-light"><?= nl2br(e($spacePara !== '' ? $spacePara : $description)) ?></p>
+          <h3 class="font-headline text-2xl mb-4 italic text-primary"><?= e($spaceHeading) ?></h3>
+          <p class="text-on-surface-variant text-[14px] leading-relaxed font-light"><?= nl2br(e($spaceBody)) ?></p>
         </div>
         <div>
           <h3 class="font-headline text-2xl mb-4 italic text-primary"><?= e($viewBody !== '' ? $viewHeading : 'Essentials') ?></h3>

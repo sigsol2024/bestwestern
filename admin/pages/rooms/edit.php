@@ -63,6 +63,14 @@ if ($id) {
 
 $gk = is_array($room['good_to_know'] ?? null) ? $room['good_to_know'] : [];
 
+$roomDescForLegacy = trim((string)($room['description'] ?? ''));
+$roomShortForLegacy = trim((string)($room['short_description'] ?? ''));
+$legacyParas = preg_split('/\r?\n\s*\r?\n/', $roomDescForLegacy, -1, PREG_SPLIT_NO_EMPTY);
+$legacySpacePara = isset($legacyParas[0]) ? trim((string)$legacyParas[0]) : $roomDescForLegacy;
+$legacyExperiencePara = isset($legacyParas[1]) ? trim((string)$legacyParas[1]) : ($roomShortForLegacy !== '' ? $roomShortForLegacy : $legacySpacePara);
+$storyExperienceBodyEdit = trim((string)($gk['experience_body'] ?? '')) !== '' ? trim((string)($gk['experience_body'] ?? '')) : $legacyExperiencePara;
+$storySpaceBodyEdit = trim((string)($gk['space_body'] ?? '')) !== '' ? trim((string)($gk['space_body'] ?? '')) : ($legacySpacePara !== '' ? $legacySpacePara : $roomDescForLegacy);
+
 require_once dirname(__DIR__, 3) . '/includes/url.php';
 $roomPublicUrlBase = rtrim((string)(defined('SITE_URL') ? SITE_URL : ''), '/');
 ?>
@@ -138,9 +146,84 @@ $roomPublicUrlBase = rtrim((string)(defined('SITE_URL') ? SITE_URL : ''), '/');
         <label for="short_description">Concept / pull quote (hero editorial line)</label>
         <textarea id="short_description" name="short_description" rows="2"><?= sanitize($room['short_description']) ?></textarea>
       </div>
+
+      <div class="card card--nested" style="margin-top: 1rem;">
+        <div class="card-header"><h3>Room page — three columns under stats</h3></div>
+        <div class="card-body card-body--stack">
+          <p class="form-help" style="margin-top:0;">These fields match the public room page, left to right. Each block is independent—no splitting the long description by blank lines.</p>
+
+          <div class="card card--nested" style="margin-bottom: 0;">
+            <div class="card-header"><h4 style="margin:0;font-size:14px;">Column 1 — The Experience</h4></div>
+            <div class="card-body card-body--stack">
+              <div class="form-group">
+                <label for="gk_experience_heading">Heading</label>
+                <input type="text" id="gk_experience_heading" class="form-control" value="<?= sanitize((string)($gk['experience_heading'] ?? '')) ?>" placeholder="The Experience">
+              </div>
+              <div class="form-group">
+                <label for="gk_experience_body">Body</label>
+                <textarea id="gk_experience_body" class="form-control" rows="4"><?= sanitize($storyExperienceBodyEdit) ?></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card--nested" style="margin-top: 12px; margin-bottom: 0;">
+            <div class="card-header"><h4 style="margin:0;font-size:14px;">Column 2 — The Space</h4></div>
+            <div class="card-body card-body--stack">
+              <div class="form-group">
+                <label for="gk_space_heading">Heading</label>
+                <input type="text" id="gk_space_heading" class="form-control" value="<?= sanitize((string)($gk['space_heading'] ?? '')) ?>" placeholder="The Space (leave blank for default)">
+              </div>
+              <div class="form-group">
+                <label for="gk_space_body">Body</label>
+                <textarea id="gk_space_body" class="form-control" rows="4"><?= sanitize($storySpaceBodyEdit) ?></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card--nested" style="margin-top: 12px; margin-bottom: 0;">
+            <div class="card-header"><h4 style="margin:0;font-size:14px;">Column 3 — The View (or Essentials)</h4></div>
+            <div class="card-body card-body--stack">
+              <p class="form-help" style="margin-top:0;">If the body is empty, the live page shows bed • size from features instead.</p>
+              <div class="form-group">
+                <label for="gk_view_heading">Heading</label>
+                <input type="text" id="gk_view_heading" class="form-control" value="<?= sanitize((string)($gk['view_heading'] ?? '')) ?>" placeholder="The View">
+              </div>
+              <div class="form-group">
+                <label for="gk_view_body">Body</label>
+                <textarea id="gk_view_body" class="form-control" rows="4"><?= sanitize((string)($gk['view_body'] ?? '')) ?></textarea>
+              </div>
+            </div>
+          </div>
+
+          <p style="margin:1.25rem 0 0.35rem;font-weight:600;font-size:13px;color:var(--text-main, #1a1a1a);">Who it’s for (optional, full width below the three columns)</p>
+          <div class="form-group">
+            <label for="gk_who_heading">Heading</label>
+            <input type="text" id="gk_who_heading" class="form-control" value="<?= sanitize((string)($gk['who_heading'] ?? '')) ?>" placeholder="Who it's for">
+          </div>
+          <div class="form-group">
+            <label for="gk_who_body">Body</label>
+            <textarea id="gk_who_body" class="form-control" rows="3"><?= sanitize((string)($gk['who_body'] ?? '')) ?></textarea>
+          </div>
+
+          <p style="margin:1.25rem 0 0.35rem;font-weight:600;font-size:13px;color:var(--text-main, #1a1a1a);">Sticky reserve panel (right column on the site)</p>
+          <p class="form-help" style="margin-top:0;"><strong>Reserve Suite</strong> uses <strong>Book URL</strong> above. Urgency line is set in the main form.</p>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="gk_booking_badge">Panel badge (also near “Refined Essentials”)</label>
+              <input type="text" id="gk_booking_badge" class="form-control" value="<?= sanitize((string)($gk['booking_badge'] ?? '')) ?>" placeholder="Plus Collection">
+            </div>
+            <div class="form-group">
+              <label for="gk_rate_label">Rate label</label>
+              <input type="text" id="gk_rate_label" class="form-control" value="<?= sanitize((string)($gk['rate_label'] ?? '')) ?>" placeholder="Standard Rate">
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="form-group">
-        <label for="description">Description (first block = “The Space”, second block after blank line = “The Experience”)</label>
+        <label for="description">Long description</label>
         <textarea id="description" name="description" rows="8"><?= sanitize($room['description']) ?></textarea>
+        <p class="form-help" style="margin-top:0;">Used on room listings and elsewhere. If “The Experience” or “The Space” bodies above are cleared, the page falls back to the old rule: first paragraph = Space column, second paragraph (after a blank line) = Experience column.</p>
       </div>
 
       <div class="form-row">
@@ -202,53 +285,6 @@ $roomPublicUrlBase = rtrim((string)(defined('SITE_URL') ? SITE_URL : ''), '/');
             <?php } ?>
           </div>
           <button type="button" class="btn btn-outline btn-sm" onclick="addFeatureRow()">Add feature</button>
-        </div>
-      </div>
-
-      <div class="card card--nested">
-        <div class="card-header"><h3>Room detail page (matches public layout)</h3></div>
-        <div class="card-body card-body--stack">
-          <p class="form-help">Stored in <code>good_to_know</code> JSON. Order matches the public room page: three story columns, optional “Who it’s for”, then the sticky reserve panel (badge, rate, urgency if set, reserve button).</p>
-
-          <p style="margin:1rem 0 0.35rem;font-weight:600;font-size:13px;color:var(--text-main, #1a1a1a);">Three columns under stats</p>
-          <p class="form-help" style="margin-top:0;">“The Space” column is always titled <em>The Space</em> and uses the long description. First column uses the experience heading + intro from the description; third column uses the view heading/body (or essentials fallback).</p>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="gk_experience_heading">Column 1 — “The Experience” heading</label>
-              <input type="text" id="gk_experience_heading" class="form-control" value="<?= sanitize((string)($gk['experience_heading'] ?? '')) ?>" placeholder="The Experience">
-            </div>
-            <div class="form-group">
-              <label for="gk_view_heading">Column 3 — heading (The View / Essentials)</label>
-              <input type="text" id="gk_view_heading" class="form-control" value="<?= sanitize((string)($gk['view_heading'] ?? '')) ?>" placeholder="The View">
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="gk_view_body">Column 3 — body</label>
-            <textarea id="gk_view_body" class="form-control" rows="3"><?= sanitize((string)($gk['view_body'] ?? '')) ?></textarea>
-          </div>
-
-          <p style="margin:1.25rem 0 0.35rem;font-weight:600;font-size:13px;color:var(--text-main, #1a1a1a);">Who it’s for (optional)</p>
-          <div class="form-group">
-            <label for="gk_who_heading">Heading</label>
-            <input type="text" id="gk_who_heading" class="form-control" value="<?= sanitize((string)($gk['who_heading'] ?? '')) ?>" placeholder="Who it's for">
-          </div>
-          <div class="form-group">
-            <label for="gk_who_body">Body</label>
-            <textarea id="gk_who_body" class="form-control" rows="3"><?= sanitize((string)($gk['who_body'] ?? '')) ?></textarea>
-          </div>
-
-          <p style="margin:1.25rem 0 0.35rem;font-weight:600;font-size:13px;color:var(--text-main, #1a1a1a);">Sticky reserve panel (right column)</p>
-          <p class="form-help" style="margin-top:0;">Shown next to room copy on the site. <strong>Reserve Suite</strong> uses this room’s <strong>Book URL</strong> field above.</p>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="gk_booking_badge">Panel badge (also near “Refined Essentials”)</label>
-              <input type="text" id="gk_booking_badge" class="form-control" value="<?= sanitize((string)($gk['booking_badge'] ?? '')) ?>" placeholder="Plus Collection">
-            </div>
-            <div class="form-group">
-              <label for="gk_rate_label">Rate label</label>
-              <input type="text" id="gk_rate_label" class="form-control" value="<?= sanitize((string)($gk['rate_label'] ?? '')) ?>" placeholder="Standard Rate">
-            </div>
-          </div>
         </div>
       </div>
 
@@ -470,6 +506,9 @@ function collectGoodToKnow() {
   }
   [
     ['experience_heading', 'gk_experience_heading'],
+    ['experience_body', 'gk_experience_body'],
+    ['space_heading', 'gk_space_heading'],
+    ['space_body', 'gk_space_body'],
     ['who_heading', 'gk_who_heading'],
     ['view_heading', 'gk_view_heading'],
     ['who_body', 'gk_who_body'],
