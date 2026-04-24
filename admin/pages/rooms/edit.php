@@ -134,15 +134,6 @@ $roomPublicUrlBase = rtrim((string)(defined('SITE_URL') ? SITE_URL : ''), '/');
       </div>
 
       <div class="form-group">
-        <label for="book_url">Book URL</label>
-        <input id="book_url" name="book_url" type="text" value="<?= sanitize($room['book_url']) ?>">
-      </div>
-      <div class="form-group">
-        <label for="urgency_message">Urgency line (booking panel)</label>
-        <input id="urgency_message" name="urgency_message" type="text" value="<?= sanitize($room['urgency_message']) ?>" placeholder="Only 2 suites left for your dates">
-      </div>
-
-      <div class="form-group">
         <label for="short_description">Concept / pull quote (hero editorial line)</label>
         <textarea id="short_description" name="short_description" rows="2"><?= sanitize($room['short_description']) ?></textarea>
       </div>
@@ -150,7 +141,7 @@ $roomPublicUrlBase = rtrim((string)(defined('SITE_URL') ? SITE_URL : ''), '/');
       <div class="card card--nested" style="margin-top: 1rem;">
         <div class="card-header"><h3>Room page — three columns under stats</h3></div>
         <div class="card-body card-body--stack">
-          <p class="form-help" style="margin-top:0;">These fields match the public room page, left to right. Each block is independent—no splitting the long description by blank lines.</p>
+          <p class="form-help" style="margin-top:0;">These fields match the public room page, left to right. Each column has its own heading and body.</p>
 
           <div class="card card--nested" style="margin-bottom: 0;">
             <div class="card-header"><h4 style="margin:0;font-size:14px;">Column 1 — The Experience</h4></div>
@@ -205,26 +196,34 @@ $roomPublicUrlBase = rtrim((string)(defined('SITE_URL') ? SITE_URL : ''), '/');
             <textarea id="gk_who_body" class="form-control" rows="3"><?= sanitize((string)($gk['who_body'] ?? '')) ?></textarea>
           </div>
 
-          <p style="margin:1.25rem 0 0.35rem;font-weight:600;font-size:13px;color:var(--text-main, #1a1a1a);">Sticky reserve panel (right column on the site)</p>
-          <p class="form-help" style="margin-top:0;"><strong>Reserve Suite</strong> uses <strong>Book URL</strong> above. Urgency line is set in the main form.</p>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="gk_booking_badge">Panel badge (also near “Refined Essentials”)</label>
-              <input type="text" id="gk_booking_badge" class="form-control" value="<?= sanitize((string)($gk['booking_badge'] ?? '')) ?>" placeholder="Plus Collection">
-            </div>
-            <div class="form-group">
-              <label for="gk_rate_label">Rate label</label>
-              <input type="text" id="gk_rate_label" class="form-control" value="<?= sanitize((string)($gk['rate_label'] ?? '')) ?>" placeholder="Standard Rate">
+          <div class="card card--nested" style="margin-top: 12px; margin-bottom: 0;">
+            <div class="card-header"><h4 style="margin:0;font-size:14px;">Sticky reserve panel (right column on the site)</h4></div>
+            <div class="card-body card-body--stack">
+              <p class="form-help" style="margin-top:0;">Everything below appears in the white booking card beside the story columns. <strong>Reserve Suite</strong> opens the Book URL.</p>
+              <div class="form-group">
+                <label for="book_url">Book URL</label>
+                <input id="book_url" name="book_url" type="text" class="form-control" value="<?= sanitize($room['book_url']) ?>">
+              </div>
+              <div class="form-group">
+                <label for="urgency_message">Urgency line (optional)</label>
+                <input id="urgency_message" name="urgency_message" type="text" class="form-control" value="<?= sanitize($room['urgency_message']) ?>" placeholder="Only 2 suites left for your dates">
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="gk_booking_badge">Panel badge (also near “Refined Essentials”)</label>
+                  <input type="text" id="gk_booking_badge" class="form-control" value="<?= sanitize((string)($gk['booking_badge'] ?? '')) ?>" placeholder="Plus Collection">
+                </div>
+                <div class="form-group">
+                  <label for="gk_rate_label">Rate label</label>
+                  <input type="text" id="gk_rate_label" class="form-control" value="<?= sanitize((string)($gk['rate_label'] ?? '')) ?>" placeholder="Standard Rate">
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="description">Long description</label>
-        <textarea id="description" name="description" rows="8"><?= sanitize($room['description']) ?></textarea>
-        <p class="form-help" style="margin-top:0;">Used on room listings and elsewhere. If “The Experience” or “The Space” bodies above are cleared, the page falls back to the old rule: first paragraph = Space column, second paragraph (after a blank line) = Experience column.</p>
-      </div>
+      <textarea id="description" name="description" class="screen-reader-text" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;" tabindex="-1" aria-hidden="true"><?= sanitize($room['description']) ?></textarea>
 
       <div class="form-row">
         <div class="form-group">
