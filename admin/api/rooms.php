@@ -85,7 +85,14 @@ function stripLegacyRoomGoodToKnowKeys(array $g): array {
     unset(
         $g['booking_checkin_default'],
         $g['booking_checkout_default'],
-        $g['booking_guests_default']
+        $g['booking_guests_default'],
+        $g['floor_plan_url'],
+        $g['testimonial_quote'],
+        $g['testimonial_by'],
+        $g['trending_message'],
+        $g['booking_trust_line'],
+        $g['booking_trust_subline'],
+        $g['panel_footnote']
     );
     return $g;
 }

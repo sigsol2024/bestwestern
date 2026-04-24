@@ -74,7 +74,18 @@ function sanitize_tailwind_utilities(string $classes): string {
  * @return array<string, mixed>
  */
 function strip_legacy_room_good_to_know(array $g): array {
-    unset($g['booking_checkin_default'], $g['booking_checkout_default']);
+    unset(
+        $g['booking_checkin_default'],
+        $g['booking_checkout_default'],
+        $g['booking_guests_default'],
+        $g['floor_plan_url'],
+        $g['testimonial_quote'],
+        $g['testimonial_by'],
+        $g['trending_message'],
+        $g['booking_trust_line'],
+        $g['booking_trust_subline'],
+        $g['panel_footnote']
+    );
     return $g;
 }
 

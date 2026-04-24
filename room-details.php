@@ -109,15 +109,8 @@ $whoHeading = trim((string)($gk['who_heading'] ?? '')) ?: "Who it's for";
 $viewHeading = trim((string)($gk['view_heading'] ?? '')) ?: 'The View';
 $whoBody = trim((string)($gk['who_body'] ?? ''));
 $viewBody = trim((string)($gk['view_body'] ?? ''));
-$testimonialQuote = trim((string)($gk['testimonial_quote'] ?? ''));
-$testimonialBy = trim((string)($gk['testimonial_by'] ?? ''));
-$floorPlanUrl = trim((string)($gk['floor_plan_url'] ?? ''));
 $bookingBadge = trim((string)($gk['booking_badge'] ?? ''));
 $rateLabel = trim((string)($gk['rate_label'] ?? '')) ?: 'Standard Rate';
-$panelFootnote = trim((string)($gk['panel_footnote'] ?? ''));
-$trendingMessage = trim((string)($gk['trending_message'] ?? ''));
-$bookingTrustLine = trim((string)($gk['booking_trust_line'] ?? ''));
-$bookingTrustSubline = trim((string)($gk['booking_trust_subline'] ?? ''));
 
 $urgencyMessage = trim((string)($room['urgency_message'] ?? ''));
 
@@ -233,32 +226,11 @@ $occupancyLabel = $maxGuests > 0
         </div>
       </div>
 
-      <?php if ($whoBody !== '' || $floorPlanUrl !== ''): ?>
-      <div class="grid md:grid-cols-2 gap-10 items-start">
-        <?php if ($whoBody !== ''): ?>
-        <div>
-          <h3 class="font-headline text-2xl mb-4 italic text-primary"><?= e($whoHeading) ?></h3>
-          <p class="text-on-surface-variant text-[14px] leading-relaxed font-light"><?= nl2br(e($whoBody)) ?></p>
-        </div>
-        <?php endif; ?>
-        <?php if ($floorPlanUrl !== ''): ?>
-        <div class="md:text-right">
-          <a class="inline-flex items-center gap-2 text-[10px] font-bold tracking-[0.3em] uppercase border-b border-primary pb-1 text-primary hover:text-secondary hover:border-secondary transition-colors" href="<?= e($floorPlanUrl) ?>" target="_blank" rel="noopener noreferrer">
-            <span class="material-symbols-outlined text-[18px]">download</span>
-            Floor plan
-          </a>
-        </div>
-        <?php endif; ?>
+      <?php if ($whoBody !== ''): ?>
+      <div>
+        <h3 class="font-headline text-2xl mb-4 italic text-primary"><?= e($whoHeading) ?></h3>
+        <p class="text-on-surface-variant text-[14px] leading-relaxed font-light"><?= nl2br(e($whoBody)) ?></p>
       </div>
-      <?php endif; ?>
-
-      <?php if ($testimonialQuote !== ''): ?>
-      <blockquote class="border-l-2 border-primary pl-8 py-2">
-        <p class="font-headline text-2xl md:text-3xl italic text-primary leading-snug"><?= nl2br(e($testimonialQuote)) ?></p>
-        <?php if ($testimonialBy !== ''): ?>
-        <footer class="mt-6 text-[11px] uppercase tracking-[0.25em] text-secondary font-bold"><?= e($testimonialBy) ?></footer>
-        <?php endif; ?>
-      </blockquote>
       <?php endif; ?>
 
       <?php if (!empty($amenityCards)): ?>
@@ -299,31 +271,9 @@ $occupancyLabel = $maxGuests > 0
           <?= e($urgencyMessage) ?>
         </div>
         <?php endif; ?>
-        <?php if ($trendingMessage !== ''): ?>
-        <div class="mb-8 flex items-center gap-2 text-primary/60 text-[11px] font-medium">
-          <span class="material-symbols-outlined text-[16px]">trending_up</span>
-          <?= e($trendingMessage) ?>
-        </div>
-        <?php endif; ?>
         <form class="mb-6" onsubmit="event.preventDefault(); window.location.href='<?= e($bookUrl) ?>';">
           <button class="w-full inline-flex items-center justify-center bg-primary text-white py-5 text-[11px] font-bold tracking-[0.4em] hover:bg-secondary transition-all uppercase shadow-lg shadow-primary/20" type="submit">Reserve Suite</button>
         </form>
-        <?php if ($bookingTrustLine !== '' || $bookingTrustSubline !== ''): ?>
-        <div class="pt-4 border-t border-outline-variant/10 space-y-2">
-          <?php if ($bookingTrustLine !== ''): ?>
-          <div class="flex items-center justify-center gap-2 text-[10px] text-on-surface-variant font-medium">
-            <span class="material-symbols-outlined text-[14px] text-green-600">check_circle</span>
-            <?= e($bookingTrustLine) ?>
-          </div>
-          <?php endif; ?>
-          <?php if ($bookingTrustSubline !== ''): ?>
-          <p class="text-[10px] text-center text-on-surface-variant/60 italic"><?= e($bookingTrustSubline) ?></p>
-          <?php endif; ?>
-        </div>
-        <?php endif; ?>
-        <?php if ($panelFootnote !== ''): ?>
-        <p class="mt-6 text-[11px] text-on-surface-variant leading-relaxed font-light"><?= nl2br(e($panelFootnote)) ?></p>
-        <?php endif; ?>
       </div>
     </div>
   </div>

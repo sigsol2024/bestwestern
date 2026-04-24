@@ -208,7 +208,7 @@ $roomPublicUrlBase = rtrim((string)(defined('SITE_URL') ? SITE_URL : ''), '/');
       <div class="card card--nested">
         <div class="card-header"><h3>Room detail page (matches public layout)</h3></div>
         <div class="card-body card-body--stack">
-          <p class="form-help">Stored in <code>good_to_know</code> JSON. Section order below follows the guest-facing room page: story columns, optional who/floor plan band, testimonial, then the sticky reserve panel.</p>
+          <p class="form-help">Stored in <code>good_to_know</code> JSON. Order matches the public room page: three story columns, optional “Who it’s for”, then the sticky reserve panel (badge, rate, urgency if set, reserve button).</p>
 
           <p style="margin:1rem 0 0.35rem;font-weight:600;font-size:13px;color:var(--text-main, #1a1a1a);">Three columns under stats</p>
           <p class="form-help" style="margin-top:0;">“The Space” column is always titled <em>The Space</em> and uses the long description. First column uses the experience heading + intro from the description; third column uses the view heading/body (or essentials fallback).</p>
@@ -227,32 +227,14 @@ $roomPublicUrlBase = rtrim((string)(defined('SITE_URL') ? SITE_URL : ''), '/');
             <textarea id="gk_view_body" class="form-control" rows="3"><?= sanitize((string)($gk['view_body'] ?? '')) ?></textarea>
           </div>
 
-          <p style="margin:1.25rem 0 0.35rem;font-weight:600;font-size:13px;color:var(--text-main, #1a1a1a);">Who it’s for &amp; floor plan (optional row)</p>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="gk_who_heading">Who it’s for — heading</label>
-              <input type="text" id="gk_who_heading" class="form-control" value="<?= sanitize((string)($gk['who_heading'] ?? '')) ?>" placeholder="Who it's for">
-            </div>
-            <div class="form-group">
-              <label for="gk_floor_plan_url">Floor plan URL</label>
-              <input type="text" id="gk_floor_plan_url" class="form-control" value="<?= sanitize((string)($gk['floor_plan_url'] ?? '')) ?>" placeholder="/assets/uploads/floorplan.pdf">
-            </div>
+          <p style="margin:1.25rem 0 0.35rem;font-weight:600;font-size:13px;color:var(--text-main, #1a1a1a);">Who it’s for (optional)</p>
+          <div class="form-group">
+            <label for="gk_who_heading">Heading</label>
+            <input type="text" id="gk_who_heading" class="form-control" value="<?= sanitize((string)($gk['who_heading'] ?? '')) ?>" placeholder="Who it's for">
           </div>
           <div class="form-group">
-            <label for="gk_who_body">Who it’s for — body</label>
+            <label for="gk_who_body">Body</label>
             <textarea id="gk_who_body" class="form-control" rows="3"><?= sanitize((string)($gk['who_body'] ?? '')) ?></textarea>
-          </div>
-
-          <p style="margin:1.25rem 0 0.35rem;font-weight:600;font-size:13px;color:var(--text-main, #1a1a1a);">Testimonial (optional)</p>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="gk_testimonial_quote">Quote</label>
-              <textarea id="gk_testimonial_quote" class="form-control" rows="2"><?= sanitize((string)($gk['testimonial_quote'] ?? '')) ?></textarea>
-            </div>
-            <div class="form-group">
-              <label for="gk_testimonial_by">Attribution</label>
-              <input type="text" id="gk_testimonial_by" class="form-control" value="<?= sanitize((string)($gk['testimonial_by'] ?? '')) ?>" placeholder="— Guest name">
-            </div>
           </div>
 
           <p style="margin:1.25rem 0 0.35rem;font-weight:600;font-size:13px;color:var(--text-main, #1a1a1a);">Sticky reserve panel (right column)</p>
@@ -266,24 +248,6 @@ $roomPublicUrlBase = rtrim((string)(defined('SITE_URL') ? SITE_URL : ''), '/');
               <label for="gk_rate_label">Rate label</label>
               <input type="text" id="gk_rate_label" class="form-control" value="<?= sanitize((string)($gk['rate_label'] ?? '')) ?>" placeholder="Standard Rate">
             </div>
-          </div>
-          <div class="form-group">
-            <label for="gk_trending_message">Trending line (optional)</label>
-            <input type="text" id="gk_trending_message" class="form-control" value="<?= sanitize((string)($gk['trending_message'] ?? '')) ?>" placeholder="Booked 4 times in the last 24 hours">
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="gk_booking_trust_line">Trust line</label>
-              <input type="text" id="gk_booking_trust_line" class="form-control" value="<?= sanitize((string)($gk['booking_trust_line'] ?? '')) ?>" placeholder="Free cancellation up to 48 hours">
-            </div>
-            <div class="form-group">
-              <label for="gk_booking_trust_subline">Trust subline</label>
-              <input type="text" id="gk_booking_trust_subline" class="form-control" value="<?= sanitize((string)($gk['booking_trust_subline'] ?? '')) ?>" placeholder="Secure your booking. No immediate payment required.">
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="gk_panel_footnote">Panel footnote</label>
-            <textarea id="gk_panel_footnote" class="form-control" rows="2"><?= sanitize((string)($gk['panel_footnote'] ?? '')) ?></textarea>
           </div>
         </div>
       </div>
@@ -510,15 +474,8 @@ function collectGoodToKnow() {
     ['view_heading', 'gk_view_heading'],
     ['who_body', 'gk_who_body'],
     ['view_body', 'gk_view_body'],
-    ['testimonial_quote', 'gk_testimonial_quote'],
-    ['testimonial_by', 'gk_testimonial_by'],
-    ['floor_plan_url', 'gk_floor_plan_url'],
     ['booking_badge', 'gk_booking_badge'],
-    ['rate_label', 'gk_rate_label'],
-    ['trending_message', 'gk_trending_message'],
-    ['booking_trust_line', 'gk_booking_trust_line'],
-    ['booking_trust_subline', 'gk_booking_trust_subline'],
-    ['panel_footnote', 'gk_panel_footnote']
+    ['rate_label', 'gk_rate_label']
   ].forEach(function (pair) {
     var val = v(pair[1]);
     if (val) g[pair[0]] = val;
