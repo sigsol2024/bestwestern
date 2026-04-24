@@ -36,15 +36,9 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
         <label for="hero_subtitle">Hero subtitle</label>
         <textarea id="hero_subtitle" name="hero_subtitle" rows="3"><?= sanitize($sectionsArray['hero_subtitle'] ?? '') ?></textarea>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="hero_kicker">Hero/listing kicker</label>
-          <input type="text" id="hero_kicker" name="hero_kicker" value="<?= sanitize($sectionsArray['hero_kicker'] ?? 'Accommodations') ?>">
-        </div>
-        <div class="form-group">
-          <label for="compare_label">Filter bar compare label</label>
-          <input type="text" id="compare_label" name="compare_label" value="<?= sanitize($sectionsArray['compare_label'] ?? 'Compare all rooms') ?>">
-        </div>
+      <div class="form-group">
+        <label for="hero_kicker">Listing kicker (line above each room title on /rooms)</label>
+        <input type="text" id="hero_kicker" name="hero_kicker" value="<?= sanitize($sectionsArray['hero_kicker'] ?? 'Accommodations') ?>">
       </div>
       <div class="form-group">
         <label for="amenities_reminder_title">Amenities reminder title</label>
@@ -86,45 +80,6 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
         <div class="form-group">
           <label for="final_cta_body">Final CTA body</label>
           <textarea id="final_cta_body" name="final_cta_body" rows="2"><?= sanitize($sectionsArray['final_cta_body'] ?? 'Our dedicated concierge is available 24/7 to help you select the perfect sanctuary for your stay in Yenagoa.') ?></textarea>
-        </div>
-      </div>
-      <div class="card card--nested" style="margin-top:12px;">
-        <div class="card-header"><h3>Hero booking strip</h3></div>
-        <div class="card-body">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="booking_checkin_label">Check-in label</label>
-              <input type="text" id="booking_checkin_label" name="booking_checkin_label" value="<?= sanitize($sectionsArray['booking_checkin_label'] ?? 'Check-in') ?>">
-            </div>
-            <div class="form-group">
-              <label for="booking_checkin_value">Check-in value</label>
-              <input type="text" id="booking_checkin_value" name="booking_checkin_value" value="<?= sanitize($sectionsArray['booking_checkin_value'] ?? 'Dec 14, 2024') ?>">
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="booking_checkout_label">Check-out label</label>
-              <input type="text" id="booking_checkout_label" name="booking_checkout_label" value="<?= sanitize($sectionsArray['booking_checkout_label'] ?? 'Check-out') ?>">
-            </div>
-            <div class="form-group">
-              <label for="booking_checkout_value">Check-out value</label>
-              <input type="text" id="booking_checkout_value" name="booking_checkout_value" value="<?= sanitize($sectionsArray['booking_checkout_value'] ?? 'Dec 18, 2024') ?>">
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="booking_guests_label">Guests label</label>
-              <input type="text" id="booking_guests_label" name="booking_guests_label" value="<?= sanitize($sectionsArray['booking_guests_label'] ?? 'Guests') ?>">
-            </div>
-            <div class="form-group">
-              <label for="booking_guests_value">Guests value</label>
-              <input type="text" id="booking_guests_value" name="booking_guests_value" value="<?= sanitize($sectionsArray['booking_guests_value'] ?? '2 Adults, 1 Room') ?>">
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="booking_cta_label">Booking button label</label>
-            <input type="text" id="booking_cta_label" name="booking_cta_label" value="<?= sanitize($sectionsArray['booking_cta_label'] ?? 'Check Availability') ?>">
-          </div>
         </div>
       </div>
       <div class="card card--nested" style="margin-top:12px;">

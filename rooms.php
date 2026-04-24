@@ -8,7 +8,6 @@ $heroTitle = getPageSection('rooms', 'hero_title', 'Rooms & Suites');
 $heroSubtitle = getPageSection('rooms', 'hero_subtitle', 'Sanctuaries of comfort on the shores of Oxbow Lake');
 $heroBg = getPageSection('rooms', 'hero_bg', $heroPlaceholder);
 $heroKicker = getPageSection('rooms', 'hero_kicker', 'Accommodations');
-$compareLabel = getPageSection('rooms', 'compare_label', 'Compare all rooms');
 $amenitiesReminderTitle = getPageSection('rooms', 'amenities_reminder_title', 'All suites include:');
 $amenitiesReminderItemsRaw = (string)getPageSection('rooms', 'amenities_reminder_items_json', '["WIFI","BREAKFAST","TOILETRIES","TURNDOWN"]');
 $amenitiesReminderItems = json_decode($amenitiesReminderItemsRaw, true);
@@ -32,13 +31,6 @@ $finalCtaBody = getPageSection('rooms', 'final_cta_body', 'Our dedicated concier
 $finalCtaLabel = getPageSection('rooms', 'final_cta_label', 'Contact Reservations');
 $finalCtaHref = getPageSection('rooms', 'final_cta_href', '/contact');
 
-$bookingCheckinLabel = getPageSection('rooms', 'booking_checkin_label', 'Check-in');
-$bookingCheckinValue = getPageSection('rooms', 'booking_checkin_value', 'Dec 14, 2024');
-$bookingCheckoutLabel = getPageSection('rooms', 'booking_checkout_label', 'Check-out');
-$bookingCheckoutValue = getPageSection('rooms', 'booking_checkout_value', 'Dec 18, 2024');
-$bookingGuestsLabel = getPageSection('rooms', 'booking_guests_label', 'Guests');
-$bookingGuestsValue = getPageSection('rooms', 'booking_guests_value', '2 Adults, 1 Room');
-$bookingCtaLabel = getPageSection('rooms', 'booking_cta_label', 'Check Availability');
 $signatureBadge = getPageSection('rooms', 'signature_badge', 'Signature Suite');
 $signatureKicker = getPageSection('rooms', 'signature_kicker', 'The Pinnacle of Living');
 
@@ -47,8 +39,6 @@ $rooms = getRooms(['is_active' => 1]);
 if (!is_array($rooms)) {
     $rooms = [];
 }
-$roomCount = count($rooms);
-
 $signatureRoom = null;
 foreach ($rooms as $r) {
     if ((int)($r['is_featured'] ?? 0) === 1) {
@@ -84,44 +74,7 @@ $listRooms = array_values(array_filter($rooms, static function ($room) use ($sig
     <div class="absolute inset-0 bg-primary/40"></div>
     <div class="relative z-10 h-full flex flex-col items-center justify-center text-center px-6 md:px-12">
       <h1 class="font-headline italic text-6xl md:text-7xl text-white mb-4"><?= e($heroTitle) ?></h1>
-      <p class="font-body text-lg text-white/90 max-w-2xl font-light tracking-wide mb-12"><?= e($heroSubtitle) ?></p>
-      <div class="bg-white p-2 rounded-sm shadow-2xl flex flex-col md:flex-row items-stretch md:items-center w-full max-w-4xl divide-y md:divide-y-0 md:divide-x divide-outline-variant/30">
-        <div class="flex-1 px-8 py-4 text-left">
-          <span class="block text-[9px] uppercase tracking-widest text-outline mb-1"><?= e($bookingCheckinLabel) ?></span>
-          <span class="text-sm font-medium text-primary"><?= e($bookingCheckinValue) ?></span>
-        </div>
-        <div class="flex-1 px-8 py-4 text-left">
-          <span class="block text-[9px] uppercase tracking-widest text-outline mb-1"><?= e($bookingCheckoutLabel) ?></span>
-          <span class="text-sm font-medium text-primary"><?= e($bookingCheckoutValue) ?></span>
-        </div>
-        <div class="flex-1 px-8 py-4 text-left">
-          <span class="block text-[9px] uppercase tracking-widest text-outline mb-1"><?= e($bookingGuestsLabel) ?></span>
-          <span class="text-sm font-medium text-primary"><?= e($bookingGuestsValue) ?></span>
-        </div>
-        <div class="px-4 py-2 flex items-center">
-          <a class="bg-secondary text-white px-8 py-4 text-[10px] font-bold uppercase tracking-widest hover:bg-primary transition-colors whitespace-nowrap" href="<?= e(site_href($finalCtaHref)) ?>">
-            <?= e($bookingCtaLabel) ?>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="border-b border-outline-variant/30 bg-surface-container-low">
-    <div class="max-w-[1440px] mx-auto px-12 py-8 flex flex-col md:flex-row justify-between items-center gap-6">
-      <div class="flex items-center space-x-8">
-        <span class="text-[10px] uppercase tracking-[0.2em] text-primary font-bold"><?= (int)$roomCount ?> Suites Available</span>
-        <div class="h-4 w-px bg-outline-variant/50"></div>
-        <div class="flex items-center space-x-4">
-          <span class="text-[9px] uppercase tracking-widest text-outline">Sort by:</span>
-          <span class="text-secondary font-bold text-[10px] uppercase tracking-widest border-b border-secondary pb-1">Recommended</span>
-          <span class="text-primary/60 text-[10px] uppercase tracking-widest">Price</span>
-          <span class="text-primary/60 text-[10px] uppercase tracking-widest">Size</span>
-        </div>
-      </div>
-      <a class="text-secondary text-[10px] uppercase tracking-widest font-bold flex items-center gap-2 group border-b border-transparent hover:border-secondary transition-all" href="<?= e(site_url('rooms')) ?>">
-        <?= e($compareLabel) ?>
-      </a>
+      <p class="font-body text-lg text-white/90 max-w-2xl font-light tracking-wide"><?= e($heroSubtitle) ?></p>
     </div>
   </section>
 
@@ -151,15 +104,17 @@ $listRooms = array_values(array_filter($rooms, static function ($room) use ($sig
       <div class="md:col-span-7 aspect-[16/10] md:aspect-auto md:h-full min-h-0 overflow-hidden <?= $reverse ? 'md:order-2' : '' ?>">
         <img class="w-full h-full min-h-[200px] md:min-h-0 object-cover grayscale-[20%] hover:grayscale-0 transition-all duration-700" src="<?= e($img) ?>" alt="<?= e($title) ?>">
       </div>
-      <div class="md:col-span-5 space-y-6 <?= $reverse ? 'md:order-1' : '' ?>">
-        <div class="space-y-1">
-          <span class="text-[9px] uppercase tracking-[0.3em] text-secondary font-bold"><?= e($heroKicker) ?></span>
-          <h2 class="text-5xl font-headline text-primary"><?= e($title) ?></h2>
+      <div class="md:col-span-5 flex flex-col gap-6 md:h-full md:min-h-0 <?= $reverse ? 'md:order-1' : '' ?>">
+        <div class="space-y-6 md:flex-1 md:min-h-0">
+          <div class="space-y-1">
+            <span class="text-[9px] uppercase tracking-[0.3em] text-secondary font-bold"><?= e($heroKicker) ?></span>
+            <h2 class="text-5xl font-headline text-primary"><?= e($title) ?></h2>
+          </div>
+          <div class="text-[10px] tracking-[0.15em] text-outline font-medium uppercase"><?= e($factLine) ?></div>
+          <p class="text-on-surface-variant font-light leading-relaxed max-w-md"><?= e($desc) ?></p>
+          <div class="text-2xl font-headline text-primary"><?= e($currency) ?><?= e($price) ?> <span class="text-[10px] font-body text-outline tracking-widest uppercase align-middle ml-2">/night</span></div>
         </div>
-        <div class="text-[10px] tracking-[0.15em] text-outline font-medium uppercase"><?= e($factLine) ?></div>
-        <p class="text-on-surface-variant font-light leading-relaxed max-w-md"><?= e($desc) ?></p>
-        <div class="text-2xl font-headline text-primary"><?= e($currency) ?><?= e($price) ?> <span class="text-[10px] font-body text-outline tracking-widest uppercase align-middle ml-2">/night</span></div>
-        <div class="pt-4">
+        <div class="shrink-0 pt-2 md:pt-0">
           <a class="inline-block bg-primary text-on-primary px-10 py-4 uppercase tracking-[0.2em] text-[10px] font-bold hover:brightness-110 transition-all" href="<?= e(site_url('room-details', ['slug' => $slug])) ?>">View Suite</a>
         </div>
       </div>
