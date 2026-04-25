@@ -213,6 +213,60 @@ function showToast(message, type = 'info') {
   setTimeout(() => toast.remove(), 5000);
 }
 
+/**
+ * Add "Remove (×)" buttons for single-image media pickers across all admin pages.
+ *
+ * Detects buttons with onclick="openMediaModal('inputId','previewId'[,...])"
+ * and injects a sibling remove button that clears the hidden input + hides the preview.
+ */
+function attachSingleImageRemoveButtons() {
+  const buttons = document.querySelectorAll('button[onclick*="openMediaModal("]');
+  const re = /openMediaModal\(\s*['"]([^'"]+)['"]\s*,\s*['"]([^'"]+)['"]\s*(?:,\s*(true|false))?/i;
+
+  buttons.forEach(function (btn) {
+    const onclick = btn.getAttribute('onclick') || '';
+    const m = onclick.match(re);
+    if (!m) return;
+    const inputId = String(m[1] || '').trim();
+    const previewId = String(m[2] || '').trim();
+    const allowMultiple = String(m[3] || '').toLowerCase() === 'true';
+    if (!inputId || !previewId || allowMultiple) return; // single-image only
+
+    // Avoid duplicating (some editors already have their own Remove button)
+    const parent = btn.parentElement || btn.parentNode;
+    if (parent) {
+      const existingRemove =
+        parent.querySelector('.js-media-remove') ||
+        parent.querySelector('button[id*="Remove"]') ||
+        parent.querySelector('button[aria-label*="Remove"]') ||
+        parent.querySelector('button[title*="Remove"]');
+      if (existingRemove) return;
+    }
+
+    const input = document.getElementById(inputId);
+    const preview = document.getElementById(previewId);
+    if (!input) return;
+
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'btn btn-outline btn-sm js-media-remove admin-media-remove-btn';
+    removeBtn.setAttribute('data-target-input', inputId);
+    removeBtn.setAttribute('data-target-preview', previewId);
+    removeBtn.title = 'Remove image';
+    removeBtn.innerHTML = '&times; Remove';
+    removeBtn.addEventListener('click', function () {
+      input.value = '';
+      if (preview) {
+        preview.innerHTML = '';
+        preview.style.display = 'none';
+      }
+      if (typeof showToast === 'function') showToast('Image removed', 'success');
+    });
+
+    btn.insertAdjacentElement('afterend', removeBtn);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   const sidebar = document.getElementById('sidebar');
   const sidebarToggle = document.getElementById('sidebarToggle');
@@ -241,5 +295,8 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
   });
+
+  // Uniform media UX (pages, rooms, settings, etc.)
+  attachSingleImageRemoveButtons();
 });
 
