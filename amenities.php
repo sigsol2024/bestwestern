@@ -131,7 +131,7 @@ $hasRenderableLink = static function (string $label, string $href): bool {
     <div class="relative z-10 w-full px-6 md:px-12 lg:px-24 max-w-screen-2xl mx-auto py-24">
       <div class="max-w-4xl">
         <span class="text-secondary uppercase tracking-[0.4em] text-[10px] mb-8 block"><?= e((string)($hero['kicker'] ?? 'The Sovereign Experience')) ?></span>
-        <h1 class="text-white font-headline text-7xl md:text-9xl font-light leading-tight mb-10"><?= (string)($hero['title_html'] ?? 'Facilities & Amenities') ?></h1>
+        <h1 class="text-white font-headline text-6xl md:text-8xl font-light leading-tight mb-10"><?= (string)($hero['title_html'] ?? 'Facilities & Amenities') ?></h1>
         <p class="text-white/90 text-xl max-w-xl leading-relaxed font-light"><?= e((string)($hero['body'] ?? 'Everything you need for business, leisure, and wellness.')) ?></p>
       </div>
     </div>
@@ -308,11 +308,5 @@ $hasRenderableLink = static function (string $label, string $href): bool {
     </div>
   </section>
 
-  <section class="py-[35px] bg-surface text-center">
-    <div class="max-w-3xl mx-auto px-6">
-      <h2 class="font-headline text-5xl md:text-6xl font-light mb-12 leading-tight"><?= e($ctaTitle) ?></h2>
-      <a class="inline-block bg-secondary text-on-secondary px-16 py-6 uppercase tracking-[0.3em] text-[10px] hover:bg-primary hover:text-white transition-all" href="<?= e(site_href($ctaBtnHref)) ?>"><?= e($ctaBtnLabel) ?></a>
-    </div>
-  </section>
 </main>
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
