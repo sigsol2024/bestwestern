@@ -264,6 +264,58 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
               <input type="text" id="business_akassa_cta_href_inline" name="business_akassa_cta_href" value="<?= sanitize($sections['business_akassa_cta_href'] ?? '#') ?>">
             </div>
           </div>
+
+          <h4 style="margin: 6px 0 10px 0; font-size: 0.95rem;">Other Chambers</h4>
+          <textarea id="business_chambers_json" name="business_chambers_json" style="display:none;"><?= htmlspecialchars(json_encode($chambersDecoded, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') ?></textarea>
+          <div id="businessChambersWrap">
+            <?php foreach ($chambersDecoded as $ch):
+                $chTitle = sanitize((string)($ch['title'] ?? ''));
+                $chBody = sanitize((string)($ch['body'] ?? ''));
+                $chBadge = sanitize((string)($ch['badge'] ?? ''));
+            ?>
+            <div class="card card--nested js-business-chamber" style="margin-bottom:10px;">
+              <div class="card-body" style="padding:12px 14px;">
+                <div class="form-group">
+                  <label>Title</label>
+                  <input type="text" class="form-control js-chamber-title" value="<?= $chTitle ?>">
+                </div>
+                <div class="form-group">
+                  <label>Description</label>
+                  <textarea class="form-control js-chamber-body" rows="3"><?= htmlspecialchars($chBody, ENT_QUOTES, 'UTF-8') ?></textarea>
+                </div>
+                <div class="form-group" style="margin-bottom:10px;">
+                  <label>Badge text</label>
+                  <input type="text" class="form-control js-chamber-badge" value="<?= $chBadge ?>">
+                </div>
+                <div style="display:flex;justify-content:flex-end;">
+                  <button type="button" class="btn btn-outline btn-sm js-remove-chamber">Remove</button>
+                </div>
+              </div>
+            </div>
+            <?php endforeach; ?>
+          </div>
+          <button type="button" class="btn btn-outline btn-sm" id="addBusinessChamberBtn">Add chamber</button>
+          <template id="businessChamberTemplate">
+            <div class="card card--nested js-business-chamber" style="margin-bottom:10px;">
+              <div class="card-body" style="padding:12px 14px;">
+                <div class="form-group">
+                  <label>Title</label>
+                  <input type="text" class="form-control js-chamber-title" value="">
+                </div>
+                <div class="form-group">
+                  <label>Description</label>
+                  <textarea class="form-control js-chamber-body" rows="3"></textarea>
+                </div>
+                <div class="form-group" style="margin-bottom:10px;">
+                  <label>Badge text</label>
+                  <input type="text" class="form-control js-chamber-badge" value="">
+                </div>
+                <div style="display:flex;justify-content:flex-end;">
+                  <button type="button" class="btn btn-outline btn-sm js-remove-chamber">Remove</button>
+                </div>
+              </div>
+            </div>
+          </template>
           <?php endif; ?>
 
           <div class="form-group">
@@ -278,6 +330,69 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
           <input type="hidden" id="<?= sanitize($galId) ?>" class="js-gallery" value="<?= $galleryJson ?>">
         </div>
       </div>
+
+      <?php if ($i === 2): ?>
+      <div class="card card--nested" style="margin: 6px 0 14px 0;">
+        <div class="card-header">
+          <h3 style="margin:0;">Lounge (after Dining Row 2)</h3>
+        </div>
+        <div class="card-body card-body--stack">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="lounge_kicker_inline">Kicker</label>
+              <input type="text" id="lounge_kicker_inline" name="lounge_kicker" value="<?= sanitize($sections['lounge_kicker'] ?? 'Evening Ambience') ?>">
+            </div>
+            <div class="form-group">
+              <label for="lounge_hours_label_inline">Hours label</label>
+              <input type="text" id="lounge_hours_label_inline" name="lounge_hours_label" value="<?= sanitize($sections['lounge_hours_label'] ?? 'Operating Hours') ?>">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="lounge_title_html_inline">Title (HTML)</label>
+            <textarea id="lounge_title_html_inline" name="lounge_title_html" rows="2" class="mono"><?= htmlspecialchars($sections['lounge_title_html'] ?? 'The Lounge &amp; Bar', ENT_QUOTES, 'UTF-8') ?></textarea>
+          </div>
+          <div class="form-group">
+            <label for="lounge_body_inline">Body</label>
+            <textarea id="lounge_body_inline" name="lounge_body" rows="4"><?= htmlspecialchars($sections['lounge_body'] ?? 'Premium spirits, signature cocktails, and live jazz sessions. The perfect venue for winding down or meeting colleagues in a refined atmosphere.', ENT_QUOTES, 'UTF-8') ?></textarea>
+          </div>
+          <div class="form-group">
+            <label for="lounge_hours_inline">Hours text</label>
+            <input type="text" id="lounge_hours_inline" name="lounge_hours" value="<?= sanitize($sections['lounge_hours'] ?? '12:00 - Midnight Daily') ?>">
+          </div>
+          <div class="form-group">
+            <label>Lounge image</label>
+            <div style="margin-bottom:10px;">
+              <button type="button" class="btn btn-outline" onclick="openMediaModal('lounge_image','lounge_image_preview')">Select image</button>
+            </div>
+            <input type="hidden" id="lounge_image" name="lounge_image" value="<?= sanitize($sections['lounge_image'] ?? '') ?>">
+            <div id="lounge_image_preview" class="image-preview" style="<?= !empty($sections['lounge_image']) ? 'display:block;' : 'display:none;' ?>">
+              <?php if (!empty($sections['lounge_image'])): ?>
+                <img src="<?= SITE_URL . ltrim($sections['lounge_image'], '/') ?>" style="max-width:500px;max-height:280px;" alt="">
+              <?php endif; ?>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card--nested" style="margin: 6px 0 14px 0;">
+        <div class="card-header">
+          <h3 style="margin:0;">Wellness Intro (before Pool/Gym/Spa)</h3>
+        </div>
+        <div class="card-body card-body--stack">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="wellness_intro_kicker_inline">Kicker</label>
+              <input type="text" id="wellness_intro_kicker_inline" name="wellness_intro_kicker" value="<?= sanitize($sections['wellness_intro_kicker'] ?? 'Rejuvenation') ?>">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="wellness_intro_title_html_inline">Title (HTML)</label>
+            <textarea id="wellness_intro_title_html_inline" name="wellness_intro_title_html" rows="2" class="mono"><?= htmlspecialchars($sections['wellness_intro_title_html'] ?? 'The Vitality <span class="italic">Sanctuary</span>', ENT_QUOTES, 'UTF-8') ?></textarea>
+          </div>
+        </div>
+      </div>
+      <?php endif; ?>
+
       <?php endfor; ?>
 
       <details style="margin-top:14px;">
@@ -287,244 +402,6 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
           <button type="button" class="btn btn-outline btn-sm" id="amenitiesApplyJsonBtn">Apply JSON</button>
         </div>
       </details>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header"><h2>Dining Row 1 Details</h2></div>
-    <div style="padding:20px;">
-      <div class="form-row">
-        <div class="form-group">
-          <label for="dining1_breakfast_label">Breakfast label</label>
-          <input type="text" id="dining1_breakfast_label" name="dining1_breakfast_label" value="<?= sanitize($sections['dining1_breakfast_label'] ?? 'Breakfast') ?>">
-        </div>
-        <div class="form-group">
-          <label for="dining1_breakfast_time">Breakfast time</label>
-          <input type="text" id="dining1_breakfast_time" name="dining1_breakfast_time" value="<?= sanitize($sections['dining1_breakfast_time'] ?? '06:30 - 10:30') ?>">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="dining1_dinner_label">Dinner label</label>
-          <input type="text" id="dining1_dinner_label" name="dining1_dinner_label" value="<?= sanitize($sections['dining1_dinner_label'] ?? 'Dinner') ?>">
-        </div>
-        <div class="form-group">
-          <label for="dining1_dinner_time">Dinner time</label>
-          <input type="text" id="dining1_dinner_time" name="dining1_dinner_time" value="<?= sanitize($sections['dining1_dinner_time'] ?? '18:00 - 22:00') ?>">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="dining1_menu_label">Menu link label</label>
-          <input type="text" id="dining1_menu_label" name="dining1_menu_label" value="<?= sanitize($sections['dining1_menu_label'] ?? 'View Full Menu') ?>">
-        </div>
-        <div class="form-group">
-          <label for="dining1_menu_href">Menu link URL</label>
-          <input type="text" id="dining1_menu_href" name="dining1_menu_href" value="<?= sanitize($sections['dining1_menu_href'] ?? '#') ?>">
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header"><h2>Dining Row 2 Details</h2></div>
-    <div style="padding:20px;">
-      <div class="form-row">
-        <div class="form-group">
-          <label for="dining2_service_note">Service note</label>
-          <input type="text" id="dining2_service_note" name="dining2_service_note" value="<?= sanitize($sections['dining2_service_note'] ?? 'Evening Service Only') ?>">
-        </div>
-        <div class="form-group">
-          <label for="dining2_hours">Service hours</label>
-          <input type="text" id="dining2_hours" name="dining2_hours" value="<?= sanitize($sections['dining2_hours'] ?? '18:00 - 23:00') ?>">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="dining2_cta_label">Button label</label>
-          <input type="text" id="dining2_cta_label" name="dining2_cta_label" value="<?= sanitize($sections['dining2_cta_label'] ?? 'Book Table') ?>">
-        </div>
-        <div class="form-group">
-          <label for="dining2_cta_href">Button URL</label>
-          <input type="text" id="dining2_cta_href" name="dining2_cta_href" value="<?= sanitize($sections['dining2_cta_href'] ?? '#') ?>">
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header"><h2>Lounge Section</h2></div>
-    <div style="padding:20px;">
-      <div class="form-row">
-        <div class="form-group">
-          <label for="lounge_kicker">Kicker</label>
-          <input type="text" id="lounge_kicker" name="lounge_kicker" value="<?= sanitize($sections['lounge_kicker'] ?? 'Evening Ambience') ?>">
-        </div>
-        <div class="form-group">
-          <label for="lounge_hours_label">Hours label</label>
-          <input type="text" id="lounge_hours_label" name="lounge_hours_label" value="<?= sanitize($sections['lounge_hours_label'] ?? 'Operating Hours') ?>">
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="lounge_title_html">Title (HTML)</label>
-        <textarea id="lounge_title_html" name="lounge_title_html" rows="2" class="mono"><?= htmlspecialchars($sections['lounge_title_html'] ?? 'The Lounge &amp; Bar', ENT_QUOTES, 'UTF-8') ?></textarea>
-      </div>
-      <div class="form-group">
-        <label for="lounge_body">Body</label>
-        <textarea id="lounge_body" name="lounge_body" rows="4"><?= htmlspecialchars($sections['lounge_body'] ?? 'Premium spirits, signature cocktails, and live jazz sessions. The perfect venue for winding down or meeting colleagues in a refined atmosphere.', ENT_QUOTES, 'UTF-8') ?></textarea>
-      </div>
-      <div class="form-group">
-        <label for="lounge_hours">Hours text</label>
-        <input type="text" id="lounge_hours" name="lounge_hours" value="<?= sanitize($sections['lounge_hours'] ?? '12:00 - Midnight Daily') ?>">
-      </div>
-      <div class="form-group">
-        <label>Lounge image</label>
-        <div style="margin-bottom:10px;">
-          <button type="button" class="btn btn-outline" onclick="openMediaModal('lounge_image','lounge_image_preview')">Select image</button>
-        </div>
-        <input type="hidden" id="lounge_image" name="lounge_image" value="<?= sanitize($sections['lounge_image'] ?? '') ?>">
-        <div id="lounge_image_preview" class="image-preview" style="<?= !empty($sections['lounge_image']) ? 'display:block;' : 'display:none;' ?>">
-          <?php if (!empty($sections['lounge_image'])): ?>
-            <img src="<?= SITE_URL . ltrim($sections['lounge_image'], '/') ?>" style="max-width:500px;max-height:280px;" alt="">
-          <?php endif; ?>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header"><h2>Wellness Row Details</h2></div>
-    <div style="padding:20px;">
-      <h3 style="margin:0 0 12px 0;font-size:0.98rem;">Wellness Row 1 (Pool-style meta)</h3>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="wellness1_left_label">Left label</label>
-          <input type="text" id="wellness1_left_label" name="wellness1_left_label" value="<?= sanitize($sections['wellness1_left_label'] ?? 'Hours') ?>">
-        </div>
-        <div class="form-group">
-          <label for="wellness1_left_value">Left value</label>
-          <input type="text" id="wellness1_left_value" name="wellness1_left_value" value="<?= sanitize($sections['wellness1_left_value'] ?? '06:00 - 22:00') ?>">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="wellness1_right_label">Right label</label>
-          <input type="text" id="wellness1_right_label" name="wellness1_right_label" value="<?= sanitize($sections['wellness1_right_label'] ?? 'Amenities') ?>">
-        </div>
-        <div class="form-group">
-          <label for="wellness1_right_value">Right value</label>
-          <input type="text" id="wellness1_right_value" name="wellness1_right_value" value="<?= sanitize($sections['wellness1_right_value'] ?? 'Poolside Service') ?>">
-        </div>
-      </div>
-
-      <h3 style="margin:14px 0 12px 0;font-size:0.98rem;">Wellness Row 2 (Gym badge)</h3>
-      <div class="form-group">
-        <label for="wellness2_badge_text">Badge text</label>
-        <input type="text" id="wellness2_badge_text" name="wellness2_badge_text" value="<?= sanitize($sections['wellness2_badge_text'] ?? '24 / 7 Access for Residents') ?>">
-      </div>
-
-      <h3 style="margin:14px 0 12px 0;font-size:0.98rem;">Wellness Row 3 (Spa footer)</h3>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="wellness3_footer_note">Footer note</label>
-          <input type="text" id="wellness3_footer_note" name="wellness3_footer_note" value="<?= sanitize($sections['wellness3_footer_note'] ?? 'Daily 09:00 - 20:00') ?>">
-        </div>
-        <div class="form-group">
-          <label for="wellness3_link_label">Footer link label</label>
-          <input type="text" id="wellness3_link_label" name="wellness3_link_label" value="<?= sanitize($sections['wellness3_link_label'] ?? 'Treatments Menu') ?>">
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="wellness3_link_href">Footer link URL</label>
-        <input type="text" id="wellness3_link_href" name="wellness3_link_href" value="<?= sanitize($sections['wellness3_link_href'] ?? '#') ?>">
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header"><h2>Business Section Details</h2></div>
-    <div style="padding:20px;">
-      <h3 style="margin:0 0 12px 0;font-size:0.98rem;">Featured Venue (Akassa block)</h3>
-      <div class="form-group">
-        <label for="business_akassa_title">Venue title</label>
-        <input type="text" id="business_akassa_title" name="business_akassa_title" value="<?= sanitize($sections['business_akassa_title'] ?? 'Akassa Conference Hall') ?>">
-      </div>
-      <div class="form-group">
-        <label for="business_akassa_body">Venue description</label>
-        <textarea id="business_akassa_body" name="business_akassa_body" rows="4"><?= htmlspecialchars($sections['business_akassa_body'] ?? 'Our premier venue for large-scale summits, product launches, and social galas. Features fully integrated AV systems and cinematic lighting.', ENT_QUOTES, 'UTF-8') ?></textarea>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="business_akassa_capacity_value">Capacity value</label>
-          <input type="text" id="business_akassa_capacity_value" name="business_akassa_capacity_value" value="<?= sanitize($sections['business_akassa_capacity_value'] ?? '500') ?>">
-        </div>
-        <div class="form-group">
-          <label for="business_akassa_capacity_label">Capacity label</label>
-          <input type="text" id="business_akassa_capacity_label" name="business_akassa_capacity_label" value="<?= sanitize($sections['business_akassa_capacity_label'] ?? 'Guest Capacity') ?>">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="business_akassa_cta_label">Button label</label>
-          <input type="text" id="business_akassa_cta_label" name="business_akassa_cta_label" value="<?= sanitize($sections['business_akassa_cta_label'] ?? 'Request Inquiry') ?>">
-        </div>
-        <div class="form-group">
-          <label for="business_akassa_cta_href">Button URL</label>
-          <input type="text" id="business_akassa_cta_href" name="business_akassa_cta_href" value="<?= sanitize($sections['business_akassa_cta_href'] ?? '#') ?>">
-        </div>
-      </div>
-
-      <h3 style="margin:18px 0 12px 0;font-size:0.98rem;">Other Chambers</h3>
-      <textarea id="business_chambers_json" name="business_chambers_json" style="display:none;"><?= htmlspecialchars(json_encode($chambersDecoded, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') ?></textarea>
-      <div id="businessChambersWrap">
-        <?php foreach ($chambersDecoded as $ch):
-            $chTitle = sanitize((string)($ch['title'] ?? ''));
-            $chBody = sanitize((string)($ch['body'] ?? ''));
-            $chBadge = sanitize((string)($ch['badge'] ?? ''));
-        ?>
-        <div class="card card--nested js-business-chamber" style="margin-bottom:10px;">
-          <div class="card-body" style="padding:12px 14px;">
-            <div class="form-group">
-              <label>Title</label>
-              <input type="text" class="form-control js-chamber-title" value="<?= $chTitle ?>">
-            </div>
-            <div class="form-group">
-              <label>Description</label>
-              <textarea class="form-control js-chamber-body" rows="3"><?= htmlspecialchars($chBody, ENT_QUOTES, 'UTF-8') ?></textarea>
-            </div>
-            <div class="form-group" style="margin-bottom:10px;">
-              <label>Badge text</label>
-              <input type="text" class="form-control js-chamber-badge" value="<?= $chBadge ?>">
-            </div>
-            <div style="display:flex;justify-content:flex-end;">
-              <button type="button" class="btn btn-outline btn-sm js-remove-chamber">Remove</button>
-            </div>
-          </div>
-        </div>
-        <?php endforeach; ?>
-      </div>
-      <button type="button" class="btn btn-outline btn-sm" id="addBusinessChamberBtn">Add chamber</button>
-      <template id="businessChamberTemplate">
-        <div class="card card--nested js-business-chamber" style="margin-bottom:10px;">
-          <div class="card-body" style="padding:12px 14px;">
-            <div class="form-group">
-              <label>Title</label>
-              <input type="text" class="form-control js-chamber-title" value="">
-            </div>
-            <div class="form-group">
-              <label>Description</label>
-              <textarea class="form-control js-chamber-body" rows="3"></textarea>
-            </div>
-            <div class="form-group" style="margin-bottom:10px;">
-              <label>Badge text</label>
-              <input type="text" class="form-control js-chamber-badge" value="">
-            </div>
-            <div style="display:flex;justify-content:flex-end;">
-              <button type="button" class="btn btn-outline btn-sm js-remove-chamber">Remove</button>
-            </div>
-          </div>
-        </div>
-      </template>
     </div>
   </div>
 

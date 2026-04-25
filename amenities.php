@@ -64,7 +64,11 @@ $loungeHoursLabel = trim((string)getPageSection('amenities', 'lounge_hours_label
 $loungeHours = trim((string)getPageSection('amenities', 'lounge_hours', '12:00 - Midnight Daily'));
 $loungeImage = trim((string)getPageSection('amenities', 'lounge_image', $sectionImage($dining2)));
 
+$wellnessIntroKicker = trim((string)getPageSection('amenities', 'wellness_intro_kicker', (string)($wellness1['kicker'] ?? 'Rejuvenation')));
+$wellnessIntroTitleHtml = (string)getPageSection('amenities', 'wellness_intro_title_html', (string)($wellness1['title_html'] ?? 'The Vitality <span class="italic">Sanctuary</span>'));
+
 $wellnessRows = [$wellness1, $wellness2, $wellness3];
+$wellnessRowIds = ['pool', 'gym', 'spa'];
 $wellnessRowMeta = [
     [
         'meta_type' => 'split',
@@ -189,12 +193,14 @@ $hasRenderableLink = static function (string $label, string $href): bool {
   <section class="bg-[#0B1F3A] text-white py-40 overflow-hidden" id="wellness">
     <div class="max-w-screen-2xl mx-auto px-12">
       <div class="mb-32 text-center">
-        <span class="text-secondary uppercase tracking-[0.4em] text-[10px] mb-6 block"><?= e((string)($wellness1['kicker'] ?? 'Rejuvenation')) ?></span>
-        <h2 class="font-headline text-6xl md:text-7xl font-light italic"><?= (string)($wellness1['title_html'] ?? 'The Vitality Sanctuary') ?></h2>
+        <span class="text-secondary uppercase tracking-[0.4em] text-[10px] mb-6 block"><?= e($wellnessIntroKicker) ?></span>
+        <h2 class="font-headline text-6xl md:text-7xl font-light italic"><?= (string)$wellnessIntroTitleHtml ?></h2>
       </div>
       <div class="space-y-40">
-        <?php foreach ($wellnessRows as $wi => $sec): ?>
-        <div class="editorial-grid items-center">
+        <?php foreach ($wellnessRows as $wi => $sec):
+          $rowId = $wellnessRowIds[$wi] ?? '';
+        ?>
+        <div class="editorial-grid items-center"<?= $rowId !== '' ? ' id="' . e($rowId) . '"' : '' ?>>
           <div class="col-span-12 lg:col-span-7 <?= $wi % 2 ? 'lg:order-2' : '' ?>">
             <img class="w-full aspect-video object-cover" src="<?= e($sectionImage($sec)) ?>" alt="<?= e((string)($sec['kicker'] ?? 'Wellness')) ?>">
           </div>
