@@ -137,7 +137,7 @@ $hasRenderableLink = static function (string $label, string $href): bool {
     </div>
   </section>
 
-  <section class="py-40 px-12 max-w-screen-2xl mx-auto" id="dining">
+  <section class="pt-[65px] pb-[65px] px-12 max-w-screen-2xl mx-auto" id="dining">
     <div class="editorial-grid mb-48 gap-20">
       <div class="col-span-12 lg:col-span-7"><img class="w-full aspect-[4/3] object-cover" src="<?= e($sectionImage($dining1)) ?>" alt="<?= e((string)($dining1['kicker'] ?? 'Dining')) ?>"></div>
       <div class="col-span-12 lg:col-span-5 flex flex-col justify-center md:px-8">
@@ -160,7 +160,7 @@ $hasRenderableLink = static function (string $label, string $href): bool {
       </div>
     </div>
 
-    <div class="editorial-grid items-center mb-48 gap-20">
+    <div class="editorial-grid items-center mb-[133px] -mt-[177px] gap-20">
       <div class="col-span-12 lg:col-span-5 flex flex-col md:px-8">
         <span class="text-secondary text-[10px] tracking-[0.3em] uppercase mb-6"><?= e((string)($dining2['kicker'] ?? 'Oriental Mastery')) ?></span>
         <h2 class="font-headline text-5xl mb-8 font-light"><?= (string)($dining2['title_html'] ?? 'Red Lotus') ?></h2>
@@ -176,9 +176,9 @@ $hasRenderableLink = static function (string $label, string $href): bool {
       <div class="col-span-12 lg:col-span-7"><img class="w-full aspect-[16/9] object-cover" src="<?= e($sectionImage($dining2)) ?>" alt="<?= e((string)($dining2['kicker'] ?? 'Dining')) ?>"></div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center py-0 -mt-[77px] -mb-[77px]">
       <div><img class="w-full h-[600px] object-cover" src="<?= e($loungeImage) ?>" alt="<?= e($loungeKicker !== '' ? $loungeKicker : 'Lounge') ?>"></div>
-      <div class="md:px-8 lg:px-16">
+      <div class="md:px-8 lg:px-16 py-0 mt-6 mb-6">
         <span class="text-secondary text-[10px] tracking-[0.3em] uppercase mb-6 block"><?= e($loungeKicker) ?></span>
         <h3 class="font-headline text-5xl mb-8 font-light"><?= (string)$loungeTitleHtml ?></h3>
         <p class="text-on-surface-variant text-lg leading-relaxed mb-12"><?= e($loungeBody) ?></p>
