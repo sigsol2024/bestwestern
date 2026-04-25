@@ -132,6 +132,140 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
             <textarea id="amenity_slot_<?= (int)$i ?>_body" class="form-control js-body" rows="4"><?= htmlspecialchars($body, ENT_QUOTES, 'UTF-8') ?></textarea>
           </div>
 
+          <?php if ($i === 1): ?>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="dining1_breakfast_label_inline">Breakfast label</label>
+              <input type="text" id="dining1_breakfast_label_inline" name="dining1_breakfast_label" value="<?= sanitize($sections['dining1_breakfast_label'] ?? 'Breakfast') ?>">
+            </div>
+            <div class="form-group">
+              <label for="dining1_breakfast_time_inline">Breakfast time</label>
+              <input type="text" id="dining1_breakfast_time_inline" name="dining1_breakfast_time" value="<?= sanitize($sections['dining1_breakfast_time'] ?? '06:30 - 10:30') ?>">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="dining1_dinner_label_inline">Dinner label</label>
+              <input type="text" id="dining1_dinner_label_inline" name="dining1_dinner_label" value="<?= sanitize($sections['dining1_dinner_label'] ?? 'Dinner') ?>">
+            </div>
+            <div class="form-group">
+              <label for="dining1_dinner_time_inline">Dinner time</label>
+              <input type="text" id="dining1_dinner_time_inline" name="dining1_dinner_time" value="<?= sanitize($sections['dining1_dinner_time'] ?? '18:00 - 22:00') ?>">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="dining1_menu_label_inline">Menu link label</label>
+              <input type="text" id="dining1_menu_label_inline" name="dining1_menu_label" value="<?= sanitize($sections['dining1_menu_label'] ?? 'View Full Menu') ?>">
+            </div>
+            <div class="form-group">
+              <label for="dining1_menu_href_inline">Menu link URL</label>
+              <input type="text" id="dining1_menu_href_inline" name="dining1_menu_href" value="<?= sanitize($sections['dining1_menu_href'] ?? '#') ?>">
+            </div>
+          </div>
+          <?php endif; ?>
+
+          <?php if ($i === 2): ?>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="dining2_service_note_inline">Service note</label>
+              <input type="text" id="dining2_service_note_inline" name="dining2_service_note" value="<?= sanitize($sections['dining2_service_note'] ?? 'Evening Service Only') ?>">
+            </div>
+            <div class="form-group">
+              <label for="dining2_hours_inline">Service hours</label>
+              <input type="text" id="dining2_hours_inline" name="dining2_hours" value="<?= sanitize($sections['dining2_hours'] ?? '18:00 - 23:00') ?>">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="dining2_cta_label_inline">Button label</label>
+              <input type="text" id="dining2_cta_label_inline" name="dining2_cta_label" value="<?= sanitize($sections['dining2_cta_label'] ?? 'Book Table') ?>">
+            </div>
+            <div class="form-group">
+              <label for="dining2_cta_href_inline">Button URL</label>
+              <input type="text" id="dining2_cta_href_inline" name="dining2_cta_href" value="<?= sanitize($sections['dining2_cta_href'] ?? '#') ?>">
+            </div>
+          </div>
+          <?php endif; ?>
+
+          <?php if ($i === 3): ?>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="wellness1_left_label_inline">Meta left label</label>
+              <input type="text" id="wellness1_left_label_inline" name="wellness1_left_label" value="<?= sanitize($sections['wellness1_left_label'] ?? 'Hours') ?>">
+            </div>
+            <div class="form-group">
+              <label for="wellness1_left_value_inline">Meta left value</label>
+              <input type="text" id="wellness1_left_value_inline" name="wellness1_left_value" value="<?= sanitize($sections['wellness1_left_value'] ?? '06:00 - 22:00') ?>">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="wellness1_right_label_inline">Meta right label</label>
+              <input type="text" id="wellness1_right_label_inline" name="wellness1_right_label" value="<?= sanitize($sections['wellness1_right_label'] ?? 'Amenities') ?>">
+            </div>
+            <div class="form-group">
+              <label for="wellness1_right_value_inline">Meta right value</label>
+              <input type="text" id="wellness1_right_value_inline" name="wellness1_right_value" value="<?= sanitize($sections['wellness1_right_value'] ?? 'Poolside Service') ?>">
+            </div>
+          </div>
+          <?php endif; ?>
+
+          <?php if ($i === 4): ?>
+          <div class="form-group">
+            <label for="wellness2_badge_text_inline">Badge text</label>
+            <input type="text" id="wellness2_badge_text_inline" name="wellness2_badge_text" value="<?= sanitize($sections['wellness2_badge_text'] ?? '24 / 7 Access for Residents') ?>">
+          </div>
+          <?php endif; ?>
+
+          <?php if ($i === 5): ?>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="wellness3_footer_note_inline">Footer note</label>
+              <input type="text" id="wellness3_footer_note_inline" name="wellness3_footer_note" value="<?= sanitize($sections['wellness3_footer_note'] ?? 'Daily 09:00 - 20:00') ?>">
+            </div>
+            <div class="form-group">
+              <label for="wellness3_link_label_inline">Footer link label</label>
+              <input type="text" id="wellness3_link_label_inline" name="wellness3_link_label" value="<?= sanitize($sections['wellness3_link_label'] ?? 'Treatments Menu') ?>">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="wellness3_link_href_inline">Footer link URL</label>
+            <input type="text" id="wellness3_link_href_inline" name="wellness3_link_href" value="<?= sanitize($sections['wellness3_link_href'] ?? '#') ?>">
+          </div>
+          <?php endif; ?>
+
+          <?php if ($i === 6): ?>
+          <div class="form-group">
+            <label for="business_akassa_title_inline">Featured venue title</label>
+            <input type="text" id="business_akassa_title_inline" name="business_akassa_title" value="<?= sanitize($sections['business_akassa_title'] ?? 'Akassa Conference Hall') ?>">
+          </div>
+          <div class="form-group">
+            <label for="business_akassa_body_inline">Featured venue description</label>
+            <textarea id="business_akassa_body_inline" name="business_akassa_body" rows="3"><?= htmlspecialchars($sections['business_akassa_body'] ?? 'Our premier venue for large-scale summits, product launches, and social galas. Features fully integrated AV systems and cinematic lighting.', ENT_QUOTES, 'UTF-8') ?></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="business_akassa_capacity_value_inline">Capacity value</label>
+              <input type="text" id="business_akassa_capacity_value_inline" name="business_akassa_capacity_value" value="<?= sanitize($sections['business_akassa_capacity_value'] ?? '500') ?>">
+            </div>
+            <div class="form-group">
+              <label for="business_akassa_capacity_label_inline">Capacity label</label>
+              <input type="text" id="business_akassa_capacity_label_inline" name="business_akassa_capacity_label" value="<?= sanitize($sections['business_akassa_capacity_label'] ?? 'Guest Capacity') ?>">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="business_akassa_cta_label_inline">Button label</label>
+              <input type="text" id="business_akassa_cta_label_inline" name="business_akassa_cta_label" value="<?= sanitize($sections['business_akassa_cta_label'] ?? 'Request Inquiry') ?>">
+            </div>
+            <div class="form-group">
+              <label for="business_akassa_cta_href_inline">Button URL</label>
+              <input type="text" id="business_akassa_cta_href_inline" name="business_akassa_cta_href" value="<?= sanitize($sections['business_akassa_cta_href'] ?? '#') ?>">
+            </div>
+          </div>
+          <?php endif; ?>
+
           <div class="form-group">
             <label>Primary image</label>
             <div style="display:flex; gap: 10px; align-items:center; flex-wrap:wrap;">
