@@ -100,6 +100,12 @@ if (!is_array($chambers) || $chambers === []) {
         ['title' => 'Business Center', 'body' => 'Full administrative support with high-speed workstations, scanning, and printing services available 24/7.', 'badge' => 'Resident Concierge'],
     ];
 }
+
+$hasRenderableLink = static function (string $label, string $href): bool {
+    $label = trim($label);
+    $href = trim($href);
+    return $label !== '' && $href !== '' && $href !== '#';
+};
 ?>
 <!DOCTYPE html>
 <html class="light" lang="en">
@@ -144,7 +150,7 @@ if (!is_array($chambers) || $chambers === []) {
             <span class="text-xs font-medium"><?= e($dining1DinnerTime) ?></span>
           </div>
         </div>
-        <?php if ($dining1MenuLabel !== '' && $dining1MenuHref !== ''): ?>
+        <?php if ($hasRenderableLink($dining1MenuLabel, $dining1MenuHref)): ?>
         <a class="text-secondary border-b border-secondary/40 pb-2 self-start text-xs uppercase tracking-widest hover:border-secondary transition-all" href="<?= e(site_href($dining1MenuHref)) ?>"><?= e($dining1MenuLabel) ?></a>
         <?php endif; ?>
       </div>
@@ -159,7 +165,7 @@ if (!is_array($chambers) || $chambers === []) {
           <span class="text-[10px] uppercase tracking-widest font-bold block mb-2 opacity-50"><?= e($dining2ServiceNote) ?></span>
           <span class="font-headline text-2xl font-light"><?= e($dining2Hours) ?></span>
         </div>
-        <?php if ($dining2CtaLabel !== '' && $dining2CtaHref !== ''): ?>
+        <?php if ($hasRenderableLink($dining2CtaLabel, $dining2CtaHref)): ?>
         <a class="inline-block bg-[#0B1F3A] text-white px-10 py-5 uppercase tracking-[0.3em] text-[10px] hover:opacity-90 transition-all self-start" href="<?= e(site_href($dining2CtaHref)) ?>"><?= e($dining2CtaLabel) ?></a>
         <?php endif; ?>
       </div>
@@ -217,7 +223,7 @@ if (!is_array($chambers) || $chambers === []) {
                 $footerLinkLabel = trim((string)($wellnessRowMeta[$wi]['footer_link_label'] ?? ''));
                 $footerLinkHref = trim((string)($wellnessRowMeta[$wi]['footer_link_href'] ?? ''));
               ?>
-              <?php if ($footerLinkLabel !== '' && $footerLinkHref !== ''): ?>
+              <?php if ($hasRenderableLink($footerLinkLabel, $footerLinkHref)): ?>
               <a class="text-secondary text-xs uppercase tracking-widest font-bold border-b border-secondary/40 pb-1" href="<?= e(site_href($footerLinkHref)) ?>"><?= e($footerLinkLabel) ?></a>
               <?php endif; ?>
             </div>
@@ -250,7 +256,7 @@ if (!is_array($chambers) || $chambers === []) {
               <span class="text-4xl font-light italic text-[#0B1F3A]"><?= e($akassaCapacityValue) ?></span>
               <span class="text-[10px] uppercase tracking-widest opacity-60"><?= e($akassaCapacityLabel) ?></span>
             </div>
-            <?php if ($akassaCtaLabel !== '' && $akassaCtaHref !== ''): ?>
+            <?php if ($hasRenderableLink($akassaCtaLabel, $akassaCtaHref)): ?>
             <a class="px-12 py-5 border border-[#0B1F3A] text-[10px] uppercase tracking-[0.3em] hover:bg-[#0B1F3A] hover:text-white transition-all self-start inline-block" href="<?= e(site_href($akassaCtaHref)) ?>"><?= e($akassaCtaLabel) ?></a>
             <?php endif; ?>
           </div>
