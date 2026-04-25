@@ -216,8 +216,8 @@ $occupancyLabel = $maxGuests > 0
     </div>
   </section>
 
-  <div id="suiteDetails" class="max-w-screen-2xl mx-auto px-6 md:px-[48px] py-[11px] grid grid-cols-12 gap-16">
-    <div class="col-span-12 lg:col-span-8 space-y-24">
+  <div id="suiteDetails" class="max-w-screen-2xl mx-auto px-6 md:px-[48px] py-[11px] grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+    <div class="col-span-1 lg:col-span-8 space-y-24">
       <div class="flex flex-wrap items-center gap-x-8 gap-y-4 py-8 border-y border-outline-variant/20">
         <div class="text-[11px] uppercase tracking-[0.3em] font-bold text-primary"><?= e($size !== '' ? $size : 'Suite') ?></div>
         <div class="w-px h-4 bg-outline-variant/50 hidden md:block"></div>
@@ -291,8 +291,8 @@ $occupancyLabel = $maxGuests > 0
       <?php endif; ?>
     </div>
 
-    <div class="col-span-12 lg:col-span-4">
-      <div class="sticky top-32 bg-white border border-outline-variant/20 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] p-10">
+    <div class="col-span-1 lg:col-span-4">
+      <div class="lg:sticky lg:top-32 bg-white border border-outline-variant/20 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] p-6 sm:p-8 lg:p-10">
         <?php if ($bookingBadge !== ''): ?>
         <div class="mb-4 text-[10px] uppercase tracking-[0.35em] font-bold text-secondary"><?= e($bookingBadge) ?></div>
         <?php endif; ?>
@@ -312,7 +312,7 @@ $occupancyLabel = $maxGuests > 0
         </div>
         <?php endif; ?>
         <form class="mb-6" onsubmit="event.preventDefault(); window.location.href='<?= e($bookUrl) ?>';">
-          <button class="w-full inline-flex items-center justify-center bg-primary text-white py-5 text-[11px] font-bold tracking-[0.4em] hover:bg-secondary transition-all uppercase shadow-lg shadow-primary/20" type="submit">Reserve Suite</button>
+          <button class="w-full inline-flex items-center justify-center bg-primary text-white py-5 text-[11px] font-bold tracking-[0.2em] sm:tracking-[0.3em] lg:tracking-[0.4em] hover:bg-secondary transition-all uppercase shadow-lg shadow-primary/20" type="submit">Reserve Suite</button>
         </form>
       </div>
     </div>
