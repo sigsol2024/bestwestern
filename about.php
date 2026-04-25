@@ -108,6 +108,18 @@ $experience_button_href = (string) getPageSection('about', 'experience_button_hr
         body[data-page="about"] .text-on-secondary { color: #ffffff !important; }
         body[data-page="about"] .bg-gold-standard { background-color: #C8A96A !important; }
         body[data-page="about"] .text-gold-standard { color: #C8A96A !important; }
+        body[data-page="about"] .site-header-nav--over-hero:not(.site-header-nav--scrolled) .site-header-desktop-link--inactive {
+            color: #1c1c18;
+        }
+        body[data-page="about"] .site-header-nav--over-hero:not(.site-header-nav--scrolled) .site-header-desktop-link--inactive:hover {
+            color: #E31837;
+        }
+        body[data-page="about"] .site-header-nav--over-hero:not(.site-header-nav--scrolled) .site-header-mobile-trigger {
+            color: #1c1c18;
+        }
+        body[data-page="about"] .site-header-nav--over-hero:not(.site-header-nav--scrolled) .site-header-mobile-trigger:hover {
+            background-color: rgba(0, 0, 0, 0.06);
+        }
   </style>
 </head>
 <body data-page="about" class="bg-surface text-on-surface selection:bg-secondary-container selection:text-on-secondary-container overflow-x-hidden">

@@ -51,11 +51,17 @@ $diningSectionHref = site_url('index') . '#home-dining';
 $diningNavHref = (site_is_valid_nav_href($diningPageHref) && site_nav_link_visible($diningPageHref))
     ? $diningPageHref
     : $diningSectionHref;
+$homeNavLabel = 'Home';
+$homeNavHref = site_url('index');
+$menuNavLabel = 'Menu';
+$menuNavHref = $diningNavHref;
 
 $ctaLabel = getSiteSetting('nav_cta_label', cms_default_setting('nav_cta_label'));
 $ctaHref = site_href(getSiteSetting('nav_cta_href', cms_default_setting('nav_cta_href')));
 
 $headerNavLinks = [
+    [$homeNavLabel, $homeNavHref],
+    [$menuNavLabel, $menuNavHref],
     [$navSuitesLabel, $navSuitesHref],
     [$aboutNavLabel, $aboutNavHref],
     [$navExperienceLabel, $navExperienceHref],
