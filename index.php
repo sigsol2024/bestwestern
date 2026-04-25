@@ -17,19 +17,21 @@ $hero_subtitle = getPageSection('index', 'hero_subtitle', 'An international stan
 $hero_bg = getPageSection('index', 'hero_bg', $heroPlaceholder);
 $hero_bg_url = site_media_url($hero_bg);
 
+$hero_bg_path = trim((string) $hero_bg);
 $heroGalleryRaw = trim((string) getPageSection('index', 'hero_gallery_slides_json', ''));
-$heroSlideUrls = [];
+$heroSlideUrls = [$hero_bg_url];
 $galleryDecoded = json_decode($heroGalleryRaw, true);
 if (is_array($galleryDecoded)) {
     foreach ($galleryDecoded as $path) {
         $p = is_string($path) ? trim($path) : '';
-        if ($p !== '') {
-            $heroSlideUrls[] = site_media_url($p);
+        if ($p === '' || $p === $hero_bg_path) {
+            continue;
         }
+        if (count($heroSlideUrls) >= 5) {
+            break;
+        }
+        $heroSlideUrls[] = site_media_url($p);
     }
-}
-if ($heroSlideUrls === []) {
-    $heroSlideUrls = [$hero_bg_url];
 }
 $heroSliderCount = count($heroSlideUrls);
 $heroSliderMultiple = $heroSliderCount > 1;
@@ -188,9 +190,9 @@ $home_room_subtitle = static function (array $room): string {
   <div class="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-r from-black/85 via-black/50 to-black/0"></div>
   <div class="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-b from-brand-ink/30 via-transparent to-brand-ink/70"></div>
 
-  <div class="relative z-10 flex h-full flex-col justify-center px-6 pt-24 pb-28 md:px-14 lg:pl-24 lg:pr-12 text-left max-w-[42rem]">
+  <div class="relative z-10 flex h-full flex-col justify-center px-6 pt-24 pb-28 md:px-14 lg:pl-24 lg:pr-12 text-left w-full max-w-[min(34rem,92vw)] text-balance">
     <?php if ($hero_show_stars || trim($hero_trust_badge) !== ''): ?>
-    <div class="flex flex-wrap items-center gap-x-2 gap-y-1 mb-4">
+    <div class="flex flex-wrap items-center gap-x-2 gap-y-1 mb-3">
       <?php if ($hero_show_stars): ?>
       <div class="flex text-brand-gold">
         <?php for ($si = 0; $si < 5; $si++): ?>
@@ -203,10 +205,10 @@ $home_room_subtitle = static function (array $room): string {
       <?php endif; ?>
     </div>
     <?php endif; ?>
-    <h1 class="site-hero-title font-headline text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-surface leading-[1.15] mb-5 drop-shadow-sm">
+    <h1 class="site-hero-title font-headline text-3xl sm:text-4xl md:text-[2.35rem] lg:text-5xl text-surface leading-snug mb-4 drop-shadow-sm max-w-[min(30rem,92vw)] [&_br]:block">
       <?= $hero_title ?>
     </h1>
-    <p class="font-body text-base md:text-lg text-surface/90 font-light max-w-xl leading-relaxed">
+    <p class="font-body text-sm sm:text-base text-surface/90 font-light max-w-[min(26rem,90vw)] leading-relaxed normal-case tracking-normal">
       <?= e($hero_subtitle) ?>
     </p>
   </div>

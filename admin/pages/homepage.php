@@ -63,25 +63,23 @@ if ($bulletsJsonRaw === '') {
     $bulletsJsonPretty = $bulletsJsonRaw;
 }
 
-$heroGallerySlides = ['', '', '', '', ''];
+$heroBgPathEditor = trim((string) hsec($sectionsArray, 'hero_bg', $heroPlaceholder));
+$heroGalleryExtra = [];
 $heroGalleryRaw = trim((string) ($sectionsArray['hero_gallery_slides_json'] ?? ''));
 if ($heroGalleryRaw !== '') {
     $hgDecoded = json_decode($heroGalleryRaw, true);
     if (is_array($hgDecoded)) {
-        $gi = 0;
         foreach ($hgDecoded as $item) {
-            if ($gi >= 5) {
+            $p = is_string($item) ? trim($item) : '';
+            if ($p === '' || $p === $heroBgPathEditor) {
+                continue;
+            }
+            if (count($heroGalleryExtra) >= 4) {
                 break;
             }
-            $p = is_string($item) ? trim($item) : '';
-            if ($p !== '') {
-                $heroGallerySlides[$gi] = $p;
-                $gi++;
-            }
+            $heroGalleryExtra[] = $p;
         }
     }
-} else {
-    $heroGallerySlides[0] = hsec($sectionsArray, 'hero_bg', $heroPlaceholder);
 }
 ?>
 
@@ -109,8 +107,8 @@ if ($heroGalleryRaw !== '') {
         <textarea id="hero_subtitle" name="hero_subtitle" rows="2"><?= hsec($sectionsArray, 'hero_subtitle', 'An international standard of hospitality in the heart of Bayelsa.') ?></textarea>
       </div>
       <div class="form-group">
-        <label>Hero fallback image</label>
-        <p class="form-help">Used when the gallery list below is empty, and as the first slide default until you add gallery images.</p>
+        <label>Hero image (first slide)</label>
+        <p class="form-help">This is always the <strong>first</strong> hero slide. Add more slides below for a rotating gallery (up to four additional images).</p>
         <div style="margin-bottom:10px;">
           <button type="button" class="btn btn-outline" onclick="openMediaModal('hero_bg','hero_bg_preview')">Select Image</button>
         </div>
@@ -122,27 +120,15 @@ if ($heroGalleryRaw !== '') {
         </div>
       </div>
       <div class="form-group">
-        <label>Hero gallery slides (up to 5)</label>
-        <p class="form-help">Each image becomes a full-screen hero slide with fade transitions, arrows, and dots. Use at least two images for the slider controls to appear on the live site.</p>
+        <label>Additional hero slides</label>
+        <p class="form-help">Optional extra images after the first slide. Two or more slides total enable arrows and dots on the site.</p>
         <input type="hidden" id="hero_gallery_slides_json" name="hero_gallery_slides_json" value="">
-        <?php for ($hg = 0; $hg < 5; $hg++): ?>
-        <div class="form-row" style="align-items:flex-end;margin-bottom:12px;">
-          <div class="form-group" style="flex:1;">
-            <label for="hero_slide_<?= $hg ?>">Slide <?= $hg + 1 ?></label>
-            <input type="hidden" id="hero_slide_<?= $hg ?>" value="<?= sanitize($heroGallerySlides[$hg]) ?>">
-            <div style="margin-bottom:6px;">
-              <button type="button" class="btn btn-outline btn-sm" onclick="openMediaModal('hero_slide_<?= $hg ?>','hero_slide_<?= $hg ?>_preview')">Select</button>
-              <button type="button" class="btn btn-outline btn-sm" onclick="(function(){var i=document.getElementById('hero_slide_<?= $hg ?>');var p=document.getElementById('hero_slide_<?= $hg ?>_preview');if(i)i.value='';if(p){p.style.display='none';p.innerHTML='';}})()">Clear</button>
-            </div>
-            <div id="hero_slide_<?= $hg ?>_preview" class="image-preview" style="<?= !empty($heroGallerySlides[$hg]) ? 'display:block;' : 'display:none;' ?>">
-              <?php if (!empty($heroGallerySlides[$hg])): ?>
-                <img src="<?= SITE_URL . ltrim($heroGallerySlides[$hg], '/') ?>" style="max-width:320px;max-height:180px;" alt="">
-              <?php endif; ?>
-            </div>
-          </div>
-        </div>
-        <?php endfor; ?>
+        <div id="hero-gallery-extra-container"></div>
+        <button type="button" class="btn btn-outline btn-sm" id="hero-gallery-add-btn" onclick="addHeroGallerySlideCard('')">Add slider image</button>
       </div>
+      <script>
+      window.heroGalleryExtrasInitial = <?= json_encode($heroGalleryExtra, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP) ?>;
+      </script>
       <div class="form-group">
         <label for="booking_widget_html">Booking widget HTML (optional)</label>
         <textarea id="booking_widget_html" name="booking_widget_html" rows="8" style="font-family:monospace;font-size:12px;"><?= htmlspecialchars($sectionsArray['booking_widget_html'] ?? '', ENT_QUOTES, 'UTF-8') ?></textarea>
@@ -360,11 +346,6 @@ if ($heroGalleryRaw !== '') {
 (function () {
   var map = {
     hero_bg: 'hero_bg_preview',
-    hero_slide_0: 'hero_slide_0_preview',
-    hero_slide_1: 'hero_slide_1_preview',
-    hero_slide_2: 'hero_slide_2_preview',
-    hero_slide_3: 'hero_slide_3_preview',
-    hero_slide_4: 'hero_slide_4_preview',
     home_philosophy_main_img: 'home_philosophy_main_preview',
     home_dining_image_top: 'home_dining_image_top_preview',
     home_dining_image_bottom: 'home_dining_image_bottom_preview',
@@ -382,6 +363,9 @@ if ($heroGalleryRaw !== '') {
     var tid = mediaModalState.targetInputId;
     var selected = list[0];
     var prevId = map[tid];
+    if (!prevId && /^hero_gallery_path_/.test(String(tid || ''))) {
+      prevId = 'hero_gallery_preview_' + String(tid).replace(/^hero_gallery_path_/, '');
+    }
     if (!prevId) return false;
     var input = document.getElementById(tid);
     var preview = document.getElementById(prevId);
@@ -398,16 +382,71 @@ if ($heroGalleryRaw !== '') {
 </script>
 
 <script>
-function syncHeroGallerySlidesJson() {
-  var paths = [];
-  for (var i = 0; i < 5; i++) {
-    var el = document.getElementById('hero_slide_' + i);
-    var p = el && el.value ? String(el.value).trim() : '';
-    if (p) paths.push(p);
+function heroGalleryExtraCount() {
+  var c = document.getElementById('hero-gallery-extra-container');
+  return c ? c.querySelectorAll('.js-hero-gallery-card').length : 0;
+}
+
+function addHeroGallerySlideCard(initialPath) {
+  var wrap = document.getElementById('hero-gallery-extra-container');
+  var addBtn = document.getElementById('hero-gallery-add-btn');
+  if (!wrap) return;
+  if (heroGalleryExtraCount() >= 4) {
+    if (typeof showToast === 'function') showToast('Maximum four additional hero slides.', 'warning');
+    return;
   }
+  var suf = 'hg_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+  var path = initialPath != null ? String(initialPath).trim() : '';
+  var card = document.createElement('div');
+  card.className = 'card js-hero-gallery-card';
+  card.style.marginBottom = '12px';
+  card.style.padding = '12px';
+  card.innerHTML =
+    '<div class="form-group" style="margin-bottom:8px;">' +
+      '<label>Slider image</label>' +
+      '<input type="hidden" class="js-hero-gallery-path" id="hero_gallery_path_' + suf + '" value="">' +
+      '<div style="margin-bottom:6px;">' +
+        '<button type="button" class="btn btn-outline btn-sm" onclick="openMediaModal(\'hero_gallery_path_' + suf + '\',\'hero_gallery_preview_' + suf + '\')">Select</button>' +
+        '<button type="button" class="btn btn-outline btn-sm" onclick="(function(btn){var c=btn.closest(\'.js-hero-gallery-card\'); if(c) c.remove(); heroGallerySyncAddButton();})(this)">Remove slide</button>' +
+      '</div>' +
+      '<div id="hero_gallery_preview_' + suf + '" class="image-preview" style="' + (path ? 'display:block;' : 'display:none;') + '">' +
+        (path ? '<img src="<?= SITE_URL ?>' + path.replace(/^\/+/, '') + '" style="max-width:320px;max-height:180px;" alt="">' : '') +
+      '</div>' +
+    '</div>';
+  wrap.appendChild(card);
+  var inp = card.querySelector('.js-hero-gallery-path');
+  if (inp && path) inp.value = path;
+  heroGallerySyncAddButton();
+}
+
+function heroGallerySyncAddButton() {
+  var addBtn = document.getElementById('hero-gallery-add-btn');
+  if (!addBtn) return;
+  addBtn.disabled = heroGalleryExtraCount() >= 4;
+}
+
+function syncHeroGallerySlidesJson() {
+  var bgEl = document.getElementById('hero_bg');
+  var bg = bgEl ? String(bgEl.value || '').trim() : '';
+  var paths = [];
+  document.querySelectorAll('#hero-gallery-extra-container .js-hero-gallery-card .js-hero-gallery-path').forEach(function (inp) {
+    var p = inp && inp.value ? String(inp.value).trim() : '';
+    if (p && p !== bg) paths.push(p);
+  });
+  if (paths.length > 4) paths = paths.slice(0, 4);
   var ta = document.getElementById('hero_gallery_slides_json');
   if (ta) ta.value = JSON.stringify(paths);
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+  var list = window.heroGalleryExtrasInitial;
+  if (Array.isArray(list)) {
+    list.forEach(function (p) {
+      if (p) addHeroGallerySlideCard(p);
+    });
+  }
+  heroGallerySyncAddButton();
+});
 
 function syncHomeBentoJsonFromTiles() {
   var out = [];
