@@ -78,9 +78,9 @@ $footerPrivacyLink = $footerPrivacyHref !== '' ? site_href($footerPrivacyHref) :
 $footerTermsLink = $footerTermsHref !== '' ? site_href($footerTermsHref) : site_url($termsSlug);
 ?>
 
-<footer class="bg-slate-950 text-slate-400 w-full min-h-[320px] flex flex-col justify-end font-body">
-  <div class="w-full px-6 md:px-12 py-16 md:py-24 flex flex-col lg:flex-row justify-between items-start max-w-screen-2xl mx-auto gap-12 lg:gap-16">
-    <div class="flex flex-col gap-10 max-w-md">
+<footer class="bg-slate-950 text-slate-400 w-full min-h-[240px] flex flex-col justify-end font-body">
+  <div class="w-full px-6 md:px-12 py-10 md:py-14 flex flex-col lg:flex-row justify-between items-start max-w-screen-2xl mx-auto gap-8 lg:gap-12">
+    <div class="flex flex-col gap-6 max-w-md">
       <div class="flex flex-col">
         <?php if ($useFooterLogo): ?>
         <div class="site-brand-logo site-brand-logo--footer mb-4">
@@ -94,14 +94,14 @@ $footerTermsLink = $footerTermsHref !== '' ? site_href($footerTermsHref) : site_
         <?php endif; ?>
       </div>
       <?php if (trim($footerEmail) !== ''): ?>
-      <div class="space-y-2">
-        <p class="font-light tracking-wide text-sm text-slate-500">ENQUIRIES</p>
-        <a class="text-xl text-white hover:text-brand-gold transition-colors break-all" href="mailto:<?= e($footerEmail) ?>"><?= e($footerEmail) ?></a>
+      <div class="space-y-1">
+        <p class="font-light tracking-wide text-[11px] text-slate-500 uppercase">Enquiries</p>
+        <a class="text-base text-white hover:text-brand-gold transition-colors break-all" href="mailto:<?= e($footerEmail) ?>"><?= e($footerEmail) ?></a>
       </div>
       <?php endif; ?>
     </div>
 
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-10 md:gap-12 w-full lg:w-auto lg:flex-1">
+    <div class="grid grid-cols-2 md:grid-cols-2 gap-8 md:gap-10 w-full lg:w-auto lg:flex-1">
       <div class="flex flex-col gap-3">
         <span class="text-white font-bold text-xs uppercase tracking-widest">Explore</span>
         <?php if (site_is_valid_nav_href($navSuitesHref) && site_nav_link_visible($navSuitesHref)): ?>
@@ -113,31 +113,11 @@ $footerTermsLink = $footerTermsHref !== '' ? site_href($footerTermsHref) : site_
         <?php if (site_is_valid_nav_href($navEventsHref) && site_nav_link_visible($navEventsHref)): ?>
         <a class="text-slate-400 hover:text-white transition-colors text-sm underline-offset-4 hover:underline" href="<?= e($navEventsHref) ?>"><?= e($navEventsLabel) ?></a>
         <?php endif; ?>
-      </div>
-      <div class="flex flex-col gap-3">
-        <span class="text-white font-bold text-xs uppercase tracking-widest">Identity</span>
         <?php
         $aboutHref = site_href('/about');
         if (site_is_valid_nav_href($aboutHref) && site_nav_link_visible($aboutHref)): ?>
         <a class="text-slate-400 hover:text-white transition-colors text-sm underline-offset-4 hover:underline" href="<?= e($aboutHref) ?>">Our Story</a>
         <?php endif; ?>
-      </div>
-      <div class="flex flex-col gap-3">
-        <span class="text-white font-bold text-xs uppercase tracking-widest">Connect</span>
-        <?php foreach ($socialMediaList as $social):
-            $url = trim((string)($social['url'] ?? ''));
-            if ($url === '') {
-                continue;
-            }
-            $platform = (string)($social['platform'] ?? '');
-            if ($platform === '') {
-                $platform = social_platform_from_url($url);
-            }
-            $platform = social_normalize_platform($platform);
-            $label = $platform !== '' ? ucfirst($platform === 'x' ? 'X' : $platform) : 'Link';
-            ?>
-        <a class="text-slate-400 hover:text-white transition-colors text-sm underline-offset-4 hover:underline" href="<?= htmlspecialchars($url, ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener noreferrer"><?= e($label) ?></a>
-        <?php endforeach; ?>
       </div>
       <div class="flex flex-col gap-3">
         <span class="text-white font-bold text-xs uppercase tracking-widest">Legal</span>
