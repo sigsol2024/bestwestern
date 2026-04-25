@@ -116,7 +116,7 @@ $experience_button_href = (string) getPageSection('about', 'experience_button_hr
 <main class="pt-32">
   <!-- Hero Section: Intentional Asymmetry -->
   <section class="px-12 mb-32 grid grid-cols-12 gap-8 items-end flex flex-col md:grid">
-    <div class="col-span-12 md:col-span-7 h-[500px] md:h-[760px] relative overflow-hidden group order-2 md:order-1">
+    <div class="col-span-12 md:col-span-7 h-[430px] md:h-[660px] relative overflow-hidden group order-2 md:order-1">
       <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Luxury hotel exterior with modernist architecture" src="<?= e($hero_bg_url) ?>"/>
     </div>
     <div class="col-span-12 md:col-span-4 md:col-start-9 pb-12 order-1 md:order-2">
@@ -128,7 +128,7 @@ $experience_button_href = (string) getPageSection('about', 'experience_button_hr
   </section>
 
   <!-- Section: Hotel Philosophy (Tonal Layering) -->
-  <section class="bg-surface-container-low py-32 px-12">
+  <section class="bg-surface-container-low py-[59px] px-12">
     <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
       <div class="order-2 md:order-1">
         <span class="inter text-xs uppercase tracking-[0.3em] text-secondary font-bold mb-6 block"><?= e($philosophy_kicker) ?></span>
@@ -148,7 +148,7 @@ $experience_button_href = (string) getPageSection('about', 'experience_button_hr
   </section>
 
   <!-- Section: Bayelsa Culture Integration (Full Bleed/Editorial) -->
-  <section class="py-32 bg-primary-container text-white overflow-hidden">
+  <section class="py-[61px] bg-primary-container text-white overflow-hidden">
     <div class="px-12 grid grid-cols-12 gap-8 items-center">
       <div class="col-span-12 md:col-span-5 z-10">
         <h2 class="notoSerif text-6xl italic mb-12"><?= e($culture_title) ?></h2>
@@ -175,7 +175,7 @@ $experience_button_href = (string) getPageSection('about', 'experience_button_hr
   </section>
 
   <!-- Section: Heritage & The Stately Curator (Editorial Layout) -->
-  <section class="py-48 px-12 max-w-7xl mx-auto">
+  <section class="py-[72px] px-12 max-w-7xl mx-auto">
     <div class="flex flex-col md:flex-row gap-24">
       <div class="md:w-1/3">
         <h3 class="notoSerif text-4xl mb-6"><?= e($heritage_title) ?></h3>
@@ -204,7 +204,7 @@ $experience_button_href = (string) getPageSection('about', 'experience_button_hr
   <!-- Section: Call to Experience -->
   <section class="relative h-[614px] flex items-center justify-center text-center overflow-hidden">
     <img class="absolute inset-0 w-full h-full object-cover" data-alt="Luxury hotel swimming pool at twilight" src="<?= e($experience_bg_url) ?>"/>
-    <div class="absolute inset-0 bg-primary/40 backdrop-blur-[2px]"></div>
+    <div class="absolute inset-0 bg-primary/40 backdrop-blur-[2px] mt-[-2px] mb-[-2px] p-0"></div>
     <div class="relative z-10 px-6">
       <h2 class="notoSerif text-5xl md:text-7xl text-white mb-8"><?= e($experience_title) ?></h2>
       <button type="button" class="bg-secondary text-on-secondary px-12 py-5 rounded-lg inter uppercase tracking-[0.3em] text-sm font-bold hover:opacity-90 transition-all shadow-xl" onclick="window.location.href='<?= e(site_href($experience_button_href)) ?>'"><?= e($experience_button_label) ?></button>
