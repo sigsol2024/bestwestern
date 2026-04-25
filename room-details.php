@@ -226,22 +226,21 @@ $occupancyLabel = $maxGuests > 0
         <div class="text-[11px] uppercase tracking-[0.3em] font-bold text-primary"><?= e($occupancyLabel) ?></div>
       </div>
 
-      <?php $hasWhoBlock = $whoBody !== ''; ?>
       <div class="rounded-2xl border border-outline-variant/25 bg-gradient-to-b from-surface-container-low/90 via-surface/40 to-surface-container-low/60 shadow-[0_10px_40px_-18px_rgba(0,0,0,0.12)] overflow-hidden transition-[box-shadow,transform] duration-500 hover:shadow-[0_20px_48px_-14px_rgba(0,0,0,0.16)] motion-reduce:transition-none">
-        <div class="grid md:grid-cols-3 md:divide-x md:divide-outline-variant/25 divide-y divide-outline-variant/20 md:divide-y-0 md:items-stretch">
-          <div class="suite-story-col group relative p-8 md:p-10 flex flex-col min-h-0 md:min-h-[14rem]">
+        <div class="grid md:grid-cols-2 gap-px bg-outline-variant/20">
+          <div class="suite-story-col group relative p-8 md:p-9 flex flex-col min-h-[14rem] bg-surface/75">
             <div class="suite-story-col-inner h-full flex flex-col transition-transform duration-300 ease-out group-hover:-translate-y-0.5 motion-reduce:transform-none">
               <h3 class="font-headline text-2xl md:text-[1.65rem] mb-4 italic text-primary tracking-tight"><?= e($expHeading) ?></h3>
               <p class="text-on-surface-variant text-[14px] leading-relaxed font-light grow"><?= nl2br(e($experienceBody)) ?></p>
             </div>
           </div>
-          <div class="suite-story-col group relative p-8 md:p-10 flex flex-col min-h-0 md:min-h-[14rem]">
+          <div class="suite-story-col group relative p-8 md:p-9 flex flex-col min-h-[14rem] bg-surface/75">
             <div class="suite-story-col-inner h-full flex flex-col transition-transform duration-300 ease-out group-hover:-translate-y-0.5 motion-reduce:transform-none">
               <h3 class="font-headline text-2xl md:text-[1.65rem] mb-4 italic text-primary tracking-tight"><?= e($spaceHeading) ?></h3>
               <p class="text-on-surface-variant text-[14px] leading-relaxed font-light grow"><?= nl2br(e($spaceBody)) ?></p>
             </div>
           </div>
-          <div class="suite-story-col group relative p-8 md:p-10 flex flex-col min-h-0 md:min-h-[14rem]">
+          <div class="suite-story-col group relative p-8 md:p-9 flex flex-col min-h-[14rem] bg-surface/75">
             <div class="suite-story-col-inner h-full flex flex-col transition-transform duration-300 ease-out group-hover:-translate-y-0.5 motion-reduce:transform-none">
               <h3 class="font-headline text-2xl md:text-[1.65rem] mb-4 italic text-primary tracking-tight"><?= e($viewBody !== '' ? $viewHeading : 'Essentials') ?></h3>
               <?php if ($viewBody !== ''): ?>
@@ -251,19 +250,17 @@ $occupancyLabel = $maxGuests > 0
               <?php endif; ?>
             </div>
           </div>
-        </div>
-        <?php if ($hasWhoBlock): ?>
-        <div class="border-t border-outline-variant/25 bg-surface-container-low/50 px-8 py-8 md:px-10 md:py-10">
-          <div class="grid md:grid-cols-2 md:gap-0 gap-6 md:divide-x md:divide-outline-variant/20 md:items-stretch">
-            <div class="md:pr-10 flex flex-col justify-center">
-              <h3 class="font-headline text-2xl md:text-[1.65rem] italic text-primary tracking-tight"><?= e($whoHeading) ?></h3>
-            </div>
-            <div class="md:pl-10 flex flex-col justify-center">
-              <p class="text-on-surface-variant text-[14px] leading-relaxed font-light"><?= nl2br(e($whoBody)) ?></p>
+          <div class="suite-story-col group relative p-8 md:p-9 flex flex-col min-h-[14rem] bg-surface/75">
+            <div class="suite-story-col-inner h-full flex flex-col transition-transform duration-300 ease-out group-hover:-translate-y-0.5 motion-reduce:transform-none">
+              <h3 class="font-headline text-2xl md:text-[1.65rem] mb-4 italic text-primary tracking-tight"><?= e($whoHeading) ?></h3>
+              <?php if ($whoBody !== ''): ?>
+              <p class="text-on-surface-variant text-[14px] leading-relaxed font-light grow"><?= nl2br(e($whoBody)) ?></p>
+              <?php else: ?>
+              <p class="text-on-surface-variant/60 text-[14px] leading-relaxed font-light grow">—</p>
+              <?php endif; ?>
             </div>
           </div>
         </div>
-        <?php endif; ?>
       </div>
 
       <?php if (!empty($amenityCards)): ?>
