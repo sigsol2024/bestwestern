@@ -356,8 +356,19 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxyge
   }
 }
 
-.admin-media-remove-btn {
-  margin-left: 8px;
+/* Single-image preview: Lusso-style overlay × icon */
+.admin-media-thumb {
+  position: relative;
+  display: inline-block;
+  margin: 6px;
+}
+.admin-media-thumb-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 4px 6px;
+  line-height: 1;
+  min-width: 0;
 }
 
 /* Media library modal — overlay must center + child needs explicit width (flex item otherwise shrinks to content) */

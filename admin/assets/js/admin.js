@@ -214,12 +214,12 @@ function showToast(message, type = 'info') {
 }
 
 /**
- * Add "Remove (×)" buttons for single-image media pickers across all admin pages.
+ * Single-image pickers: show a small × icon OVER the preview image (like the Lusso project),
+ * only when an image is present. Removes the image by clearing the hidden input + preview.
  *
- * Detects buttons with onclick="openMediaModal('inputId','previewId'[,...])"
- * and injects a sibling remove button that clears the hidden input + hides the preview.
+ * Detects: openMediaModal('inputId','previewId') (allowMultiple must be false/omitted).
  */
-function attachSingleImageRemoveButtons() {
+function attachSingleImageRemoveOverlays() {
   const buttons = document.querySelectorAll('button[onclick*="openMediaModal("]');
   const re = /openMediaModal\(\s*['"]([^'"]+)['"]\s*,\s*['"]([^'"]+)['"]\s*(?:,\s*(true|false))?/i;
 
@@ -230,40 +230,70 @@ function attachSingleImageRemoveButtons() {
     const inputId = String(m[1] || '').trim();
     const previewId = String(m[2] || '').trim();
     const allowMultiple = String(m[3] || '').toLowerCase() === 'true';
-    if (!inputId || !previewId || allowMultiple) return; // single-image only
-
-    // Avoid duplicating (some editors already have their own Remove button)
-    const parent = btn.parentElement || btn.parentNode;
-    if (parent) {
-      const existingRemove =
-        parent.querySelector('.js-media-remove') ||
-        parent.querySelector('button[id*="Remove"]') ||
-        parent.querySelector('button[aria-label*="Remove"]') ||
-        parent.querySelector('button[title*="Remove"]');
-      if (existingRemove) return;
-    }
+    if (!inputId || !previewId || allowMultiple) return;
 
     const input = document.getElementById(inputId);
     const preview = document.getElementById(previewId);
-    if (!input) return;
+    if (!input || !preview) return;
 
-    const removeBtn = document.createElement('button');
-    removeBtn.type = 'button';
-    removeBtn.className = 'btn btn-outline btn-sm js-media-remove admin-media-remove-btn';
-    removeBtn.setAttribute('data-target-input', inputId);
-    removeBtn.setAttribute('data-target-preview', previewId);
-    removeBtn.title = 'Remove image';
-    removeBtn.innerHTML = '&times; Remove';
-    removeBtn.addEventListener('click', function () {
+    // Hide any legacy "Remove" buttons next to Select (rooms editor etc.)
+    const row = btn.parentElement;
+    if (row) {
+      row.querySelectorAll('button[id*="Remove"],button[id*="remove"],button[title*="Remove"]').forEach(function (b) {
+        if (b !== btn) b.style.display = 'none';
+      });
+    }
+
+    function clearImage() {
       input.value = '';
-      if (preview) {
-        preview.innerHTML = '';
-        preview.style.display = 'none';
-      }
+      preview.innerHTML = '';
+      preview.style.display = 'none';
+      try {
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      } catch (e) {}
       if (typeof showToast === 'function') showToast('Image removed', 'success');
-    });
+    }
 
-    btn.insertAdjacentElement('afterend', removeBtn);
+    function ensureOverlay() {
+      const hasValue = String(input.value || '').trim() !== '';
+      const imgs = preview.querySelectorAll('img');
+      const hasImg = imgs && imgs.length > 0;
+
+      // If no image chosen, ensure preview isn't showing an empty box
+      if (!hasValue || !hasImg) {
+        preview.querySelectorAll('.js-admin-single-remove').forEach(function (x) { x.remove(); });
+        if (!hasValue) {
+          preview.style.display = 'none';
+          preview.innerHTML = '';
+        }
+        return;
+      }
+
+      // Wrap each image in a thumb container and add × overlay
+      imgs.forEach(function (img) {
+        if (img.closest('.admin-media-thumb')) return;
+        const wrap = document.createElement('div');
+        wrap.className = 'admin-media-thumb';
+        img.parentNode.insertBefore(wrap, img);
+        wrap.appendChild(img);
+
+        const rm = document.createElement('button');
+        rm.type = 'button';
+        rm.className = 'btn btn-outline btn-sm admin-media-thumb-remove js-admin-single-remove';
+        rm.innerHTML = '&times;';
+        rm.title = 'Remove image';
+        rm.addEventListener('click', clearImage);
+        wrap.appendChild(rm);
+      });
+
+      preview.style.display = 'block';
+    }
+
+    // Initial pass + keep in sync when the media modal inserts an image
+    ensureOverlay();
+    input.addEventListener('change', ensureOverlay);
+    const mo = new MutationObserver(function () { ensureOverlay(); });
+    mo.observe(preview, { childList: true, subtree: true });
   });
 }
 
@@ -297,6 +327,6 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // Uniform media UX (pages, rooms, settings, etc.)
-  attachSingleImageRemoveButtons();
+  attachSingleImageRemoveOverlays();
 });
 
