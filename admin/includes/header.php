@@ -20,7 +20,11 @@ $maintenanceEnabled = in_array(strtolower($maintenanceRaw), ['1', 'true', 'yes',
   <meta name="csrf-token" content="<?= generateCSRFToken() ?>">
   <script>window.ADMIN_URL = <?= json_encode(ADMIN_URL) ?>;</script>
   <title><?= sanitize($pageTitle) ?> - <?= sanitize((string) getSetting('cms_product_name', cms_default_setting('cms_product_name'))) ?></title>
-  <link rel="stylesheet" href="<?= ADMIN_URL ?>assets/css/admin.css">
+  <?php
+    $adminCss = __DIR__ . '/../assets/css/admin.css';
+    $adminCssV = is_file($adminCss) ? (string)filemtime($adminCss) : '1';
+  ?>
+  <link rel="stylesheet" href="<?= ADMIN_URL ?>assets/css/admin.css?v=<?= htmlspecialchars($adminCssV, ENT_QUOTES, 'UTF-8') ?>">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
