@@ -267,7 +267,7 @@ $hasRenderableLink = static function (string $label, string $href): bool {
             <?php endif; ?>
           </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-16">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-16 mt-10">
           <?php foreach ($chambers as $ch):
             $chTitle = trim((string)($ch['title'] ?? ''));
             if ($chTitle === '') { continue; }
@@ -285,7 +285,7 @@ $hasRenderableLink = static function (string $label, string $href): bool {
     </div>
   </section>
 
-  <section class="py-40 bg-surface-container-low" id="services">
+  <section class="py-[66px] bg-surface-container-low" id="services">
     <div class="max-w-screen-2xl mx-auto px-12">
       <div class="text-center mb-32">
         <span class="text-secondary uppercase tracking-[0.4em] text-[10px] mb-6 block"><?= e($servicesKicker) ?></span>
@@ -308,7 +308,7 @@ $hasRenderableLink = static function (string $label, string $href): bool {
     </div>
   </section>
 
-  <section class="py-60 bg-surface text-center">
+  <section class="py-[35px] bg-surface text-center">
     <div class="max-w-3xl mx-auto px-6">
       <h2 class="font-headline text-5xl md:text-6xl font-light mb-12 leading-tight"><?= e($ctaTitle) ?></h2>
       <a class="inline-block bg-secondary text-on-secondary px-16 py-6 uppercase tracking-[0.3em] text-[10px] hover:bg-primary hover:text-white transition-all" href="<?= e(site_href($ctaBtnHref)) ?>"><?= e($ctaBtnLabel) ?></a>
