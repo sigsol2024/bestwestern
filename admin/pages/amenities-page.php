@@ -43,6 +43,15 @@ if (!is_array($servicesDecoded) || $servicesDecoded === []) {
         ['title' => 'Room Service', 'subtitle' => 'Global dining 24/7'],
     ];
 }
+$chambersRaw = $sections['business_chambers_json'] ?? '';
+$chambersDecoded = json_decode((string)$chambersRaw, true);
+if (!is_array($chambersDecoded) || $chambersDecoded === []) {
+    $chambersDecoded = [
+        ['title' => 'Nun Chamber', 'body' => 'Ideal for high-level board meetings and strategic workshops. Ergonomic executive seating and absolute privacy.', 'badge' => '50 Guest Capacity'],
+        ['title' => 'Epele Chamber', 'body' => 'A quiet and focused space for breakout sessions, smaller seminars, and intimate corporate presentations.', 'badge' => '30 Guest Capacity'],
+        ['title' => 'Business Center', 'body' => 'Full administrative support with high-speed workstations, scanning, and printing services available 24/7.', 'badge' => 'Resident Concierge'],
+    ];
+}
 
 $amenitiesSlotMeta = [
     ['label' => 'Hero Section', 'help' => 'Top full-screen hero on /amenities (kicker, title HTML, body, hero image).'],
@@ -59,17 +68,6 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
 ?>
 
 <form id="amenitiesPageForm">
-  <div class="card">
-    <div class="card-header"><h2>Page title</h2></div>
-    <div style="padding:20px;">
-      <div class="form-group">
-        <label for="page_title">Browser tab title</label>
-        <input type="text" id="page_title" name="page_title" value="<?= sanitize($sections['page_title'] ?? 'Hotel Amenities') ?>">
-        <p class="form-help">This only updates the browser/page title (SEO/meta). The visible hero heading is edited in <strong>Main content sections → Hero Section → Title (HTML)</strong>.</p>
-      </div>
-    </div>
-  </div>
-
   <div class="card">
     <div class="card-header"><h2>Main content sections (frontend order)</h2></div>
     <div style="padding:20px;">
@@ -143,16 +141,7 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
             <div id="<?= sanitize($bgPrevId) ?>" class="image-preview" style="display:none;margin-top:10px;"></div>
           </div>
 
-          <div class="form-group" style="margin-top:10px;">
-            <label>Extra images (optional)</label>
-            <div style="display:flex; gap: 10px; align-items:center; flex-wrap:wrap;">
-              <button type="button" class="btn btn-outline js-pick-gallery">Select images</button>
-              <button type="button" class="btn btn-outline btn-sm js-clear-gallery">Clear</button>
-            </div>
-            <input type="hidden" id="<?= sanitize($galId) ?>" class="js-gallery" value="<?= $galleryJson ?>">
-            <div id="<?= sanitize($galPrevId) ?>" class="image-preview" style="display:block;margin-top:10px;"></div>
-            <p class="form-help" style="margin-top:8px;">Not used by the new public layout unless you switch back to a gallery-driven design; kept for data compatibility.</p>
-          </div>
+          <input type="hidden" id="<?= sanitize($galId) ?>" class="js-gallery" value="<?= $galleryJson ?>">
         </div>
       </div>
       <?php endfor; ?>
@@ -164,6 +153,244 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
           <button type="button" class="btn btn-outline btn-sm" id="amenitiesApplyJsonBtn">Apply JSON</button>
         </div>
       </details>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Dining Row 1 Details</h2></div>
+    <div style="padding:20px;">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="dining1_breakfast_label">Breakfast label</label>
+          <input type="text" id="dining1_breakfast_label" name="dining1_breakfast_label" value="<?= sanitize($sections['dining1_breakfast_label'] ?? 'Breakfast') ?>">
+        </div>
+        <div class="form-group">
+          <label for="dining1_breakfast_time">Breakfast time</label>
+          <input type="text" id="dining1_breakfast_time" name="dining1_breakfast_time" value="<?= sanitize($sections['dining1_breakfast_time'] ?? '06:30 - 10:30') ?>">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="dining1_dinner_label">Dinner label</label>
+          <input type="text" id="dining1_dinner_label" name="dining1_dinner_label" value="<?= sanitize($sections['dining1_dinner_label'] ?? 'Dinner') ?>">
+        </div>
+        <div class="form-group">
+          <label for="dining1_dinner_time">Dinner time</label>
+          <input type="text" id="dining1_dinner_time" name="dining1_dinner_time" value="<?= sanitize($sections['dining1_dinner_time'] ?? '18:00 - 22:00') ?>">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="dining1_menu_label">Menu link label</label>
+          <input type="text" id="dining1_menu_label" name="dining1_menu_label" value="<?= sanitize($sections['dining1_menu_label'] ?? 'View Full Menu') ?>">
+        </div>
+        <div class="form-group">
+          <label for="dining1_menu_href">Menu link URL</label>
+          <input type="text" id="dining1_menu_href" name="dining1_menu_href" value="<?= sanitize($sections['dining1_menu_href'] ?? '#') ?>">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Dining Row 2 Details</h2></div>
+    <div style="padding:20px;">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="dining2_service_note">Service note</label>
+          <input type="text" id="dining2_service_note" name="dining2_service_note" value="<?= sanitize($sections['dining2_service_note'] ?? 'Evening Service Only') ?>">
+        </div>
+        <div class="form-group">
+          <label for="dining2_hours">Service hours</label>
+          <input type="text" id="dining2_hours" name="dining2_hours" value="<?= sanitize($sections['dining2_hours'] ?? '18:00 - 23:00') ?>">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="dining2_cta_label">Button label</label>
+          <input type="text" id="dining2_cta_label" name="dining2_cta_label" value="<?= sanitize($sections['dining2_cta_label'] ?? 'Book Table') ?>">
+        </div>
+        <div class="form-group">
+          <label for="dining2_cta_href">Button URL</label>
+          <input type="text" id="dining2_cta_href" name="dining2_cta_href" value="<?= sanitize($sections['dining2_cta_href'] ?? '#') ?>">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Lounge Section</h2></div>
+    <div style="padding:20px;">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="lounge_kicker">Kicker</label>
+          <input type="text" id="lounge_kicker" name="lounge_kicker" value="<?= sanitize($sections['lounge_kicker'] ?? 'Evening Ambience') ?>">
+        </div>
+        <div class="form-group">
+          <label for="lounge_hours_label">Hours label</label>
+          <input type="text" id="lounge_hours_label" name="lounge_hours_label" value="<?= sanitize($sections['lounge_hours_label'] ?? 'Operating Hours') ?>">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="lounge_title_html">Title (HTML)</label>
+        <textarea id="lounge_title_html" name="lounge_title_html" rows="2" class="mono"><?= htmlspecialchars($sections['lounge_title_html'] ?? 'The Lounge &amp; Bar', ENT_QUOTES, 'UTF-8') ?></textarea>
+      </div>
+      <div class="form-group">
+        <label for="lounge_body">Body</label>
+        <textarea id="lounge_body" name="lounge_body" rows="4"><?= htmlspecialchars($sections['lounge_body'] ?? 'Premium spirits, signature cocktails, and live jazz sessions. The perfect venue for winding down or meeting colleagues in a refined atmosphere.', ENT_QUOTES, 'UTF-8') ?></textarea>
+      </div>
+      <div class="form-group">
+        <label for="lounge_hours">Hours text</label>
+        <input type="text" id="lounge_hours" name="lounge_hours" value="<?= sanitize($sections['lounge_hours'] ?? '12:00 - Midnight Daily') ?>">
+      </div>
+      <div class="form-group">
+        <label>Lounge image</label>
+        <div style="margin-bottom:10px;">
+          <button type="button" class="btn btn-outline" onclick="openMediaModal('lounge_image','lounge_image_preview')">Select image</button>
+        </div>
+        <input type="hidden" id="lounge_image" name="lounge_image" value="<?= sanitize($sections['lounge_image'] ?? '') ?>">
+        <div id="lounge_image_preview" class="image-preview" style="<?= !empty($sections['lounge_image']) ? 'display:block;' : 'display:none;' ?>">
+          <?php if (!empty($sections['lounge_image'])): ?>
+            <img src="<?= SITE_URL . ltrim($sections['lounge_image'], '/') ?>" style="max-width:500px;max-height:280px;" alt="">
+          <?php endif; ?>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Wellness Row Details</h2></div>
+    <div style="padding:20px;">
+      <h3 style="margin:0 0 12px 0;font-size:0.98rem;">Wellness Row 1 (Pool-style meta)</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="wellness1_left_label">Left label</label>
+          <input type="text" id="wellness1_left_label" name="wellness1_left_label" value="<?= sanitize($sections['wellness1_left_label'] ?? 'Hours') ?>">
+        </div>
+        <div class="form-group">
+          <label for="wellness1_left_value">Left value</label>
+          <input type="text" id="wellness1_left_value" name="wellness1_left_value" value="<?= sanitize($sections['wellness1_left_value'] ?? '06:00 - 22:00') ?>">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="wellness1_right_label">Right label</label>
+          <input type="text" id="wellness1_right_label" name="wellness1_right_label" value="<?= sanitize($sections['wellness1_right_label'] ?? 'Amenities') ?>">
+        </div>
+        <div class="form-group">
+          <label for="wellness1_right_value">Right value</label>
+          <input type="text" id="wellness1_right_value" name="wellness1_right_value" value="<?= sanitize($sections['wellness1_right_value'] ?? 'Poolside Service') ?>">
+        </div>
+      </div>
+
+      <h3 style="margin:14px 0 12px 0;font-size:0.98rem;">Wellness Row 2 (Gym badge)</h3>
+      <div class="form-group">
+        <label for="wellness2_badge_text">Badge text</label>
+        <input type="text" id="wellness2_badge_text" name="wellness2_badge_text" value="<?= sanitize($sections['wellness2_badge_text'] ?? '24 / 7 Access for Residents') ?>">
+      </div>
+
+      <h3 style="margin:14px 0 12px 0;font-size:0.98rem;">Wellness Row 3 (Spa footer)</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="wellness3_footer_note">Footer note</label>
+          <input type="text" id="wellness3_footer_note" name="wellness3_footer_note" value="<?= sanitize($sections['wellness3_footer_note'] ?? 'Daily 09:00 - 20:00') ?>">
+        </div>
+        <div class="form-group">
+          <label for="wellness3_link_label">Footer link label</label>
+          <input type="text" id="wellness3_link_label" name="wellness3_link_label" value="<?= sanitize($sections['wellness3_link_label'] ?? 'Treatments Menu') ?>">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="wellness3_link_href">Footer link URL</label>
+        <input type="text" id="wellness3_link_href" name="wellness3_link_href" value="<?= sanitize($sections['wellness3_link_href'] ?? '#') ?>">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Business Section Details</h2></div>
+    <div style="padding:20px;">
+      <h3 style="margin:0 0 12px 0;font-size:0.98rem;">Featured Venue (Akassa block)</h3>
+      <div class="form-group">
+        <label for="business_akassa_title">Venue title</label>
+        <input type="text" id="business_akassa_title" name="business_akassa_title" value="<?= sanitize($sections['business_akassa_title'] ?? 'Akassa Conference Hall') ?>">
+      </div>
+      <div class="form-group">
+        <label for="business_akassa_body">Venue description</label>
+        <textarea id="business_akassa_body" name="business_akassa_body" rows="4"><?= htmlspecialchars($sections['business_akassa_body'] ?? 'Our premier venue for large-scale summits, product launches, and social galas. Features fully integrated AV systems and cinematic lighting.', ENT_QUOTES, 'UTF-8') ?></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="business_akassa_capacity_value">Capacity value</label>
+          <input type="text" id="business_akassa_capacity_value" name="business_akassa_capacity_value" value="<?= sanitize($sections['business_akassa_capacity_value'] ?? '500') ?>">
+        </div>
+        <div class="form-group">
+          <label for="business_akassa_capacity_label">Capacity label</label>
+          <input type="text" id="business_akassa_capacity_label" name="business_akassa_capacity_label" value="<?= sanitize($sections['business_akassa_capacity_label'] ?? 'Guest Capacity') ?>">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="business_akassa_cta_label">Button label</label>
+          <input type="text" id="business_akassa_cta_label" name="business_akassa_cta_label" value="<?= sanitize($sections['business_akassa_cta_label'] ?? 'Request Inquiry') ?>">
+        </div>
+        <div class="form-group">
+          <label for="business_akassa_cta_href">Button URL</label>
+          <input type="text" id="business_akassa_cta_href" name="business_akassa_cta_href" value="<?= sanitize($sections['business_akassa_cta_href'] ?? '#') ?>">
+        </div>
+      </div>
+
+      <h3 style="margin:18px 0 12px 0;font-size:0.98rem;">Other Chambers</h3>
+      <textarea id="business_chambers_json" name="business_chambers_json" style="display:none;"><?= htmlspecialchars(json_encode($chambersDecoded, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') ?></textarea>
+      <div id="businessChambersWrap">
+        <?php foreach ($chambersDecoded as $ch):
+            $chTitle = sanitize((string)($ch['title'] ?? ''));
+            $chBody = sanitize((string)($ch['body'] ?? ''));
+            $chBadge = sanitize((string)($ch['badge'] ?? ''));
+        ?>
+        <div class="card card--nested js-business-chamber" style="margin-bottom:10px;">
+          <div class="card-body" style="padding:12px 14px;">
+            <div class="form-group">
+              <label>Title</label>
+              <input type="text" class="form-control js-chamber-title" value="<?= $chTitle ?>">
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea class="form-control js-chamber-body" rows="3"><?= htmlspecialchars($chBody, ENT_QUOTES, 'UTF-8') ?></textarea>
+            </div>
+            <div class="form-group" style="margin-bottom:10px;">
+              <label>Badge text</label>
+              <input type="text" class="form-control js-chamber-badge" value="<?= $chBadge ?>">
+            </div>
+            <div style="display:flex;justify-content:flex-end;">
+              <button type="button" class="btn btn-outline btn-sm js-remove-chamber">Remove</button>
+            </div>
+          </div>
+        </div>
+        <?php endforeach; ?>
+      </div>
+      <button type="button" class="btn btn-outline btn-sm" id="addBusinessChamberBtn">Add chamber</button>
+      <template id="businessChamberTemplate">
+        <div class="card card--nested js-business-chamber" style="margin-bottom:10px;">
+          <div class="card-body" style="padding:12px 14px;">
+            <div class="form-group">
+              <label>Title</label>
+              <input type="text" class="form-control js-chamber-title" value="">
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <textarea class="form-control js-chamber-body" rows="3"></textarea>
+            </div>
+            <div class="form-group" style="margin-bottom:10px;">
+              <label>Badge text</label>
+              <input type="text" class="form-control js-chamber-badge" value="">
+            </div>
+            <div style="display:flex;justify-content:flex-end;">
+              <button type="button" class="btn btn-outline btn-sm js-remove-chamber">Remove</button>
+            </div>
+          </div>
+        </div>
+      </template>
     </div>
   </div>
 
@@ -246,6 +473,7 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
           <label for="cta_btn_href">Button URL</label>
           <input type="text" id="cta_btn_href" name="cta_btn_href" value="<?= sanitize($sections['cta_btn_href'] ?? '/contact') ?>">
         </div>
+      </div>
     </div>
   </div>
 
@@ -317,7 +545,7 @@ function amenitiesRenderGalleryPreview(wrap) {
         var u = amenitiesNormalizeImgUrl(p);
         return u ? ('<img src="' + amenitiesEscHtml(u) + '" style="max-width:120px;max-height:90px;display:inline-block;margin:5px;object-fit:cover;border-radius:6px;">') : '';
       }).join('')
-    : '<span style="color: var(--text-muted); font-size: 12px;">No extra images selected.</span>';
+    : '';
 }
 
 function amenitiesGetItemsFromDom() {
@@ -374,11 +602,30 @@ function amenitiesSyncServicesJson() {
   hidden.value = JSON.stringify(amenitiesGetServicesFromDom());
 }
 
+function amenitiesGetBusinessChambersFromDom() {
+  var items = [];
+  document.querySelectorAll('#businessChambersWrap .js-business-chamber').forEach(function (wrap) {
+    var title = (wrap.querySelector('.js-chamber-title')?.value || '').trim();
+    var body = (wrap.querySelector('.js-chamber-body')?.value || '').trim();
+    var badge = (wrap.querySelector('.js-chamber-badge')?.value || '').trim();
+    if (!title) return;
+    items.push({ title: title, body: body, badge: badge });
+  });
+  return items;
+}
+
+function amenitiesSyncBusinessChambersJson() {
+  var hidden = document.getElementById('business_chambers_json');
+  if (!hidden) return;
+  hidden.value = JSON.stringify(amenitiesGetBusinessChambersFromDom());
+}
+
 function amenitiesSyncHiddenJson() {
   var items = amenitiesGetItemsFromDom();
   var hidden = document.getElementById('sections_json');
   if (hidden) hidden.value = JSON.stringify(items);
   amenitiesSyncServicesJson();
+  amenitiesSyncBusinessChambersJson();
   var adv = document.getElementById('sections_json_advanced');
   if (adv) adv.value = JSON.stringify(items, null, 2);
 }
@@ -386,7 +633,7 @@ function amenitiesSyncHiddenJson() {
 document.getElementById('amenitiesPageForm').addEventListener('submit', function (e) {
   e.preventDefault();
   amenitiesSyncHiddenJson();
-  savePageForm(this, 'amenities', { sections_json: 'json', services_items_json: 'json' }, { pageActiveSettingKey: 'page_active_amenities' })
+  savePageForm(this, 'amenities', { sections_json: 'json', services_items_json: 'json', business_chambers_json: 'json' }, { pageActiveSettingKey: 'page_active_amenities' })
     .then(function () { showToast('Saved', 'success'); })
     .catch(function (err) { showToast(err.message || 'Save failed', 'error'); });
 });
@@ -495,6 +742,9 @@ document.addEventListener('DOMContentLoaded', function () {
   var servicesWrap = document.getElementById('servicesItemsWrap');
   var addServiceBtn = document.getElementById('addServiceItemBtn');
   var serviceTemplate = document.getElementById('serviceItemTemplate');
+  var chambersWrap = document.getElementById('businessChambersWrap');
+  var addChamberBtn = document.getElementById('addBusinessChamberBtn');
+  var chamberTemplate = document.getElementById('businessChamberTemplate');
 
   function wireServiceRow(row) {
     if (!row) return;
@@ -522,6 +772,32 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
   amenitiesSyncServicesJson();
+
+  function wireBusinessChamberRow(row) {
+    if (!row) return;
+    var removeBtn = row.querySelector('.js-remove-chamber');
+    if (removeBtn) {
+      removeBtn.addEventListener('click', function () {
+        row.remove();
+        amenitiesSyncBusinessChambersJson();
+      });
+    }
+    row.addEventListener('input', amenitiesSyncBusinessChambersJson);
+    row.addEventListener('change', amenitiesSyncBusinessChambersJson);
+  }
+
+  if (chambersWrap) {
+    chambersWrap.querySelectorAll('.js-business-chamber').forEach(wireBusinessChamberRow);
+  }
+  if (addChamberBtn && chambersWrap && chamberTemplate) {
+    addChamberBtn.addEventListener('click', function () {
+      var fragment = chamberTemplate.content.cloneNode(true);
+      chambersWrap.appendChild(fragment);
+      wireBusinessChamberRow(chambersWrap.lastElementChild);
+      amenitiesSyncBusinessChambersJson();
+    });
+  }
+  amenitiesSyncBusinessChambersJson();
 
   var applyBtn = document.getElementById('amenitiesApplyJsonBtn');
   if (applyBtn) applyBtn.addEventListener('click', function () {
