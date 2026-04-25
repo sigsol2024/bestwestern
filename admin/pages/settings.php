@@ -191,82 +191,6 @@ $themeHexPickerValue = static function (string $key) use ($settings, $defaultSet
         </div>
     </div>
 
-    <!-- Header CTA (desktop nav button) -->
-    <div class="card">
-        <div class="card-header">
-            <h2>Header navigation</h2>
-        </div>
-        <div class="card-body card-body--stack">
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="nav_suites_label">Rooms link label</label>
-                    <input type="text" id="nav_suites_label" name="nav_suites_label" value="<?= sanitize($settings['nav_suites_label'] ?? $defaultSettings['nav_suites_label']) ?>" placeholder="<?= sanitize($defaultSettings['nav_suites_label']) ?>">
-                </div>
-                <div class="form-group">
-                    <label for="nav_suites_href">Rooms link URL</label>
-                    <input type="text" id="nav_suites_href" name="nav_suites_href" value="<?= sanitize($settings['nav_suites_href'] ?? $defaultSettings['nav_suites_href']) ?>" placeholder="<?= sanitize($defaultSettings['nav_suites_href']) ?>">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="nav_dining_label">Dining link label</label>
-                    <input type="text" id="nav_dining_label" name="nav_dining_label" value="<?= sanitize($settings['nav_dining_label'] ?? $defaultSettings['nav_dining_label']) ?>" placeholder="<?= sanitize($defaultSettings['nav_dining_label']) ?>">
-                </div>
-                <div class="form-group">
-                    <label for="nav_dining_href">Dining link URL</label>
-                    <input type="text" id="nav_dining_href" name="nav_dining_href" value="<?= sanitize($settings['nav_dining_href'] ?? $defaultSettings['nav_dining_href']) ?>" placeholder="<?= sanitize($defaultSettings['nav_dining_href']) ?>">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="nav_experience_label">Facilities link label</label>
-                    <input type="text" id="nav_experience_label" name="nav_experience_label" value="<?= sanitize($settings['nav_experience_label'] ?? $defaultSettings['nav_experience_label']) ?>" placeholder="<?= sanitize($defaultSettings['nav_experience_label']) ?>">
-                </div>
-                <div class="form-group">
-                    <label for="nav_experience_href">Facilities link URL</label>
-                    <input type="text" id="nav_experience_href" name="nav_experience_href" value="<?= sanitize($settings['nav_experience_href'] ?? $defaultSettings['nav_experience_href']) ?>" placeholder="<?= sanitize($defaultSettings['nav_experience_href']) ?>">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="nav_events_label">Events / gallery link label</label>
-                    <input type="text" id="nav_events_label" name="nav_events_label" value="<?= sanitize($settings['nav_events_label'] ?? $defaultSettings['nav_events_label']) ?>" placeholder="<?= sanitize($defaultSettings['nav_events_label']) ?>">
-                </div>
-                <div class="form-group">
-                    <label for="nav_events_href">Events / gallery link URL</label>
-                    <input type="text" id="nav_events_href" name="nav_events_href" value="<?= sanitize($settings['nav_events_href'] ?? $defaultSettings['nav_events_href']) ?>" placeholder="<?= sanitize($defaultSettings['nav_events_href']) ?>">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="nav_story_label">Story link label</label>
-                    <input type="text" id="nav_story_label" name="nav_story_label" value="<?= sanitize($settings['nav_story_label'] ?? $defaultSettings['nav_story_label']) ?>" placeholder="<?= sanitize($defaultSettings['nav_story_label']) ?>">
-                </div>
-                <div class="form-group">
-                    <label for="nav_story_href">Story link URL</label>
-                    <input type="text" id="nav_story_href" name="nav_story_href" value="<?= sanitize($settings['nav_story_href'] ?? $defaultSettings['nav_story_href']) ?>" placeholder="<?= sanitize($defaultSettings['nav_story_href']) ?>">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card">
-        <div class="card-header">
-            <h2>Header — primary button</h2>
-        </div>
-        <div class="card-body card-body--stack">
-            <div class="form-group">
-                <label for="nav_cta_label">Button label</label>
-                <input type="text" id="nav_cta_label" name="nav_cta_label" value="<?= sanitize($settings['nav_cta_label'] ?? $defaultSettings['nav_cta_label']) ?>" placeholder="<?= sanitize($defaultSettings['nav_cta_label']) ?>">
-                <p class="form-help">Shown on the right side of the desktop header (e.g. Check Availability).</p>
-            </div>
-            <div class="form-group">
-                <label for="nav_cta_href">Button URL</label>
-                <input type="text" id="nav_cta_href" name="nav_cta_href" value="<?= sanitize($settings['nav_cta_href'] ?? $defaultSettings['nav_cta_href']) ?>" placeholder="<?= sanitize($defaultSettings['nav_cta_href']) ?>">
-                <p class="form-help">Internal path (e.g. <code>/rooms</code>) or full booking engine URL. This replaces the old fixed “contact” link for that button.</p>
-            </div>
-        </div>
-    </div>
 
     <div class="card">
         <div class="card-header">
@@ -400,19 +324,10 @@ $themeHexPickerValue = static function (string $key) use ($settings, $defaultSet
                 <label for="footer_line_2">Footer tagline line 2 (optional)</label>
                 <input type="text" id="footer_line_2" name="footer_line_2" value="<?= sanitize($settings['footer_line_2'] ?? $defaultSettings['footer_line_2']) ?>" placeholder="<?= sanitize($defaultSettings['footer_line_2']) ?>">
             </div>
-            <div class="form-group">
-                <label for="footer_trust_line">Trust strip label (optional)</label>
-                <input type="text" id="footer_trust_line" name="footer_trust_line" value="<?= sanitize($settings['footer_trust_line'] ?? $defaultSettings['footer_trust_line']) ?>" placeholder="<?= sanitize($defaultSettings['footer_trust_line']) ?>">
-                <p class="form-help">If set, shows a five-star row with this label in the footer.</p>
-            </div>
             <div class="form-row">
                 <div class="form-group">
                     <label for="footer_careers_href">Careers URL (optional)</label>
                     <input type="text" id="footer_careers_href" name="footer_careers_href" value="<?= sanitize($settings['footer_careers_href'] ?? '') ?>" placeholder="/careers">
-                </div>
-                <div class="form-group">
-                    <label for="footer_press_href">Press room URL (optional)</label>
-                    <input type="text" id="footer_press_href" name="footer_press_href" value="<?= sanitize($settings['footer_press_href'] ?? '') ?>" placeholder="/press">
                 </div>
             </div>
             <div class="form-group">

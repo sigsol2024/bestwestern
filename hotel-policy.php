@@ -39,31 +39,36 @@ HTML;
   <title><?= e($pageTitle) ?></title>
   <?php require_once __DIR__ . '/includes/head-header.php'; ?>
   <style>
-    .legal-content h2 { margin-top: 28px; margin-bottom: 10px; font-weight: 600; letter-spacing: -0.01em; }
-    .legal-content p { margin-top: 10px; line-height: 1.8; }
-    .legal-content ul { margin-top: 10px; padding-left: 1.25rem; list-style: disc; }
+    .notoSerif { font-family: 'Noto Serif', serif; }
+    .inter { font-family: 'Inter', sans-serif; }
+    body[data-page="legal"] { background-color: #fdf9f3; color: #1c1c18; }
+    body[data-page="legal"] .site-header-nav--over-hero:not(.site-header-nav--scrolled) .site-header-desktop-link--inactive,
+    body[data-page="legal"] .site-header-nav--over-hero:not(.site-header-nav--scrolled) .site-header-mobile-trigger { color: #1c1c18; }
+    .legal-content h2 { margin-top: 28px; margin-bottom: 10px; font-family: 'Noto Serif', serif; font-size: 1.7rem; line-height: 1.3; color: #0b1f3a; }
+    .legal-content p { margin-top: 10px; line-height: 1.8; color: #44474d; font-family: 'Inter', sans-serif; }
+    .legal-content ul { margin-top: 10px; padding-left: 1.25rem; list-style: disc; color: #44474d; }
     .legal-content li { margin-top: 8px; line-height: 1.7; }
-    .legal-content a { text-decoration: underline; }
+    .legal-content a { text-decoration: underline; color: #C8A96A; text-underline-offset: 3px; }
   </style>
 </head>
-<body class="bg-background-light dark:bg-background-dark font-display antialiased text-text-main dark:text-white transition-colors duration-300 overflow-x-hidden">
+<body data-page="legal" class="bg-surface text-on-surface overflow-x-hidden">
 <?php require_once __DIR__ . '/includes/header.php'; ?>
 
-<div class="relative flex min-h-screen w-full flex-col">
-  <main class="flex-grow w-full max-w-[980px] mx-auto px-6 lg:px-12 py-12 lg:py-20">
-    <div class="mb-10">
-      <span class="block text-primary text-xs font-bold uppercase tracking-[0.25em] mb-3"><?= e($hero_kicker) ?></span>
-      <h1 class="text-4xl md:text-5xl lg:text-6xl font-display font-medium tracking-tight mb-4"><?= e($hero_title) ?></h1>
-      <p class="text-text-muted text-base md:text-lg font-body font-light leading-relaxed max-w-2xl"><?= e($hero_subtitle) ?></p>
-      <p class="text-xs text-text-muted mt-4"><?= e($last_updated) ?></p>
+<main class="pt-32 pb-24 px-6 md:px-12">
+  <section class="max-w-5xl mx-auto">
+    <div class="mb-12">
+      <span class="inter block text-secondary text-xs font-bold uppercase tracking-[0.25em] mb-3"><?= e($hero_kicker) ?></span>
+      <h1 class="notoSerif text-4xl md:text-6xl leading-tight text-primary-container mb-4"><?= e($hero_title) ?></h1>
+      <p class="inter text-on-surface-variant text-base md:text-lg font-light leading-relaxed max-w-2xl"><?= e($hero_subtitle) ?></p>
+      <p class="inter text-xs text-on-surface-variant mt-4 uppercase tracking-[0.2em]"><?= e($last_updated) ?></p>
     </div>
 
-    <div class="bg-white rounded-2xl border border-black/[0.06] shadow-elevation p-7 md:p-10">
-      <div class="legal-content text-text-main">
+    <div class="bg-surface-container-low rounded-xl border border-outline-variant/30 p-7 md:p-10">
+      <div class="legal-content">
         <?= $body_html ?>
       </div>
     </div>
-  </main>
-</div>
+  </section>
+</main>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>

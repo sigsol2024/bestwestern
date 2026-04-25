@@ -19,7 +19,6 @@ $useFooterLogo = $siteLogoLightUrl !== '';
 $footerEmail = getSiteSetting('footer_email', cms_default_setting('footer_email'));
 $footerCopyright = getSiteSetting('footer_copyright', cms_default_setting('footer_copyright'));
 $footerLine2 = getSiteSetting('footer_line_2', cms_default_setting('footer_line_2'));
-$footerTrustLine = getSiteSetting('footer_trust_line', cms_default_setting('footer_trust_line'));
 
 $navSuitesLabel = getSiteSetting('nav_suites_label', cms_default_setting('nav_suites_label'));
 $navDiningLabel = getSiteSetting('nav_dining_label', cms_default_setting('nav_dining_label'));
@@ -29,7 +28,6 @@ $navDiningHref = site_href(getSiteSetting('nav_dining_href', cms_default_setting
 $navEventsHref = site_href(getSiteSetting('nav_events_href', cms_default_setting('nav_events_href')));
 
 $footerCareersHref = trim((string)getSiteSetting('footer_careers_href', cms_default_setting('footer_careers_href')));
-$footerPressHref = trim((string)getSiteSetting('footer_press_href', cms_default_setting('footer_press_href')));
 $footerSustainabilityHref = trim((string)getSiteSetting('footer_sustainability_href', cms_default_setting('footer_sustainability_href')));
 $footerPrivacyHref = trim((string)getSiteSetting('footer_privacy_href', cms_default_setting('footer_privacy_href')));
 $footerTermsHref = trim((string)getSiteSetting('footer_terms_href', cms_default_setting('footer_terms_href')));
@@ -82,7 +80,6 @@ $footerPrivacyLink = $footerPrivacyHref !== '' ? site_href($footerPrivacyHref) :
 $footerTermsLink = $footerTermsHref !== '' ? site_href($footerTermsHref) : site_url($termsSlug);
 $footerSustainLink = $footerSustainabilityHref !== '' ? site_href($footerSustainabilityHref) : '';
 $footerCareersLink = $footerCareersHref !== '' ? site_href($footerCareersHref) : '';
-$footerPressLink = $footerPressHref !== '' ? site_href($footerPressHref) : '';
 ?>
 
 <footer class="bg-slate-950 text-slate-400 w-full min-h-[320px] flex flex-col justify-end font-body">
@@ -104,16 +101,6 @@ $footerPressLink = $footerPressHref !== '' ? site_href($footerPressHref) : '';
       <div class="space-y-2">
         <p class="font-light tracking-wide text-sm text-slate-500">ENQUIRIES</p>
         <a class="text-xl text-white hover:text-brand-gold transition-colors break-all" href="mailto:<?= e($footerEmail) ?>"><?= e($footerEmail) ?></a>
-      </div>
-      <?php endif; ?>
-      <?php if (trim($footerTrustLine) !== ''): ?>
-      <div class="flex items-center gap-3 border border-white/10 p-4 rounded-sm self-start">
-        <div class="flex text-brand-gold">
-          <?php for ($si = 0; $si < 5; $si++): ?>
-          <span class="material-symbols-outlined !text-sm" style="font-variation-settings:'FILL'1,'wght'400;">star</span>
-          <?php endfor; ?>
-        </div>
-        <span class="text-[10px] text-white uppercase tracking-widest font-bold"><?= e($footerTrustLine) ?></span>
       </div>
       <?php endif; ?>
     </div>
@@ -140,9 +127,6 @@ $footerPressLink = $footerPressHref !== '' ? site_href($footerPressHref) : '';
         <?php endif; ?>
         <?php if ($footerCareersLink !== '' && site_is_valid_nav_href($footerCareersLink)): ?>
         <a class="text-slate-400 hover:text-white transition-colors text-sm underline-offset-4 hover:underline" href="<?= e($footerCareersLink) ?>">Careers</a>
-        <?php endif; ?>
-        <?php if ($footerPressLink !== '' && site_is_valid_nav_href($footerPressLink)): ?>
-        <a class="text-slate-400 hover:text-white transition-colors text-sm underline-offset-4 hover:underline" href="<?= e($footerPressLink) ?>">Press Room</a>
         <?php endif; ?>
       </div>
       <div class="flex flex-col gap-3">
