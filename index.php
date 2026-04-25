@@ -190,7 +190,7 @@ $home_room_subtitle = static function (array $room): string {
   <div class="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-r from-black/85 via-black/50 to-black/0"></div>
   <div class="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-b from-brand-ink/30 via-transparent to-brand-ink/70"></div>
 
-  <div class="relative z-10 flex h-full flex-col justify-center px-6 pt-24 pb-28 md:px-14 lg:pl-24 lg:pr-12 text-left w-full max-w-[min(34rem,92vw)] text-balance">
+  <div class="relative z-10 flex h-full flex-col justify-center px-6 pt-24 pb-28 md:px-14 lg:pl-24 lg:pr-12 text-left w-full max-w-[min(42rem,94vw)]">
     <?php if ($hero_show_stars || trim($hero_trust_badge) !== ''): ?>
     <div class="flex flex-wrap items-center gap-x-2 gap-y-1 mb-3">
       <?php if ($hero_show_stars): ?>
@@ -205,7 +205,7 @@ $home_room_subtitle = static function (array $room): string {
       <?php endif; ?>
     </div>
     <?php endif; ?>
-    <h1 class="site-hero-title font-headline text-3xl sm:text-4xl md:text-[2.35rem] lg:text-5xl text-surface leading-snug mb-4 drop-shadow-sm max-w-[min(30rem,92vw)] [&_br]:block">
+    <h1 class="site-hero-title font-headline text-3xl sm:text-4xl md:text-[2.35rem] lg:text-5xl text-surface leading-tight mb-4 drop-shadow-sm max-w-[min(38rem,94vw)]">
       <?= $hero_title ?>
     </h1>
     <p class="font-body text-sm sm:text-base text-surface/90 font-light max-w-[min(26rem,90vw)] leading-relaxed normal-case tracking-normal">
@@ -214,12 +214,14 @@ $home_room_subtitle = static function (array $room): string {
   </div>
 
   <?php if ($heroSliderMultiple): ?>
-  <button type="button" class="home-hero-nav absolute left-3 md:left-6 top-1/2 z-20 -translate-y-1/2 rounded-md border border-white/25 bg-white/15 px-3 py-2.5 text-surface backdrop-blur-sm transition hover:bg-white/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/60" data-hero-prev aria-label="Previous slide">
-    <span class="material-symbols-outlined text-2xl leading-none">chevron_left</span>
-  </button>
-  <button type="button" class="home-hero-nav absolute right-3 md:right-6 top-1/2 z-20 -translate-y-1/2 rounded-md border border-white/25 bg-white/15 px-3 py-2.5 text-surface backdrop-blur-sm transition hover:bg-white/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/60" data-hero-next aria-label="Next slide">
-    <span class="material-symbols-outlined text-2xl leading-none">chevron_right</span>
-  </button>
+  <div class="absolute bottom-8 right-6 md:right-10 z-20 flex items-center gap-2">
+    <button type="button" class="home-hero-nav rounded-md border border-white/25 bg-white/15 px-3 py-2.5 text-surface backdrop-blur-sm transition hover:bg-white/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/60" data-hero-prev aria-label="Previous slide">
+      <span class="material-symbols-outlined text-2xl leading-none">chevron_left</span>
+    </button>
+    <button type="button" class="home-hero-nav rounded-md border border-white/25 bg-white/15 px-3 py-2.5 text-surface backdrop-blur-sm transition hover:bg-white/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/60" data-hero-next aria-label="Next slide">
+      <span class="material-symbols-outlined text-2xl leading-none">chevron_right</span>
+    </button>
+  </div>
   <div class="absolute bottom-8 left-6 z-20 flex gap-2 md:left-14 lg:left-24" data-hero-dots role="tablist" aria-label="Hero slides"></div>
   <?php endif; ?>
 
