@@ -137,8 +137,8 @@ $hasRenderableLink = static function (string $label, string $href): bool {
     </div>
   </section>
 
-  <section class="py-40 px-12 max-w-screen-2xl mx-auto" id="dining">
-    <div class="editorial-grid mb-48 gap-20">
+  <section class="py-28 px-12 max-w-screen-2xl mx-auto" id="dining">
+    <div class="editorial-grid mb-24 gap-20">
       <div class="col-span-12 lg:col-span-7"><img class="w-full aspect-[4/3] object-cover" src="<?= e($sectionImage($dining1)) ?>" alt="<?= e((string)($dining1['kicker'] ?? 'Dining')) ?>"></div>
       <div class="col-span-12 lg:col-span-5 flex flex-col justify-center md:px-8">
         <span class="text-secondary text-[10px] tracking-[0.3em] uppercase mb-6"><?= e((string)($dining1['kicker'] ?? 'Native Flavors')) ?></span>
@@ -160,7 +160,7 @@ $hasRenderableLink = static function (string $label, string $href): bool {
       </div>
     </div>
 
-    <div class="editorial-grid items-center mb-48 gap-20">
+    <div class="editorial-grid items-center mb-24 gap-20">
       <div class="col-span-12 lg:col-span-5 flex flex-col md:px-8">
         <span class="text-secondary text-[10px] tracking-[0.3em] uppercase mb-6"><?= e((string)($dining2['kicker'] ?? 'Oriental Mastery')) ?></span>
         <h2 class="font-headline text-5xl mb-8 font-light"><?= (string)($dining2['title_html'] ?? 'Red Lotus') ?></h2>
@@ -190,13 +190,13 @@ $hasRenderableLink = static function (string $label, string $href): bool {
     </div>
   </section>
 
-  <section class="bg-[#0B1F3A] text-white py-40 overflow-hidden" id="wellness">
+  <section class="bg-[#0B1F3A] text-white py-28 overflow-hidden" id="wellness">
     <div class="max-w-screen-2xl mx-auto px-12">
-      <div class="mb-32 text-center">
+      <div class="mb-20 text-center">
         <span class="text-secondary uppercase tracking-[0.4em] text-[10px] mb-6 block"><?= e($wellnessIntroKicker) ?></span>
         <h2 class="font-headline text-6xl md:text-7xl font-light italic"><?= (string)$wellnessIntroTitleHtml ?></h2>
       </div>
-      <div class="space-y-40">
+      <div class="space-y-24">
         <?php foreach ($wellnessRows as $wi => $sec):
           $rowId = $wellnessRowIds[$wi] ?? '';
         ?>
