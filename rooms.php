@@ -108,7 +108,7 @@ $listRooms = array_values(array_filter($rooms, static function ($room) use ($sig
         <div class="space-y-6 md:flex-1 md:min-h-0">
           <div class="space-y-1">
             <span class="text-[9px] uppercase tracking-[0.3em] text-secondary font-bold"><?= e($heroKicker) ?></span>
-            <h2 class="text-5xl font-headline text-primary"><?= e($title) ?></h2>
+            <h2 class="text-lg md:text-5xl font-headline text-primary"><?= e($title) ?></h2>
           </div>
           <div class="text-[10px] tracking-[0.15em] text-outline font-medium uppercase"><?= e($factLine) ?></div>
           <p class="text-on-surface-variant font-light leading-relaxed max-w-md"><?= e($desc) ?></p>
@@ -151,7 +151,7 @@ $listRooms = array_values(array_filter($rooms, static function ($room) use ($sig
         <div class="p-12 md:p-20 space-y-8">
           <div class="space-y-4">
             <span class="text-[10px] uppercase tracking-[0.4em] text-secondary font-bold block"><?= e($signatureKicker) ?></span>
-            <h2 class="text-5xl md:text-6xl font-headline text-primary leading-tight"><?= e($st) ?></h2>
+            <h2 class="text-lg md:text-6xl font-headline text-primary leading-tight"><?= e($st) ?></h2>
           </div>
           <div class="text-[10px] tracking-[0.2em] text-primary/60 font-bold uppercase"><?= e(implode(' • ', array_slice($sFacts, 0, 4))) ?></div>
           <p class="text-on-surface-variant font-light leading-relaxed max-w-lg italic"><?= e($sd) ?></p>

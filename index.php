@@ -180,7 +180,7 @@ $home_room_subtitle = static function (array $room): string {
       <?php endif; ?>
     </div>
     <?php endif; ?>
-    <h1 class="site-hero-title font-headline text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-surface leading-tight mb-5 max-w-5xl">
+    <h1 class="site-hero-title font-headline text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-surface leading-tight mb-5 max-w-5xl">
       <?= $hero_title ?>
     </h1>
     <p class="font-body text-sm md:text-base lg:text-lg text-surface/90 tracking-widest uppercase font-light max-w-3xl">
@@ -200,7 +200,7 @@ $home_room_subtitle = static function (array $room): string {
 </header>
 
 <!-- Brand story -->
-<section class="py-24 md:py-32 px-6 md:px-12 max-w-screen-2xl mx-auto bg-surface">
+<section id="home-about" class="py-24 md:py-32 px-6 md:px-12 max-w-screen-2xl mx-auto bg-surface">
   <div class="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 items-center">
     <div class="md:col-span-7 relative">
       <img class="w-full aspect-[5/6] max-h-[480px] sm:max-h-[500px] md:max-h-[540px] object-cover shadow-2xl shadow-brand-ink/5" src="<?= e($hp_main_img) ?>" alt="" width="800" height="960"/>
@@ -296,7 +296,7 @@ $home_room_subtitle = static function (array $room): string {
 </section>
 
 <!-- Dining (background hardcoded for brand consistency) -->
-<section class="py-24 md:py-32 text-surface" style="background-color:#1A1A1A;">
+<section id="home-dining" class="py-24 md:py-32 text-surface" style="background-color:#1A1A1A;">
   <div class="px-6 md:px-12 max-w-screen-2xl mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
     <div class="lg:w-1/2 w-full">
       <?php if (trim($dining_kicker) !== ''): ?>
@@ -304,11 +304,11 @@ $home_room_subtitle = static function (array $room): string {
       <?php endif; ?>
       <div class="font-headline text-4xl md:text-6xl lg:text-7xl mb-10 md:mb-12"><?= $dining_heading_html ?></div>
       <div class="space-y-12 md:space-y-16">
-        <div class="border-l-2 border-brand-gold/30 pl-6 md:pl-8 py-2">
+        <div class="border-l-2 border-white pl-6 md:pl-8 py-2">
           <h4 class="font-body text-xl md:text-2xl font-semibold mb-3 md:mb-4 tracking-tight text-white"><?= e($dining_v1_title) ?></h4>
           <p class="font-body text-surface/60 leading-relaxed font-light"><?= e($dining_v1_body) ?></p>
         </div>
-        <div class="border-l-2 border-brand-gold/30 pl-6 md:pl-8 py-2">
+        <div class="border-l-2 border-white pl-6 md:pl-8 py-2">
           <h4 class="font-body text-xl md:text-2xl font-semibold mb-3 md:mb-4 tracking-tight text-white"><?= e($dining_v2_title) ?></h4>
           <p class="font-body text-surface/60 leading-relaxed font-light"><?= e($dining_v2_body) ?></p>
         </div>

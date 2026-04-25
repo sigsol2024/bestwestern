@@ -38,13 +38,28 @@ $navExperienceHref = site_href(getSiteSetting('nav_experience_href', cms_default
 $navStoryHref = site_href(getSiteSetting('nav_story_href', cms_default_setting('nav_story_href')));
 $navContactHref = site_href('/contact');
 
+$aboutNavLabel = 'About Us';
+$aboutPageHref = site_href('/about');
+$aboutSectionHref = site_url('index') . '#home-about';
+$aboutNavHref = (site_is_valid_nav_href($aboutPageHref) && site_nav_link_visible($aboutPageHref))
+    ? $aboutPageHref
+    : $aboutSectionHref;
+
+$diningNavLabel = trim((string) $navDiningLabel) !== '' ? (string) $navDiningLabel : 'Dining';
+$diningPageHref = site_href('/dining');
+$diningSectionHref = site_url('index') . '#home-dining';
+$diningNavHref = (site_is_valid_nav_href($diningPageHref) && site_nav_link_visible($diningPageHref))
+    ? $diningPageHref
+    : $diningSectionHref;
+
 $ctaLabel = getSiteSetting('nav_cta_label', cms_default_setting('nav_cta_label'));
 $ctaHref = site_href(getSiteSetting('nav_cta_href', cms_default_setting('nav_cta_href')));
 
 $headerNavLinks = [
     [$navSuitesLabel, $navSuitesHref],
+    [$aboutNavLabel, $aboutNavHref],
     [$navExperienceLabel, $navExperienceHref],
-    [$navDiningLabel, $navDiningHref],
+    [$diningNavLabel, $diningNavHref],
     [$navStoryLabel, $navStoryHref],
     ['Contact', $navContactHref],
 ];

@@ -208,7 +208,7 @@ $occupancyLabel = $maxGuests > 0
     <div class="absolute inset-0 pointer-events-none flex items-end pb-16 md:pb-24 pt-24 md:pt-28 px-6 md:px-12 max-w-screen-2xl mx-auto left-0 right-0">
       <div class="max-w-2xl text-white pointer-events-auto">
         <span class="font-body uppercase tracking-[0.5em] text-[10px] font-bold mb-4 block opacity-80"><?= e($heroBadge) ?></span>
-        <h1 class="font-headline text-3xl sm:text-4xl md:text-5xl leading-tight mb-6"><?= e($title) ?></h1>
+        <h1 class="font-headline text-lg sm:text-4xl md:text-5xl leading-tight mb-6"><?= e($title) ?></h1>
         <div class="flex items-center gap-8">
           <a class="text-[10px] font-bold tracking-[0.3em] uppercase border-b border-white/30 pb-1 hover:border-white transition-all" href="#suiteDetails">View Details</a>
         </div>
@@ -351,7 +351,7 @@ $occupancyLabel = $maxGuests > 0
             <div class="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors"></div>
             <div class="absolute inset-x-0 bottom-0 h-[65%] bg-gradient-to-t from-black/65 via-black/28 to-transparent pointer-events-none"></div>
             <div class="absolute bottom-8 left-8 right-8 text-white">
-              <h4 class="font-headline text-3xl mb-2"><?= e($st) ?></h4>
+              <h4 class="font-headline text-lg md:text-3xl mb-2"><?= e($st) ?></h4>
               <span class="text-[10px] uppercase tracking-widest font-light opacity-80">From <?= e($currency) ?><?= e($sp) ?></span>
             </div>
           </div>
