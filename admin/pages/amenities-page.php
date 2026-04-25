@@ -31,15 +31,27 @@ $amenitiesItems = [];
 for ($i = 0; $i < 7; $i++) {
     $amenitiesItems[$i] = isset($decoded[$i]) && is_array($decoded[$i]) ? $decoded[$i] : [];
 }
+$servicesRaw = $sections['services_items_json'] ?? '';
+$servicesDecoded = json_decode((string)$servicesRaw, true);
+if (!is_array($servicesDecoded) || $servicesDecoded === []) {
+    $servicesDecoded = [
+        ['title' => '24h Concierge', 'subtitle' => 'Dedicated to your every whim'],
+        ['title' => 'Airport Transfer', 'subtitle' => 'Luxury chauffeur fleet'],
+        ['title' => 'Laundry & Press', 'subtitle' => 'Same-day valet service'],
+        ['title' => 'High-Speed WiFi', 'subtitle' => 'Gigabit fiber throughout'],
+        ['title' => 'Secure Parking', 'subtitle' => '24/7 guarded premises'],
+        ['title' => 'Room Service', 'subtitle' => 'Global dining 24/7'],
+    ];
+}
 
-$amenitiesSlotHelp = [
-    'Shown as the full-screen hero on /amenities (kicker, title HTML, body, hero image).',
-    'Dining row 1: large image left, copy right.',
-    'Dining row 2: copy left, wide image right.',
-    'Wellness band intro + first wellness row (image alternates on the public page).',
-    'Wellness row 2.',
-    'Wellness row 3.',
-    'Meetings & events band (headline + supporting copy + wide image).',
+$amenitiesSlotMeta = [
+    ['label' => 'Hero Section', 'help' => 'Top full-screen hero on /amenities (kicker, title HTML, body, hero image).'],
+    ['label' => 'Dining Row 1', 'help' => 'First dining row: large image left, copy right.'],
+    ['label' => 'Dining Row 2', 'help' => 'Second dining row: copy left, wide image right.'],
+    ['label' => 'Wellness Row 1', 'help' => 'Wellness intro and first row content.'],
+    ['label' => 'Wellness Row 2', 'help' => 'Second wellness row content.'],
+    ['label' => 'Wellness Row 3', 'help' => 'Third wellness row content.'],
+    ['label' => 'Business & Events', 'help' => 'Meetings/events band with headline, copy, and wide image.'],
 ];
 
 $pageActiveSettingKey = 'page_active_amenities';
@@ -58,9 +70,71 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
   </div>
 
   <div class="card">
+    <div class="card-header"><h2>Services Section</h2></div>
+    <div style="padding:20px;">
+      <div class="form-row">
+        <div class="form-group" style="flex:1;">
+          <label for="services_kicker">Services kicker</label>
+          <input type="text" id="services_kicker" name="services_kicker" value="<?= sanitize($sections['services_kicker'] ?? 'Impeccable Care') ?>">
+        </div>
+        <div class="form-group" style="flex:1;">
+          <label for="services_title">Services title</label>
+          <input type="text" id="services_title" name="services_title" value="<?= sanitize($sections['services_title'] ?? 'Signature Guest Services') ?>">
+        </div>
+      </div>
+      <p class="form-help">Service cards are now editable as normal fields. Use "Add service item" for more rows.</p>
+      <textarea id="services_items_json" name="services_items_json" style="display:none;"><?= htmlspecialchars(json_encode($servicesDecoded, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8') ?></textarea>
+      <div id="servicesItemsWrap">
+        <?php foreach ($servicesDecoded as $si => $srv):
+            $srvTitle = sanitize((string)($srv['title'] ?? ''));
+            $srvSubtitle = sanitize((string)($srv['subtitle'] ?? ($srv['body'] ?? '')));
+        ?>
+        <div class="card js-service-item" style="margin-bottom:10px;">
+          <div class="card-body" style="padding:12px 14px;">
+            <div class="form-row">
+              <div class="form-group" style="flex:1;">
+                <label>Service title</label>
+                <input type="text" class="form-control js-service-title" value="<?= $srvTitle ?>">
+              </div>
+              <div class="form-group" style="flex:1;">
+                <label>Service subtitle</label>
+                <input type="text" class="form-control js-service-subtitle" value="<?= $srvSubtitle ?>">
+              </div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;">
+              <button type="button" class="btn btn-outline btn-sm js-remove-service">Remove</button>
+            </div>
+          </div>
+        </div>
+        <?php endforeach; ?>
+      </div>
+      <button type="button" class="btn btn-outline btn-sm" id="addServiceItemBtn">Add service item</button>
+      <template id="serviceItemTemplate">
+        <div class="card js-service-item" style="margin-bottom:10px;">
+          <div class="card-body" style="padding:12px 14px;">
+            <div class="form-row">
+              <div class="form-group" style="flex:1;">
+                <label>Service title</label>
+                <input type="text" class="form-control js-service-title" value="">
+              </div>
+              <div class="form-group" style="flex:1;">
+                <label>Service subtitle</label>
+                <input type="text" class="form-control js-service-subtitle" value="">
+              </div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;">
+              <button type="button" class="btn btn-outline btn-sm js-remove-service">Remove</button>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <div class="card">
     <div class="card-header"><h2>Bottom CTA</h2></div>
     <div style="padding:20px;">
-      <p class="form-help" style="margin-top:0;">This closing block is separate from <code>sections_json</code> so it is easy to edit as plain text.</p>
+      <p class="form-help" style="margin-top:0;">This is the final block on the live amenities page.</p>
       <div class="form-group">
         <label for="cta_title">CTA title</label>
         <input type="text" id="cta_title" name="cta_title" value="<?= sanitize($sections['cta_title'] ?? 'Ready to Experience Our Facilities?') ?>">
@@ -75,25 +149,6 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
           <input type="text" id="cta_btn_href" name="cta_btn_href" value="<?= sanitize($sections['cta_btn_href'] ?? '/contact') ?>">
         </div>
       </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header"><h2>Services Section</h2></div>
-    <div style="padding:20px;">
-      <div class="form-row">
-        <div class="form-group" style="flex:1;">
-          <label for="services_kicker">Services kicker</label>
-          <input type="text" id="services_kicker" name="services_kicker" value="<?= sanitize($sections['services_kicker'] ?? 'Impeccable Care') ?>">
-        </div>
-        <div class="form-group" style="flex:1;">
-          <label for="services_title">Services title</label>
-          <input type="text" id="services_title" name="services_title" value="<?= sanitize($sections['services_title'] ?? 'Signature Guest Services') ?>">
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="services_items_json">Service cards JSON</label>
-        <textarea id="services_items_json" name="services_items_json" rows="8" style="font-family:monospace;font-size:12px;"><?= htmlspecialchars($sections['services_items_json'] ?? '[{"title":"24h Concierge","subtitle":"Dedicated to your every whim"},{"title":"Airport Transfer","subtitle":"Luxury chauffeur fleet"},{"title":"Laundry & Press","subtitle":"Same-day valet service"},{"title":"High-Speed WiFi","subtitle":"Gigabit fiber throughout"},{"title":"Secure Parking","subtitle":"24/7 guarded premises"},{"title":"Room Service","subtitle":"Global dining 24/7"}]', ENT_QUOTES, 'UTF-8') ?></textarea>
       </div>
     </div>
   </div>
@@ -102,7 +157,7 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
     <div class="card-header"><h2>Page modules (saved as JSON)</h2></div>
     <div style="padding:20px;">
       <p class="form-help" style="margin-top:0;">
-        The public amenities page reads <strong>7 fixed slots</strong> from <code>sections_json</code> (indexes 0-6). Extra legacy sections (index 7+) are preserved when you save, but only appear in Advanced JSON.
+        Section order below matches the live frontend order exactly. These are 7 fixed slots saved internally in <code>sections_json</code>.
       </p>
 
       <textarea id="sections_json" name="sections_json" style="display:none;"><?= htmlspecialchars($raw, ENT_QUOTES, 'UTF-8') ?></textarea>
@@ -123,8 +178,9 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
               $gallery = [];
           }
           $galleryJson = htmlspecialchars(json_encode($gallery, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8');
-          $slotLabel = 'Module ' . ($i + 1);
-          $help = $amenitiesSlotHelp[$i] ?? '';
+          $slotMeta = $amenitiesSlotMeta[$i] ?? ['label' => 'Module ' . ($i + 1), 'help' => ''];
+          $slotLabel = (string)($slotMeta['label'] ?? ('Module ' . ($i + 1)));
+          $help = (string)($slotMeta['help'] ?? '');
           $bgId = 'amenity_slot_' . $i . '_bg';
           $bgPrevId = 'amenity_slot_' . $i . '_bg_preview';
           $galId = 'amenity_slot_' . $i . '_gallery_images';
@@ -303,10 +359,28 @@ function amenitiesGetItemsFromDom() {
   return out.slice(0, AMENITIES_SLOT_COUNT).concat(tail);
 }
 
+function amenitiesGetServicesFromDom() {
+  var items = [];
+  document.querySelectorAll('#servicesItemsWrap .js-service-item').forEach(function (wrap) {
+    var title = (wrap.querySelector('.js-service-title')?.value || '').trim();
+    var subtitle = (wrap.querySelector('.js-service-subtitle')?.value || '').trim();
+    if (!title) return;
+    items.push({ title: title, subtitle: subtitle });
+  });
+  return items;
+}
+
+function amenitiesSyncServicesJson() {
+  var hidden = document.getElementById('services_items_json');
+  if (!hidden) return;
+  hidden.value = JSON.stringify(amenitiesGetServicesFromDom());
+}
+
 function amenitiesSyncHiddenJson() {
   var items = amenitiesGetItemsFromDom();
   var hidden = document.getElementById('sections_json');
   if (hidden) hidden.value = JSON.stringify(items);
+  amenitiesSyncServicesJson();
   var adv = document.getElementById('sections_json_advanced');
   if (adv) adv.value = JSON.stringify(items, null, 2);
 }
@@ -419,6 +493,37 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   amenitiesSyncHiddenJson();
+
+  var servicesWrap = document.getElementById('servicesItemsWrap');
+  var addServiceBtn = document.getElementById('addServiceItemBtn');
+  var serviceTemplate = document.getElementById('serviceItemTemplate');
+
+  function wireServiceRow(row) {
+    if (!row) return;
+    var removeBtn = row.querySelector('.js-remove-service');
+    if (removeBtn) {
+      removeBtn.addEventListener('click', function () {
+        row.remove();
+        amenitiesSyncServicesJson();
+      });
+    }
+    row.addEventListener('input', amenitiesSyncServicesJson);
+    row.addEventListener('change', amenitiesSyncServicesJson);
+  }
+
+  if (servicesWrap) {
+    servicesWrap.querySelectorAll('.js-service-item').forEach(wireServiceRow);
+  }
+  if (addServiceBtn && servicesWrap && serviceTemplate) {
+    addServiceBtn.addEventListener('click', function () {
+      var fragment = serviceTemplate.content.cloneNode(true);
+      var row = fragment.querySelector('.js-service-item');
+      servicesWrap.appendChild(fragment);
+      wireServiceRow(servicesWrap.lastElementChild);
+      amenitiesSyncServicesJson();
+    });
+  }
+  amenitiesSyncServicesJson();
 
   var applyBtn = document.getElementById('amenitiesApplyJsonBtn');
   if (applyBtn) applyBtn.addEventListener('click', function () {
