@@ -97,9 +97,29 @@ $experience_button_href = (string) getPageSection('about', 'experience_button_hr
         .scrim-bottom {
             background: linear-gradient(to top, rgba(11, 31, 58, 0.9) 0%, rgba(11, 31, 58, 0) 100%);
         }
+
+        /* About page palette override to match the provided sample exactly */
+        body[data-page="about"] { background-color: #fdf9f3; color: #1c1c18; }
+        body[data-page="about"] ::selection { background: #fedb98; color: #785f28; }
+        body[data-page="about"] .bg-surface { background-color: #fdf9f3 !important; }
+        body[data-page="about"] .text-on-surface { color: #1c1c18 !important; }
+        body[data-page="about"] .text-on-surface-variant { color: #44474d !important; }
+        body[data-page="about"] .bg-surface-container-low { background-color: #f7f3ed !important; }
+        body[data-page="about"] .bg-surface-container { background-color: #f1ede7 !important; }
+        body[data-page="about"] .bg-surface-container-high { background-color: #ebe8e2 !important; }
+        body[data-page="about"] .bg-surface-container-highest { background-color: #e6e2dc !important; }
+        body[data-page="about"] .text-primary { color: #000615 !important; }
+        body[data-page="about"] .bg-primary-container { background-color: #0b1f3a !important; }
+        body[data-page="about"] .text-primary-container { color: #0b1f3a !important; }
+        body[data-page="about"] .text-on-primary-container { color: #7587a7 !important; }
+        body[data-page="about"] .bg-secondary { background-color: #C8A96A !important; }
+        body[data-page="about"] .text-secondary { color: #C8A96A !important; }
+        body[data-page="about"] .text-on-secondary { color: #ffffff !important; }
+        body[data-page="about"] .bg-gold-standard { background-color: #C8A96A !important; }
+        body[data-page="about"] .text-gold-standard { color: #C8A96A !important; }
   </style>
 </head>
-<body class="bg-surface text-on-surface selection:bg-secondary-container selection:text-on-secondary-container overflow-x-hidden">
+<body data-page="about" class="bg-surface text-on-surface selection:bg-secondary-container selection:text-on-secondary-container overflow-x-hidden">
 <?php require_once __DIR__ . '/includes/header.php'; ?>
 
 <main class="pt-32">
