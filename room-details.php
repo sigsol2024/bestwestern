@@ -226,7 +226,7 @@ $occupancyLabel = $maxGuests > 0
         <div class="text-[11px] uppercase tracking-[0.3em] font-bold text-primary"><?= e($occupancyLabel) ?></div>
       </div>
 
-      <div class="rounded-2xl border border-outline-variant/25 bg-gradient-to-b from-surface-container-low/90 via-surface/40 to-surface-container-low/60 shadow-[0_10px_40px_-18px_rgba(0,0,0,0.12)] overflow-hidden transition-[box-shadow,transform] duration-500 hover:shadow-[0_20px_48px_-14px_rgba(0,0,0,0.16)] motion-reduce:transition-none">
+      <div class="rounded-2xl !mt-[57px] border border-outline-variant/25 bg-gradient-to-b from-surface-container-low/90 via-surface/40 to-surface-container-low/60 shadow-[0_10px_40px_-18px_rgba(0,0,0,0.12)] overflow-hidden transition-[box-shadow,transform] duration-500 hover:shadow-[0_20px_48px_-14px_rgba(0,0,0,0.16)] motion-reduce:transition-none">
         <div class="grid md:grid-cols-2 gap-px bg-outline-variant/20">
           <div class="suite-story-col group relative p-8 md:p-9 flex flex-col min-h-[14rem] bg-surface/75">
             <div class="suite-story-col-inner h-full flex flex-col transition-transform duration-300 ease-out group-hover:-translate-y-0.5 motion-reduce:transform-none">
@@ -264,7 +264,7 @@ $occupancyLabel = $maxGuests > 0
       </div>
 
       <?php if (!empty($amenityCards)): ?>
-      <div class="rounded-2xl border border-outline-variant/25 bg-gradient-to-br from-primary/[0.07] via-surface-container-low/40 to-primary/[0.05] p-8 md:p-12 shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] overflow-hidden">
+      <div class="rounded-2xl border border-outline-variant/25 bg-gradient-to-br from-primary/[0.07] via-surface-container-low/40 to-primary/[0.05] px-8 md:px-12 py-[26px] shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] overflow-hidden">
         <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8 md:mb-10 pb-6 border-b border-outline-variant/20">
           <h3 class="font-headline text-3xl md:text-4xl italic text-primary tracking-tight">Refined Essentials</h3>
           <div class="text-[10px] uppercase tracking-[0.35em] text-secondary font-bold shrink-0"><?= e($bookingBadge !== '' ? $bookingBadge : 'Best Western Plus Collection') ?></div>
