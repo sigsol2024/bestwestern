@@ -144,7 +144,9 @@ if (!is_array($chambers) || $chambers === []) {
             <span class="text-xs font-medium"><?= e($dining1DinnerTime) ?></span>
           </div>
         </div>
-        <a class="text-secondary border-b border-secondary/40 pb-2 self-start text-xs uppercase tracking-widest hover:border-secondary transition-all" href="<?= e(site_href($dining1MenuHref !== '' ? $dining1MenuHref : '#')) ?>"><?= e($dining1MenuLabel !== '' ? $dining1MenuLabel : 'View Full Menu') ?></a>
+        <?php if ($dining1MenuLabel !== '' && $dining1MenuHref !== ''): ?>
+        <a class="text-secondary border-b border-secondary/40 pb-2 self-start text-xs uppercase tracking-widest hover:border-secondary transition-all" href="<?= e(site_href($dining1MenuHref)) ?>"><?= e($dining1MenuLabel) ?></a>
+        <?php endif; ?>
       </div>
     </div>
 
@@ -157,7 +159,9 @@ if (!is_array($chambers) || $chambers === []) {
           <span class="text-[10px] uppercase tracking-widest font-bold block mb-2 opacity-50"><?= e($dining2ServiceNote) ?></span>
           <span class="font-headline text-2xl font-light"><?= e($dining2Hours) ?></span>
         </div>
-        <a class="inline-block bg-[#0B1F3A] text-white px-10 py-5 uppercase tracking-[0.3em] text-[10px] hover:opacity-90 transition-all self-start" href="<?= e(site_href($dining2CtaHref !== '' ? $dining2CtaHref : '#')) ?>"><?= e($dining2CtaLabel !== '' ? $dining2CtaLabel : 'Book Table') ?></a>
+        <?php if ($dining2CtaLabel !== '' && $dining2CtaHref !== ''): ?>
+        <a class="inline-block bg-[#0B1F3A] text-white px-10 py-5 uppercase tracking-[0.3em] text-[10px] hover:opacity-90 transition-all self-start" href="<?= e(site_href($dining2CtaHref)) ?>"><?= e($dining2CtaLabel) ?></a>
+        <?php endif; ?>
       </div>
       <div class="col-span-12 lg:col-span-7"><img class="w-full aspect-[16/9] object-cover" src="<?= e($sectionImage($dining2)) ?>" alt="<?= e((string)($dining2['kicker'] ?? 'Dining')) ?>"></div>
     </div>
@@ -209,7 +213,13 @@ if (!is_array($chambers) || $chambers === []) {
             <?php elseif (($wellnessRowMeta[$wi]['meta_type'] ?? '') === 'footer'): ?>
             <div class="flex items-center justify-between border-t border-white/10 pt-8">
               <span class="text-xs uppercase tracking-[0.2em] opacity-50"><?= e((string)($wellnessRowMeta[$wi]['footer_note'] ?? '')) ?></span>
-              <a class="text-secondary text-xs uppercase tracking-widest font-bold border-b border-secondary/40 pb-1" href="<?= e(site_href((string)($wellnessRowMeta[$wi]['footer_link_href'] ?? '#'))) ?>"><?= e((string)($wellnessRowMeta[$wi]['footer_link_label'] ?? '')) ?></a>
+              <?php
+                $footerLinkLabel = trim((string)($wellnessRowMeta[$wi]['footer_link_label'] ?? ''));
+                $footerLinkHref = trim((string)($wellnessRowMeta[$wi]['footer_link_href'] ?? ''));
+              ?>
+              <?php if ($footerLinkLabel !== '' && $footerLinkHref !== ''): ?>
+              <a class="text-secondary text-xs uppercase tracking-widest font-bold border-b border-secondary/40 pb-1" href="<?= e(site_href($footerLinkHref)) ?>"><?= e($footerLinkLabel) ?></a>
+              <?php endif; ?>
             </div>
             <?php endif; ?>
           </div>
@@ -240,7 +250,9 @@ if (!is_array($chambers) || $chambers === []) {
               <span class="text-4xl font-light italic text-[#0B1F3A]"><?= e($akassaCapacityValue) ?></span>
               <span class="text-[10px] uppercase tracking-widest opacity-60"><?= e($akassaCapacityLabel) ?></span>
             </div>
-            <a class="px-12 py-5 border border-[#0B1F3A] text-[10px] uppercase tracking-[0.3em] hover:bg-[#0B1F3A] hover:text-white transition-all self-start inline-block" href="<?= e(site_href($akassaCtaHref !== '' ? $akassaCtaHref : '#')) ?>"><?= e($akassaCtaLabel) ?></a>
+            <?php if ($akassaCtaLabel !== '' && $akassaCtaHref !== ''): ?>
+            <a class="px-12 py-5 border border-[#0B1F3A] text-[10px] uppercase tracking-[0.3em] hover:bg-[#0B1F3A] hover:text-white transition-all self-start inline-block" href="<?= e(site_href($akassaCtaHref)) ?>"><?= e($akassaCtaLabel) ?></a>
+            <?php endif; ?>
           </div>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-16">
