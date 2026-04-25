@@ -18,7 +18,6 @@ $hero_intro = (string) getPageSection(
 );
 $hero_bg = (string) getPageSection('about', 'hero_bg', $heroPlaceholder);
 $hero_bg_url = site_media_url($hero_bg);
-$hero_bg_alt = (string) getPageSection('about', 'hero_bg_alt', 'Luxury hotel exterior with modernist architecture');
 
 // Philosophy (tonal layering)
 $philosophy_kicker = (string) getPageSection('about', 'philosophy_kicker', 'Philosophy');
@@ -43,8 +42,6 @@ if ($philosophy_image_2 === '') {
 }
 $philosophy_image_1_url = site_media_url($philosophy_image_1);
 $philosophy_image_2_url = site_media_url($philosophy_image_2);
-$philosophy_image_1_alt = (string) getPageSection('about', 'philosophy_image_1_alt', 'Hotel lobby details');
-$philosophy_image_2_alt = (string) getPageSection('about', 'philosophy_image_2_alt', 'Luxury spa environment');
 
 // Rooted in the Delta (culture integration)
 $culture_title = (string) getPageSection('about', 'culture_title', 'Rooted in the Delta');
@@ -54,7 +51,6 @@ $culture_feature_2_title = (string) getPageSection('about', 'culture_feature_2_t
 $culture_feature_2_body = (string) getPageSection('about', 'culture_feature_2_body', 'Collaborating with Bayelsan artisans, we showcase traditional motifs reimagined for a modern global audience.');
 $culture_image = (string) getPageSection('about', 'culture_image', $galleryPlaceholder);
 $culture_image_url = site_media_url($culture_image);
-$culture_image_alt = (string) getPageSection('about', 'culture_image_alt', 'Aerial cinematic view of a winding river');
 
 // Heritage (editorial layout)
 $heritage_title = (string) getPageSection('about', 'heritage_title', 'Our Heritage');
@@ -65,10 +61,6 @@ $heritage_image_1 = (string) getPageSection('about', 'heritage_image_1', $detail
 $heritage_image_2 = (string) getPageSection('about', 'heritage_image_2', $galleryPlaceholder);
 $heritage_image_1_url = site_media_url($heritage_image_1);
 $heritage_image_2_url = site_media_url($heritage_image_2);
-$heritage_image_1_alt = (string) getPageSection('about', 'heritage_image_1_alt', 'Professional hotel staff');
-$heritage_image_2_alt = (string) getPageSection('about', 'heritage_image_2_alt', 'Sophisticated hotel bar area');
-$heritage_quote = (string) getPageSection('about', 'heritage_quote', '"To serve is a privilege; to curate is an art."');
-$heritage_quote_byline = (string) getPageSection('about', 'heritage_quote_byline', '— Our Founding Philosophy');
 
 // Call to experience
 $experience_bg = trim((string) getPageSection('about', 'experience_bg', ''));
@@ -76,7 +68,6 @@ if ($experience_bg === '') {
     $experience_bg = (string) getPageSection('about', 'parallax_bg', $heroPlaceholder);
 }
 $experience_bg_url = site_media_url($experience_bg);
-$experience_bg_alt = (string) getPageSection('about', 'experience_bg_alt', 'Luxury hotel swimming pool at twilight');
 $experience_title = (string) getPageSection('about', 'experience_title', 'Write Your Own Story');
 $experience_button_label = (string) getPageSection('about', 'experience_button_label', 'Begin Your Stay');
 $experience_button_href = (string) getPageSection('about', 'experience_button_href', '/rooms');
@@ -125,9 +116,8 @@ $experience_button_href = (string) getPageSection('about', 'experience_button_hr
 <main class="pt-32">
   <!-- Hero Section: Intentional Asymmetry -->
   <section class="px-12 mb-32 grid grid-cols-12 gap-8 items-end flex flex-col md:grid">
-    <div class="col-span-12 md:col-span-7 h-[500px] md:h-[819px] relative overflow-hidden group order-2 md:order-1">
-      <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="<?= e($hero_bg_alt) ?>" src="<?= e($hero_bg_url) ?>"/>
-      <div class="absolute inset-0 bg-primary/10"></div>
+    <div class="col-span-12 md:col-span-7 h-[500px] md:h-[760px] relative overflow-hidden group order-2 md:order-1">
+      <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Luxury hotel exterior with modernist architecture" src="<?= e($hero_bg_url) ?>"/>
     </div>
     <div class="col-span-12 md:col-span-4 md:col-start-9 pb-12 order-1 md:order-2">
       <h1 class="notoSerif text-6xl md:text-8xl leading-none mb-2 text-primary italic"><?= $hero_title_html ?></h1>
@@ -148,10 +138,10 @@ $experience_button_href = (string) getPageSection('about', 'experience_button_hr
       </div>
       <div class="order-1 md:order-2 grid grid-cols-2 gap-4">
         <div class="aspect-[3/4] bg-surface-container-highest overflow-hidden">
-          <img class="w-full h-full object-cover" data-alt="<?= e($philosophy_image_1_alt) ?>" src="<?= e($philosophy_image_1_url) ?>"/>
+          <img class="w-full h-full object-cover" data-alt="Hotel lobby details" src="<?= e($philosophy_image_1_url) ?>"/>
         </div>
         <div class="aspect-[3/4] bg-surface-container-highest overflow-hidden mt-12">
-          <img class="w-full h-full object-cover" data-alt="<?= e($philosophy_image_2_alt) ?>" src="<?= e($philosophy_image_2_url) ?>"/>
+          <img class="w-full h-full object-cover" data-alt="Luxury spa environment" src="<?= e($philosophy_image_2_url) ?>"/>
         </div>
       </div>
     </div>
@@ -177,7 +167,7 @@ $experience_button_href = (string) getPageSection('about', 'experience_button_hr
       </div>
       <div class="col-span-12 md:col-span-7 relative">
         <div class="aspect-video bg-slate-800 rounded-lg overflow-hidden shadow-2xl">
-          <img class="w-full h-full object-cover opacity-80" data-alt="<?= e($culture_image_alt) ?>" src="<?= e($culture_image_url) ?>"/>
+          <img class="w-full h-full object-cover opacity-80" data-alt="Aerial cinematic view of a winding river" src="<?= e($culture_image_url) ?>"/>
         </div>
         <div class="absolute -bottom-12 -right-12 w-64 h-64 bg-secondary/20 blur-3xl rounded-full"></div>
       </div>
@@ -201,14 +191,10 @@ $experience_button_href = (string) getPageSection('about', 'experience_button_hr
       <div class="md:w-2/3">
         <div class="grid grid-cols-12 gap-4">
           <div class="col-span-7 h-96 bg-surface-container overflow-hidden">
-            <img class="w-full h-full object-cover" data-alt="<?= e($heritage_image_1_alt) ?>" src="<?= e($heritage_image_1_url) ?>"/>
+            <img class="w-full h-full object-cover" data-alt="Professional hotel staff" src="<?= e($heritage_image_1_url) ?>"/>
           </div>
           <div class="col-span-5 h-96 bg-surface-container-high overflow-hidden">
-            <img class="w-full h-full object-cover" data-alt="<?= e($heritage_image_2_alt) ?>" src="<?= e($heritage_image_2_url) ?>"/>
-          </div>
-          <div class="col-span-12 py-16 flex flex-col items-center justify-center text-center">
-            <p class="italic notoSerif text-3xl text-primary/80 mb-4 max-w-xl"><?= e($heritage_quote) ?></p>
-            <p class="inter text-[10px] uppercase tracking-[0.3em] text-gold-standard font-bold"><?= e($heritage_quote_byline) ?></p>
+            <img class="w-full h-full object-cover" data-alt="Sophisticated hotel bar area" src="<?= e($heritage_image_2_url) ?>"/>
           </div>
         </div>
       </div>
@@ -217,7 +203,7 @@ $experience_button_href = (string) getPageSection('about', 'experience_button_hr
 
   <!-- Section: Call to Experience -->
   <section class="relative h-[614px] flex items-center justify-center text-center overflow-hidden">
-    <img class="absolute inset-0 w-full h-full object-cover" data-alt="<?= e($experience_bg_alt) ?>" src="<?= e($experience_bg_url) ?>"/>
+    <img class="absolute inset-0 w-full h-full object-cover" data-alt="Luxury hotel swimming pool at twilight" src="<?= e($experience_bg_url) ?>"/>
     <div class="absolute inset-0 bg-primary/40 backdrop-blur-[2px]"></div>
     <div class="relative z-10 px-6">
       <h2 class="notoSerif text-5xl md:text-7xl text-white mb-8"><?= e($experience_title) ?></h2>

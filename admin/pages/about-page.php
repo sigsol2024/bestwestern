@@ -50,10 +50,6 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
         <?php endif; ?>
       </div>
     </div>
-    <div class="form-group">
-      <label for="hero_bg_alt">Hero image alt text</label>
-      <input type="text" id="hero_bg_alt" name="hero_bg_alt" value="<?= sanitize($sections['hero_bg_alt'] ?? 'Luxury hotel exterior with modernist architecture') ?>">
-    </div>
   </div></div>
 
   <div class="card"><div class="card-header"><h2>Philosophy</h2></div><div style="padding:20px;">
@@ -93,16 +89,6 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
         </div>
       </div>
     </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label for="philosophy_image_1_alt">Image 1 alt</label>
-        <input type="text" id="philosophy_image_1_alt" name="philosophy_image_1_alt" value="<?= sanitize($sections['philosophy_image_1_alt'] ?? 'Hotel lobby details') ?>">
-      </div>
-      <div class="form-group">
-        <label for="philosophy_image_2_alt">Image 2 alt</label>
-        <input type="text" id="philosophy_image_2_alt" name="philosophy_image_2_alt" value="<?= sanitize($sections['philosophy_image_2_alt'] ?? 'Luxury spa environment') ?>">
-      </div>
-    </div>
   </div></div>
 
   <div class="card"><div class="card-header"><h2>Rooted in the Delta</h2></div><div style="padding:20px;">
@@ -137,10 +123,6 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
       <div id="culture_image_preview" class="image-preview" style="<?= !empty($sections['culture_image']) ? 'display:block;' : 'display:none;' ?>">
         <?php if (!empty($sections['culture_image'])): ?><img src="<?= SITE_URL . ltrim($sections['culture_image'], '/') ?>" style="max-width:500px;"><?php endif; ?>
       </div>
-    </div>
-    <div class="form-group">
-      <label for="culture_image_alt">Image alt</label>
-      <input type="text" id="culture_image_alt" name="culture_image_alt" value="<?= sanitize($sections['culture_image_alt'] ?? 'Aerial cinematic view of a winding river') ?>">
     </div>
   </div></div>
 
@@ -183,16 +165,6 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label for="heritage_image_1_alt">Image 1 alt</label>
-        <input type="text" id="heritage_image_1_alt" name="heritage_image_1_alt" value="<?= sanitize($sections['heritage_image_1_alt'] ?? 'Professional hotel staff') ?>">
-      </div>
-      <div class="form-group">
-        <label for="heritage_image_2_alt">Image 2 alt</label>
-        <input type="text" id="heritage_image_2_alt" name="heritage_image_2_alt" value="<?= sanitize($sections['heritage_image_2_alt'] ?? 'Sophisticated hotel bar area') ?>">
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
         <label for="heritage_quote">Quote</label>
         <input type="text" id="heritage_quote" name="heritage_quote" value="<?= sanitize($sections['heritage_quote'] ?? '"To serve is a privilege; to curate is an art."') ?>">
       </div>
@@ -211,10 +183,6 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
       <div id="experience_bg_preview" class="image-preview" style="<?= !empty($sections['experience_bg']) ? 'display:block;' : 'display:none;' ?>">
         <?php if (!empty($sections['experience_bg'])): ?><img src="<?= SITE_URL . ltrim($sections['experience_bg'], '/') ?>" style="max-width:500px;"><?php endif; ?>
       </div>
-    </div>
-    <div class="form-group">
-      <label for="experience_bg_alt">Background image alt</label>
-      <input type="text" id="experience_bg_alt" name="experience_bg_alt" value="<?= sanitize($sections['experience_bg_alt'] ?? 'Luxury hotel swimming pool at twilight') ?>">
     </div>
     <div class="form-row">
       <div class="form-group">
