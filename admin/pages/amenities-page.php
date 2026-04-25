@@ -63,9 +63,107 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
     <div class="card-header"><h2>Page title</h2></div>
     <div style="padding:20px;">
       <div class="form-group">
-        <label for="page_title">Browser title</label>
+        <label for="page_title">Browser tab title</label>
         <input type="text" id="page_title" name="page_title" value="<?= sanitize($sections['page_title'] ?? 'Hotel Amenities') ?>">
+        <p class="form-help">This only updates the browser/page title (SEO/meta). The visible hero heading is edited in <strong>Main content sections → Hero Section → Title (HTML)</strong>.</p>
       </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Main content sections (frontend order)</h2></div>
+    <div style="padding:20px;">
+      <p class="form-help" style="margin-top:0;">
+        The order below matches the live amenities page from top to bottom.
+      </p>
+      <textarea id="sections_json" name="sections_json" style="display:none;"><?= htmlspecialchars($raw, ENT_QUOTES, 'UTF-8') ?></textarea>
+
+      <?php for ($i = 0; $i < 7; $i++):
+          $slot = $amenitiesItems[$i];
+          $bg = sanitize((string)($slot['bg'] ?? ''));
+          $kicker = sanitize((string)($slot['kicker'] ?? ''));
+          $titleHtml = (string)($slot['title_html'] ?? '');
+          $body = (string)($slot['body'] ?? '');
+          $gradient = sanitize((string)($slot['gradient'] ?? ''));
+          $icon = sanitize((string)($slot['icon'] ?? ''));
+          $layout = sanitize((string)($slot['layout'] ?? 'bottom'));
+          $btn = sanitize((string)($slot['btn'] ?? ''));
+          $btnHref = sanitize((string)($slot['btn_href'] ?? ''));
+          $gallery = $slot['gallery'] ?? ($slot['gallery_images'] ?? []);
+          if (!is_array($gallery)) {
+              $gallery = [];
+          }
+          $galleryJson = htmlspecialchars(json_encode($gallery, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8');
+          $slotMeta = $amenitiesSlotMeta[$i] ?? ['label' => 'Module ' . ($i + 1), 'help' => ''];
+          $slotLabel = (string)($slotMeta['label'] ?? ('Module ' . ($i + 1)));
+          $help = (string)($slotMeta['help'] ?? '');
+          $bgId = 'amenity_slot_' . $i . '_bg';
+          $bgPrevId = 'amenity_slot_' . $i . '_bg_preview';
+          $galId = 'amenity_slot_' . $i . '_gallery_images';
+          $galPrevId = 'amenity_slot_' . $i . '_gallery_preview';
+      ?>
+      <div class="card card--nested js-amenity-slot" data-slot="<?= (int)$i ?>" style="margin-bottom: 14px;">
+        <div class="card-header">
+          <h3 style="margin:0;"><?= sanitize($slotLabel) ?></h3>
+        </div>
+        <div class="card-body card-body--stack">
+          <?php if ($help !== ''): ?>
+            <p class="form-help" style="margin-top:0;"><?= sanitize($help) ?></p>
+          <?php endif; ?>
+
+          <input type="hidden" class="js-meta-gradient" value="<?= $gradient ?>">
+          <input type="hidden" class="js-meta-icon" value="<?= $icon ?>">
+          <input type="hidden" class="js-meta-layout" value="<?= $layout ?>">
+          <input type="hidden" class="js-meta-btn" value="<?= $btn ?>">
+          <input type="hidden" class="js-meta-btn-href" value="<?= $btnHref ?>">
+
+          <div class="form-row">
+            <div class="form-group" style="flex:1;">
+              <label for="amenity_slot_<?= (int)$i ?>_kicker">Kicker</label>
+              <input type="text" id="amenity_slot_<?= (int)$i ?>_kicker" class="form-control js-kicker" value="<?= $kicker ?>">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="amenity_slot_<?= (int)$i ?>_title_html">Title (HTML)</label>
+            <textarea id="amenity_slot_<?= (int)$i ?>_title_html" class="form-control js-title-html mono" rows="3"><?= htmlspecialchars($titleHtml, ENT_QUOTES, 'UTF-8') ?></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="amenity_slot_<?= (int)$i ?>_body">Body</label>
+            <textarea id="amenity_slot_<?= (int)$i ?>_body" class="form-control js-body" rows="4"><?= htmlspecialchars($body, ENT_QUOTES, 'UTF-8') ?></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Primary image</label>
+            <div style="display:flex; gap: 10px; align-items:center; flex-wrap:wrap;">
+              <button type="button" class="btn btn-outline js-pick-bg">Select from media</button>
+              <input type="text" id="<?= sanitize($bgId) ?>" class="form-control js-bg" value="<?= $bg ?>" placeholder="/assets/uploads/... or https://...">
+            </div>
+            <div id="<?= sanitize($bgPrevId) ?>" class="image-preview" style="display:none;margin-top:10px;"></div>
+          </div>
+
+          <div class="form-group" style="margin-top:10px;">
+            <label>Extra images (optional)</label>
+            <div style="display:flex; gap: 10px; align-items:center; flex-wrap:wrap;">
+              <button type="button" class="btn btn-outline js-pick-gallery">Select images</button>
+              <button type="button" class="btn btn-outline btn-sm js-clear-gallery">Clear</button>
+            </div>
+            <input type="hidden" id="<?= sanitize($galId) ?>" class="js-gallery" value="<?= $galleryJson ?>">
+            <div id="<?= sanitize($galPrevId) ?>" class="image-preview" style="display:block;margin-top:10px;"></div>
+            <p class="form-help" style="margin-top:8px;">Not used by the new public layout unless you switch back to a gallery-driven design; kept for data compatibility.</p>
+          </div>
+        </div>
+      </div>
+      <?php endfor; ?>
+
+      <details style="margin-top:14px;">
+        <summary style="cursor:pointer; color: var(--text-muted);">Advanced JSON (optional)</summary>
+        <textarea id="sections_json_advanced" rows="18" class="mono" style="margin-top:10px;"></textarea>
+        <div style="margin-top:10px;">
+          <button type="button" class="btn btn-outline btn-sm" id="amenitiesApplyJsonBtn">Apply JSON</button>
+        </div>
+      </details>
     </div>
   </div>
 
@@ -89,7 +187,7 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
             $srvTitle = sanitize((string)($srv['title'] ?? ''));
             $srvSubtitle = sanitize((string)($srv['subtitle'] ?? ($srv['body'] ?? '')));
         ?>
-        <div class="card js-service-item" style="margin-bottom:10px;">
+        <div class="card card--nested js-service-item" style="margin-bottom:10px;">
           <div class="card-body" style="padding:12px 14px;">
             <div class="form-row">
               <div class="form-group" style="flex:1;">
@@ -110,7 +208,7 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
       </div>
       <button type="button" class="btn btn-outline btn-sm" id="addServiceItemBtn">Add service item</button>
       <template id="serviceItemTemplate">
-        <div class="card js-service-item" style="margin-bottom:10px;">
+        <div class="card card--nested js-service-item" style="margin-bottom:10px;">
           <div class="card-body" style="padding:12px 14px;">
             <div class="form-row">
               <div class="form-group" style="flex:1;">
@@ -148,106 +246,6 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
           <label for="cta_btn_href">Button URL</label>
           <input type="text" id="cta_btn_href" name="cta_btn_href" value="<?= sanitize($sections['cta_btn_href'] ?? '/contact') ?>">
         </div>
-      </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header"><h2>Page modules (saved as JSON)</h2></div>
-    <div style="padding:20px;">
-      <p class="form-help" style="margin-top:0;">
-        Section order below matches the live frontend order exactly. These are 7 fixed slots saved internally in <code>sections_json</code>.
-      </p>
-
-      <textarea id="sections_json" name="sections_json" style="display:none;"><?= htmlspecialchars($raw, ENT_QUOTES, 'UTF-8') ?></textarea>
-
-      <?php for ($i = 0; $i < 7; $i++):
-          $slot = $amenitiesItems[$i];
-          $bg = sanitize((string)($slot['bg'] ?? ''));
-          $kicker = sanitize((string)($slot['kicker'] ?? ''));
-          $titleHtml = (string)($slot['title_html'] ?? '');
-          $body = (string)($slot['body'] ?? '');
-          $gradient = sanitize((string)($slot['gradient'] ?? ''));
-          $icon = sanitize((string)($slot['icon'] ?? ''));
-          $layout = sanitize((string)($slot['layout'] ?? 'bottom'));
-          $btn = sanitize((string)($slot['btn'] ?? ''));
-          $btnHref = sanitize((string)($slot['btn_href'] ?? ''));
-          $gallery = $slot['gallery'] ?? ($slot['gallery_images'] ?? []);
-          if (!is_array($gallery)) {
-              $gallery = [];
-          }
-          $galleryJson = htmlspecialchars(json_encode($gallery, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8');
-          $slotMeta = $amenitiesSlotMeta[$i] ?? ['label' => 'Module ' . ($i + 1), 'help' => ''];
-          $slotLabel = (string)($slotMeta['label'] ?? ('Module ' . ($i + 1)));
-          $help = (string)($slotMeta['help'] ?? '');
-          $bgId = 'amenity_slot_' . $i . '_bg';
-          $bgPrevId = 'amenity_slot_' . $i . '_bg_preview';
-          $galId = 'amenity_slot_' . $i . '_gallery_images';
-          $galPrevId = 'amenity_slot_' . $i . '_gallery_preview';
-      ?>
-      <div class="card js-amenity-slot" data-slot="<?= (int)$i ?>" style="margin-bottom: 14px;">
-        <div class="card-header">
-          <h3 style="margin:0;"><?= sanitize($slotLabel) ?></h3>
-        </div>
-        <div class="card-body card-body--stack" style="padding: 14px 16px;">
-          <?php if ($help !== ''): ?>
-            <p class="form-help" style="margin-top:0;"><?= sanitize($help) ?></p>
-          <?php endif; ?>
-
-          <input type="hidden" class="js-meta-gradient" value="<?= $gradient ?>">
-          <input type="hidden" class="js-meta-icon" value="<?= $icon ?>">
-          <input type="hidden" class="js-meta-layout" value="<?= $layout ?>">
-          <input type="hidden" class="js-meta-btn" value="<?= $btn ?>">
-          <input type="hidden" class="js-meta-btn-href" value="<?= $btnHref ?>">
-
-          <div class="form-row">
-            <div class="form-group" style="flex:1;">
-              <label for="amenity_slot_<?= (int)$i ?>_kicker">Kicker</label>
-              <input type="text" id="amenity_slot_<?= (int)$i ?>_kicker" class="form-control js-kicker" value="<?= $kicker ?>">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="amenity_slot_<?= (int)$i ?>_title_html">Title (HTML)</label>
-            <textarea id="amenity_slot_<?= (int)$i ?>_title_html" class="form-control js-title-html" rows="3" style="font-family:monospace;font-size:12px;"><?= htmlspecialchars($titleHtml, ENT_QUOTES, 'UTF-8') ?></textarea>
-          </div>
-
-          <div class="form-group">
-            <label for="amenity_slot_<?= (int)$i ?>_body">Body</label>
-            <textarea id="amenity_slot_<?= (int)$i ?>_body" class="form-control js-body" rows="4"><?= htmlspecialchars($body, ENT_QUOTES, 'UTF-8') ?></textarea>
-          </div>
-
-          <div class="form-group">
-            <label>Primary image</label>
-            <div style="display:flex; gap: 10px; align-items:center; flex-wrap:wrap;">
-              <button type="button" class="btn btn-outline js-pick-bg">Select from media</button>
-              <input type="text" id="<?= sanitize($bgId) ?>" class="form-control js-bg" value="<?= $bg ?>" placeholder="/assets/uploads/... or https://...">
-            </div>
-            <div id="<?= sanitize($bgPrevId) ?>" class="image-preview" style="display:none;margin-top:10px;"></div>
-          </div>
-
-          <div class="form-group" style="margin-top:10px;">
-            <label>Extra images (optional)</label>
-            <div style="display:flex; gap: 10px; align-items:center; flex-wrap:wrap;">
-              <button type="button" class="btn btn-outline js-pick-gallery">Select images</button>
-              <button type="button" class="btn btn-outline btn-sm js-clear-gallery">Clear</button>
-            </div>
-            <input type="hidden" id="<?= sanitize($galId) ?>" class="js-gallery" value="<?= $galleryJson ?>">
-            <div id="<?= sanitize($galPrevId) ?>" class="image-preview" style="display:block;margin-top:10px;"></div>
-            <p class="form-help" style="margin-top:8px;">Not used by the new public layout unless you switch back to a gallery-driven design; kept for data compatibility.</p>
-          </div>
-        </div>
-      </div>
-      <?php endfor; ?>
-
-      <details style="margin-top:14px;">
-        <summary style="cursor:pointer; color: var(--text-muted);">Advanced JSON (optional)</summary>
-        <textarea id="sections_json_advanced" rows="18" style="margin-top:10px;font-family:monospace;font-size:12px;"></textarea>
-        <div style="margin-top:10px;">
-          <button type="button" class="btn btn-outline btn-sm" id="amenitiesApplyJsonBtn">Apply JSON</button>
-        </div>
-      </details>
     </div>
   </div>
 
