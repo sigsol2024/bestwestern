@@ -17,6 +17,23 @@ $hero_subtitle = getPageSection('index', 'hero_subtitle', 'An international stan
 $hero_bg = getPageSection('index', 'hero_bg', $heroPlaceholder);
 $hero_bg_url = site_media_url($hero_bg);
 
+$heroGalleryRaw = trim((string) getPageSection('index', 'hero_gallery_slides_json', ''));
+$heroSlideUrls = [];
+$galleryDecoded = json_decode($heroGalleryRaw, true);
+if (is_array($galleryDecoded)) {
+    foreach ($galleryDecoded as $path) {
+        $p = is_string($path) ? trim($path) : '';
+        if ($p !== '') {
+            $heroSlideUrls[] = site_media_url($p);
+        }
+    }
+}
+if ($heroSlideUrls === []) {
+    $heroSlideUrls = [$hero_bg_url];
+}
+$heroSliderCount = count($heroSlideUrls);
+$heroSliderMultiple = $heroSliderCount > 1;
+
 $booking_widget_html = getPageSection('index', 'booking_widget_html', '');
 $hasBookingEmbed = trim((string) $booking_widget_html) !== '';
 $bookingWrapperId = preg_replace('/[^A-Za-z0-9_-]/', '', (string) getSiteSetting('booking_wrapper_id', cms_default_setting('booking_wrapper_id')));
@@ -159,34 +176,50 @@ $home_room_subtitle = static function (array $room): string {
 <body class="bg-surface text-on-surface font-body font-light selection:bg-secondary-container selection:text-on-secondary-container antialiased max-w-[100vw] overflow-x-clip">
 <?php require_once __DIR__ . '/includes/header.php'; ?>
 
-<!-- Hero -->
-<header class="relative h-screen min-h-[600px] w-full overflow-hidden">
-  <div class="absolute inset-0 z-0">
-    <img class="w-full h-full object-cover" src="<?= e($hero_bg_url) ?>" alt="" width="1920" height="1080" fetchpriority="high"/>
-    <div class="absolute inset-0 bg-gradient-to-b from-brand-ink/40 via-transparent to-brand-ink/80"></div>
+<!-- Hero (full-bleed gallery slider) -->
+<header id="home-hero" class="relative h-screen min-h-[600px] w-full overflow-hidden" data-hero-autoplay-ms="6000">
+  <div class="absolute inset-0 z-0" aria-hidden="true">
+    <?php foreach ($heroSlideUrls as $i => $slideUrl): ?>
+    <div class="home-hero-slide absolute inset-0 transition-opacity duration-1000 ease-in-out <?= $i === 0 ? 'opacity-100 z-[1]' : 'opacity-0 z-0' ?>" data-hero-slide="<?= (int) $i ?>">
+      <img class="w-full h-full object-cover" src="<?= e($slideUrl) ?>" alt="" width="1920" height="1080"<?= $i === 0 ? ' fetchpriority="high"' : ' loading="lazy"' ?>/>
+    </div>
+    <?php endforeach; ?>
   </div>
-  <div class="relative z-10 flex flex-col justify-center items-center h-full text-center px-6 pt-20">
+  <div class="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-r from-black/85 via-black/50 to-black/0"></div>
+  <div class="pointer-events-none absolute inset-0 z-[2] bg-gradient-to-b from-brand-ink/30 via-transparent to-brand-ink/70"></div>
+
+  <div class="relative z-10 flex h-full flex-col justify-center px-6 pt-24 pb-28 md:px-14 lg:pl-24 lg:pr-12 text-left max-w-[42rem]">
     <?php if ($hero_show_stars || trim($hero_trust_badge) !== ''): ?>
-    <div class="flex items-center gap-2 mb-3">
+    <div class="flex flex-wrap items-center gap-x-2 gap-y-1 mb-4">
       <?php if ($hero_show_stars): ?>
       <div class="flex text-brand-gold">
         <?php for ($si = 0; $si < 5; $si++): ?>
-        <span class="material-symbols-outlined !text-xs" style="font-variation-settings:'FILL'1,'wght'400;">star</span>
+        <span class="material-symbols-outlined !text-sm sm:!text-base" style="font-variation-settings:'FILL'1,'wght'400;">star</span>
         <?php endfor; ?>
       </div>
       <?php endif; ?>
       <?php if (trim($hero_trust_badge) !== ''): ?>
-      <span class="font-body text-[9px] sm:text-[10px] text-surface/80 uppercase tracking-[0.22em] sm:tracking-[0.28em]"><?= e($hero_trust_badge) ?></span>
+      <span class="font-body text-[10px] sm:text-xs text-surface/85 uppercase tracking-[0.22em] sm:tracking-[0.28em]"><?= e($hero_trust_badge) ?></span>
       <?php endif; ?>
     </div>
     <?php endif; ?>
-    <h1 class="site-hero-title font-headline text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-surface leading-tight mb-5 max-w-5xl">
+    <h1 class="site-hero-title font-headline text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-surface leading-[1.15] mb-5 drop-shadow-sm">
       <?= $hero_title ?>
     </h1>
-    <p class="font-body text-sm md:text-base lg:text-lg text-surface/90 tracking-widest uppercase font-light max-w-3xl">
+    <p class="font-body text-base md:text-lg text-surface/90 font-light max-w-xl leading-relaxed">
       <?= e($hero_subtitle) ?>
     </p>
   </div>
+
+  <?php if ($heroSliderMultiple): ?>
+  <button type="button" class="home-hero-nav absolute left-3 md:left-6 top-1/2 z-20 -translate-y-1/2 rounded-md border border-white/25 bg-white/15 px-3 py-2.5 text-surface backdrop-blur-sm transition hover:bg-white/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/60" data-hero-prev aria-label="Previous slide">
+    <span class="material-symbols-outlined text-2xl leading-none">chevron_left</span>
+  </button>
+  <button type="button" class="home-hero-nav absolute right-3 md:right-6 top-1/2 z-20 -translate-y-1/2 rounded-md border border-white/25 bg-white/15 px-3 py-2.5 text-surface backdrop-blur-sm transition hover:bg-white/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/60" data-hero-next aria-label="Next slide">
+    <span class="material-symbols-outlined text-2xl leading-none">chevron_right</span>
+  </button>
+  <div class="absolute bottom-8 left-6 z-20 flex gap-2 md:left-14 lg:left-24" data-hero-dots role="tablist" aria-label="Hero slides"></div>
+  <?php endif; ?>
 
   <?php if ($hasBookingEmbed): ?>
   <div class="absolute bottom-8 md:bottom-12 left-1/2 -translate-x-1/2 w-full max-w-5xl px-4 md:px-6 z-20">
@@ -196,6 +229,78 @@ $home_room_subtitle = static function (array $room): string {
       </div>
     </div>
   </div>
+  <?php endif; ?>
+  <?php if ($heroSliderMultiple): ?>
+  <script>
+  (function () {
+    var root = document.getElementById('home-hero');
+    if (!root) return;
+    var slides = root.querySelectorAll('[data-hero-slide]');
+    var dotsWrap = root.querySelector('[data-hero-dots]');
+    var prevBtn = root.querySelector('[data-hero-prev]');
+    var nextBtn = root.querySelector('[data-hero-next]');
+    if (!slides.length || !dotsWrap) return;
+    var n = slides.length;
+    var current = 0;
+    var autoplayMs = parseInt(root.getAttribute('data-hero-autoplay-ms') || '6000', 10);
+    if (autoplayMs < 2000) autoplayMs = 6000;
+    var timer = null;
+
+    function setActive(i) {
+      current = (i + n) % n;
+      slides.forEach(function (el, idx) {
+        if (idx === current) {
+          el.classList.remove('opacity-0', 'z-0');
+          el.classList.add('opacity-100', 'z-[1]');
+        } else {
+          el.classList.remove('opacity-100', 'z-[1]');
+          el.classList.add('opacity-0', 'z-0');
+        }
+      });
+      var dots = dotsWrap.querySelectorAll('[data-hero-dot]');
+      dots.forEach(function (d, idx) {
+        if (idx === current) {
+          d.classList.add('bg-white', 'w-6');
+          d.classList.remove('bg-white/40');
+          d.setAttribute('aria-selected', 'true');
+        } else {
+          d.classList.remove('bg-white', 'w-6');
+          d.classList.add('bg-white/40');
+          d.setAttribute('aria-selected', 'false');
+        }
+      });
+    }
+
+    for (var j = 0; j < n; j++) {
+      (function (index) {
+        var dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'h-2 rounded-full bg-white/40 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold/70 ' + (index === 0 ? 'w-6 bg-white' : 'w-2');
+        dot.setAttribute('data-hero-dot', '');
+        dot.setAttribute('role', 'tab');
+        dot.setAttribute('aria-label', 'Slide ' + (index + 1));
+        dot.setAttribute('aria-selected', index === 0 ? 'true' : 'false');
+        dot.addEventListener('click', function () {
+          setActive(index);
+          restart();
+        });
+        dotsWrap.appendChild(dot);
+      })(j);
+    }
+
+    function next() { setActive(current + 1); }
+    function prev() { setActive(current - 1); }
+
+    function restart() {
+      if (timer) clearInterval(timer);
+      timer = setInterval(next, autoplayMs);
+    }
+
+    if (prevBtn) prevBtn.addEventListener('click', function () { prev(); restart(); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { next(); restart(); });
+    restart();
+  })();
+  </script>
   <?php endif; ?>
 </header>
 

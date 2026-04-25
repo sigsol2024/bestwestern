@@ -106,6 +106,7 @@ $pageSections = [
     ['index', 'hero_title', 'html', 'Lorem on the Shores<br/><span class="italic text-surface">of the Lake.</span>'],
     ['index', 'hero_subtitle', 'text', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'],
     ['index', 'hero_bg', 'image', $heroPlaceholder],
+    ['index', 'hero_gallery_slides_json', 'json', $jsonEncode([$heroPlaceholder, $detailPlaceholder, $galleryPlaceholder])],
     ['index', 'home_booking_guarantee_line', 'text', 'Best Rate Guarantee'],
     ['index', 'home_philosophy_kicker', 'text', 'Our Heritage'],
     ['index', 'home_philosophy_title_html', 'html', 'Where Heritage Meets Hospitality'],

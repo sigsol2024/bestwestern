@@ -62,6 +62,27 @@ if ($bulletsJsonRaw === '') {
 } else {
     $bulletsJsonPretty = $bulletsJsonRaw;
 }
+
+$heroGallerySlides = ['', '', '', '', ''];
+$heroGalleryRaw = trim((string) ($sectionsArray['hero_gallery_slides_json'] ?? ''));
+if ($heroGalleryRaw !== '') {
+    $hgDecoded = json_decode($heroGalleryRaw, true);
+    if (is_array($hgDecoded)) {
+        $gi = 0;
+        foreach ($hgDecoded as $item) {
+            if ($gi >= 5) {
+                break;
+            }
+            $p = is_string($item) ? trim($item) : '';
+            if ($p !== '') {
+                $heroGallerySlides[$gi] = $p;
+                $gi++;
+            }
+        }
+    }
+} else {
+    $heroGallerySlides[0] = hsec($sectionsArray, 'hero_bg', $heroPlaceholder);
+}
 ?>
 
 <form id="homepageForm">
@@ -88,7 +109,8 @@ if ($bulletsJsonRaw === '') {
         <textarea id="hero_subtitle" name="hero_subtitle" rows="2"><?= hsec($sectionsArray, 'hero_subtitle', 'An international standard of hospitality in the heart of Bayelsa.') ?></textarea>
       </div>
       <div class="form-group">
-        <label>Hero image</label>
+        <label>Hero fallback image</label>
+        <p class="form-help">Used when the gallery list below is empty, and as the first slide default until you add gallery images.</p>
         <div style="margin-bottom:10px;">
           <button type="button" class="btn btn-outline" onclick="openMediaModal('hero_bg','hero_bg_preview')">Select Image</button>
         </div>
@@ -98,6 +120,28 @@ if ($bulletsJsonRaw === '') {
             <img src="<?= SITE_URL . ltrim($sectionsArray['hero_bg'], '/') ?>" style="max-width:500px;max-height:300px;" alt="">
           <?php endif; ?>
         </div>
+      </div>
+      <div class="form-group">
+        <label>Hero gallery slides (up to 5)</label>
+        <p class="form-help">Each image becomes a full-screen hero slide with fade transitions, arrows, and dots. Use at least two images for the slider controls to appear on the live site.</p>
+        <input type="hidden" id="hero_gallery_slides_json" name="hero_gallery_slides_json" value="">
+        <?php for ($hg = 0; $hg < 5; $hg++): ?>
+        <div class="form-row" style="align-items:flex-end;margin-bottom:12px;">
+          <div class="form-group" style="flex:1;">
+            <label for="hero_slide_<?= $hg ?>">Slide <?= $hg + 1 ?></label>
+            <input type="hidden" id="hero_slide_<?= $hg ?>" value="<?= sanitize($heroGallerySlides[$hg]) ?>">
+            <div style="margin-bottom:6px;">
+              <button type="button" class="btn btn-outline btn-sm" onclick="openMediaModal('hero_slide_<?= $hg ?>','hero_slide_<?= $hg ?>_preview')">Select</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="(function(){var i=document.getElementById('hero_slide_<?= $hg ?>');var p=document.getElementById('hero_slide_<?= $hg ?>_preview');if(i)i.value='';if(p){p.style.display='none';p.innerHTML='';}})()">Clear</button>
+            </div>
+            <div id="hero_slide_<?= $hg ?>_preview" class="image-preview" style="<?= !empty($heroGallerySlides[$hg]) ? 'display:block;' : 'display:none;' ?>">
+              <?php if (!empty($heroGallerySlides[$hg])): ?>
+                <img src="<?= SITE_URL . ltrim($heroGallerySlides[$hg], '/') ?>" style="max-width:320px;max-height:180px;" alt="">
+              <?php endif; ?>
+            </div>
+          </div>
+        </div>
+        <?php endfor; ?>
       </div>
       <div class="form-group">
         <label for="booking_widget_html">Booking widget HTML (optional)</label>
@@ -316,6 +360,11 @@ if ($bulletsJsonRaw === '') {
 (function () {
   var map = {
     hero_bg: 'hero_bg_preview',
+    hero_slide_0: 'hero_slide_0_preview',
+    hero_slide_1: 'hero_slide_1_preview',
+    hero_slide_2: 'hero_slide_2_preview',
+    hero_slide_3: 'hero_slide_3_preview',
+    hero_slide_4: 'hero_slide_4_preview',
     home_philosophy_main_img: 'home_philosophy_main_preview',
     home_dining_image_top: 'home_dining_image_top_preview',
     home_dining_image_bottom: 'home_dining_image_bottom_preview',
@@ -349,6 +398,17 @@ if ($bulletsJsonRaw === '') {
 </script>
 
 <script>
+function syncHeroGallerySlidesJson() {
+  var paths = [];
+  for (var i = 0; i < 5; i++) {
+    var el = document.getElementById('hero_slide_' + i);
+    var p = el && el.value ? String(el.value).trim() : '';
+    if (p) paths.push(p);
+  }
+  var ta = document.getElementById('hero_gallery_slides_json');
+  if (ta) ta.value = JSON.stringify(paths);
+}
+
 function syncHomeBentoJsonFromTiles() {
   var out = [];
   for (var i = 0; i < 4; i++) {
@@ -369,6 +429,7 @@ function syncHomeBentoJsonFromTiles() {
 <script>
 document.getElementById('homepageForm').addEventListener('submit', function (e) {
   e.preventDefault();
+  syncHeroGallerySlidesJson();
   syncHomeBentoJsonFromTiles();
   var form = this;
   var typeOverrides = {
@@ -378,7 +439,8 @@ document.getElementById('homepageForm').addEventListener('submit', function (e) 
     home_philosophy_body: 'html',
     home_dining_heading_html: 'html',
     home_facilities_bento_json: 'json',
-    home_location_bullets_json: 'json'
+    home_location_bullets_json: 'json',
+    hero_gallery_slides_json: 'json'
   };
   savePageForm(form, 'index', typeOverrides)
     .then(function () { showToast('Saved', 'success'); })
