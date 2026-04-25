@@ -76,6 +76,26 @@ $privacyPolicySlug = 'privacy-policy';
 $termsSlug = 'terms-and-conditions';
 $footerPrivacyLink = $footerPrivacyHref !== '' ? site_href($footerPrivacyHref) : site_url($privacyPolicySlug);
 $footerTermsLink = $footerTermsHref !== '' ? site_href($footerTermsHref) : site_url($termsSlug);
+$aboutHref = site_href('/about');
+$footerMenuLinks = [];
+if (site_is_valid_nav_href($navSuitesHref) && site_nav_link_visible($navSuitesHref)) {
+    $footerMenuLinks[] = ['label' => $navSuitesLabel, 'href' => $navSuitesHref];
+}
+if (site_is_valid_nav_href($navEventsHref) && site_nav_link_visible($navEventsHref)) {
+    $footerMenuLinks[] = ['label' => $navEventsLabel, 'href' => $navEventsHref];
+}
+if (site_is_valid_nav_href($aboutHref) && site_nav_link_visible($aboutHref)) {
+    $footerMenuLinks[] = ['label' => 'Our Story', 'href' => $aboutHref];
+}
+if (site_is_valid_nav_href($footerPrivacyLink)) {
+    $footerMenuLinks[] = ['label' => 'Privacy', 'href' => $footerPrivacyLink];
+}
+if (site_is_valid_nav_href($footerTermsLink)) {
+    $footerMenuLinks[] = ['label' => 'Terms', 'href' => $footerTermsLink];
+}
+if (function_exists('site_public_page_exists') && site_public_page_exists('hotel-policy')) {
+    $footerMenuLinks[] = ['label' => 'Hotel Policy', 'href' => site_url('hotel-policy')];
+}
 ?>
 
 <footer class="bg-slate-950 text-slate-400 w-full min-h-[240px] flex flex-col justify-end font-body">
@@ -84,7 +104,7 @@ $footerTermsLink = $footerTermsHref !== '' ? site_href($footerTermsHref) : site_
       <div class="flex flex-col">
         <?php if ($useFooterLogo): ?>
         <div class="site-brand-logo site-brand-logo--footer mb-4">
-          <img src="<?= e($siteLogoUrl) ?>" alt="<?= e($siteName) ?>" class="h-16 md:h-20 w-auto max-w-[16rem] object-contain object-left" decoding="async"/>
+          <img src="<?= e($siteLogoUrl) ?>" alt="<?= e($siteName) ?>" class="h-16 md:h-20 w-auto max-w-[16rem] object-contain object-left rounded-lg bg-white/5 p-2 border border-white/10" decoding="async"/>
         </div>
         <?php else: ?>
         <div class="font-headline text-2xl md:text-3xl uppercase tracking-[0.25em] text-brand-gold leading-none"><?= site_brand_name_html($siteName) ?></div>
@@ -101,35 +121,38 @@ $footerTermsLink = $footerTermsHref !== '' ? site_href($footerTermsHref) : site_
       <?php endif; ?>
     </div>
 
-    <div class="grid grid-cols-2 md:grid-cols-2 gap-8 md:gap-10 w-full lg:w-auto lg:flex-1">
-      <div class="flex flex-col gap-3">
-        <span class="text-white font-bold text-xs uppercase tracking-widest">Explore</span>
-        <?php if (site_is_valid_nav_href($navSuitesHref) && site_nav_link_visible($navSuitesHref)): ?>
-        <a class="text-slate-400 hover:text-white transition-colors text-sm underline-offset-4 hover:underline" href="<?= e($navSuitesHref) ?>"><?= e($navSuitesLabel) ?></a>
+    <div class="w-full lg:w-auto lg:flex-1 flex flex-col gap-6 lg:items-end">
+      <div class="flex flex-wrap items-center gap-y-2">
+        <?php foreach ($footerMenuLinks as $idx => $item): ?>
+        <a class="text-slate-300 hover:text-white transition-colors text-xs md:text-sm uppercase tracking-[0.14em]" href="<?= e($item['href']) ?>">
+          <?= e($item['label']) ?>
+        </a>
+        <?php if ($idx < count($footerMenuLinks) - 1): ?>
+        <span class="mx-3 inline-block h-3 w-px bg-white/20" aria-hidden="true"></span>
         <?php endif; ?>
-        <?php if (site_is_valid_nav_href($navDiningHref) && site_nav_link_visible($navDiningHref)): ?>
-        <a class="text-slate-400 hover:text-white transition-colors text-sm underline-offset-4 hover:underline" href="<?= e($navDiningHref) ?>"><?= e($navDiningLabel) ?></a>
-        <?php endif; ?>
-        <?php if (site_is_valid_nav_href($navEventsHref) && site_nav_link_visible($navEventsHref)): ?>
-        <a class="text-slate-400 hover:text-white transition-colors text-sm underline-offset-4 hover:underline" href="<?= e($navEventsHref) ?>"><?= e($navEventsLabel) ?></a>
-        <?php endif; ?>
-        <?php
-        $aboutHref = site_href('/about');
-        if (site_is_valid_nav_href($aboutHref) && site_nav_link_visible($aboutHref)): ?>
-        <a class="text-slate-400 hover:text-white transition-colors text-sm underline-offset-4 hover:underline" href="<?= e($aboutHref) ?>">Our Story</a>
-        <?php endif; ?>
+        <?php endforeach; ?>
       </div>
-      <div class="flex flex-col gap-3">
-        <span class="text-white font-bold text-xs uppercase tracking-widest">Legal</span>
-        <?php if (site_is_valid_nav_href($footerPrivacyLink)): ?>
-        <a class="text-slate-400 hover:text-white transition-colors text-sm underline-offset-4 hover:underline" href="<?= e($footerPrivacyLink) ?>">Privacy</a>
-        <?php endif; ?>
-        <?php if (site_is_valid_nav_href($footerTermsLink)): ?>
-        <a class="text-slate-400 hover:text-white transition-colors text-sm underline-offset-4 hover:underline" href="<?= e($footerTermsLink) ?>">Terms</a>
-        <?php endif; ?>
-        <?php if (function_exists('site_public_page_exists') && site_public_page_exists('hotel-policy')): ?>
-        <a class="text-slate-400 hover:text-white transition-colors text-sm underline-offset-4 hover:underline" href="<?= e(site_url('hotel-policy')) ?>">Hotel Policy</a>
-        <?php endif; ?>
+
+      <div class="flex items-center gap-3">
+        <?php foreach ($socialMediaList as $social):
+            $url = trim((string)($social['url'] ?? ''));
+            if ($url === '') {
+                continue;
+            }
+            $platform = (string)($social['platform'] ?? '');
+            if ($platform === '') {
+                $platform = social_platform_from_url($url);
+            }
+            $icon = social_platform_svg($platform);
+            if ($icon === '') {
+                continue;
+            }
+            ?>
+        <a class="inline-flex items-center justify-center w-9 h-9 rounded-full border border-white/15 text-slate-300 hover:text-white hover:border-white/40 transition-colors"
+           href="<?= htmlspecialchars($url, ENT_QUOTES, 'UTF-8') ?>" target="_blank" rel="noopener noreferrer" aria-label="<?= e(ucfirst((string) $platform)) ?>">
+          <?= $icon ?>
+        </a>
+        <?php endforeach; ?>
       </div>
     </div>
   </div>
