@@ -330,12 +330,12 @@ $occupancyLabel = $maxGuests > 0
   <?php if ($similarRooms !== []): ?>
   <section class="bg-surface-container-low py-[26px] px-6 md:px-12 border-t border-outline-variant/20">
     <div class="max-w-screen-2xl mx-auto">
-      <div class="flex justify-between items-end mb-12">
+      <div class="flex flex-col md:flex-row md:justify-between md:items-end gap-4 mb-12">
         <div>
           <span class="text-secondary text-[10px] uppercase tracking-[0.5em] font-bold mb-4 block">Selection</span>
           <h2 class="font-headline text-4xl md:text-5xl italic text-primary">Similar Accommodations</h2>
         </div>
-        <a class="text-[10px] font-bold tracking-[0.3em] border-b border-primary pb-1 text-primary hover:text-secondary hover:border-secondary transition-colors" href="<?= e(site_url('rooms')) ?>">VIEW ALL ROOMS</a>
+        <a class="text-[10px] font-bold tracking-[0.3em] border-b border-primary pb-1 text-primary hover:text-secondary hover:border-secondary transition-colors self-start md:self-auto" href="<?= e(site_url('rooms')) ?>">VIEW ALL ROOMS</a>
       </div>
       <div class="grid md:grid-cols-3 gap-10">
         <?php foreach (array_slice($similarRooms, 0, 3) as $sr):
@@ -349,6 +349,7 @@ $occupancyLabel = $maxGuests > 0
           <div class="aspect-[4/5] overflow-hidden mb-6 relative">
             <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" src="<?= e($si) ?>" alt="<?= e($st) ?>">
             <div class="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors"></div>
+            <div class="absolute inset-x-0 bottom-0 h-[65%] bg-gradient-to-t from-black/65 via-black/28 to-transparent pointer-events-none"></div>
             <div class="absolute bottom-8 left-8 right-8 text-white">
               <h4 class="font-headline text-3xl mb-2"><?= e($st) ?></h4>
               <span class="text-[10px] uppercase tracking-widest font-light opacity-80">From <?= e($currency) ?><?= e($sp) ?></span>
