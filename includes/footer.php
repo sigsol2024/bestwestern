@@ -13,9 +13,9 @@ if (!function_exists('e')) {
 
 $siteName = getSiteSetting('site_name', cms_default_setting('site_name'));
 $siteBrandCollection = getSiteSetting('site_brand_collection_line', cms_default_setting('site_brand_collection_line'));
-$siteLogoLightPath = site_brand_logo_path((string)getSiteSetting('site_logo_light', ''), 'assets/images/logo/logo-light.png');
-$siteLogoLightUrl = $siteLogoLightPath !== '' ? site_media_url($siteLogoLightPath) : '';
-$useFooterLogo = $siteLogoLightUrl !== '';
+$siteLogoPath = site_brand_logo_path((string)getSiteSetting('site_logo', ''), 'assets/images/logo/logo-dark.png');
+$siteLogoUrl = $siteLogoPath !== '' ? site_media_url($siteLogoPath) : '';
+$useFooterLogo = $siteLogoUrl !== '';
 $footerEmail = getSiteSetting('footer_email', cms_default_setting('footer_email'));
 $footerCopyright = getSiteSetting('footer_copyright', cms_default_setting('footer_copyright'));
 $footerLine2 = getSiteSetting('footer_line_2', cms_default_setting('footer_line_2'));
@@ -27,8 +27,6 @@ $navSuitesHref = site_href(getSiteSetting('nav_suites_href', cms_default_setting
 $navDiningHref = site_href(getSiteSetting('nav_dining_href', cms_default_setting('nav_dining_href')));
 $navEventsHref = site_href(getSiteSetting('nav_events_href', cms_default_setting('nav_events_href')));
 
-$footerCareersHref = trim((string)getSiteSetting('footer_careers_href', cms_default_setting('footer_careers_href')));
-$footerSustainabilityHref = trim((string)getSiteSetting('footer_sustainability_href', cms_default_setting('footer_sustainability_href')));
 $footerPrivacyHref = trim((string)getSiteSetting('footer_privacy_href', cms_default_setting('footer_privacy_href')));
 $footerTermsHref = trim((string)getSiteSetting('footer_terms_href', cms_default_setting('footer_terms_href')));
 
@@ -78,17 +76,15 @@ $privacyPolicySlug = 'privacy-policy';
 $termsSlug = 'terms-and-conditions';
 $footerPrivacyLink = $footerPrivacyHref !== '' ? site_href($footerPrivacyHref) : site_url($privacyPolicySlug);
 $footerTermsLink = $footerTermsHref !== '' ? site_href($footerTermsHref) : site_url($termsSlug);
-$footerSustainLink = $footerSustainabilityHref !== '' ? site_href($footerSustainabilityHref) : '';
-$footerCareersLink = $footerCareersHref !== '' ? site_href($footerCareersHref) : '';
 ?>
 
 <footer class="bg-slate-950 text-slate-400 w-full min-h-[320px] flex flex-col justify-end font-body">
-  <div class="w-full px-6 md:px-12 py-16 md:py-24 flex flex-col lg:flex-row justify-between items-start lg:items-end max-w-screen-2xl mx-auto gap-12 lg:gap-16">
+  <div class="w-full px-6 md:px-12 py-16 md:py-24 flex flex-col lg:flex-row justify-between items-start max-w-screen-2xl mx-auto gap-12 lg:gap-16">
     <div class="flex flex-col gap-10 max-w-md">
       <div class="flex flex-col">
         <?php if ($useFooterLogo): ?>
         <div class="site-brand-logo site-brand-logo--footer mb-4">
-          <img src="<?= e($siteLogoLightUrl) ?>" alt="<?= e($siteName) ?>" class="h-16 md:h-20 w-auto max-w-[12rem] object-contain object-left brightness-0 invert opacity-90" decoding="async"/>
+          <img src="<?= e($siteLogoUrl) ?>" alt="<?= e($siteName) ?>" class="h-16 md:h-20 w-auto max-w-[16rem] object-contain object-left" decoding="async"/>
         </div>
         <?php else: ?>
         <div class="font-headline text-2xl md:text-3xl uppercase tracking-[0.25em] text-brand-gold leading-none"><?= site_brand_name_html($siteName) ?></div>
@@ -125,9 +121,6 @@ $footerCareersLink = $footerCareersHref !== '' ? site_href($footerCareersHref) :
         if (site_is_valid_nav_href($aboutHref) && site_nav_link_visible($aboutHref)): ?>
         <a class="text-slate-400 hover:text-white transition-colors text-sm underline-offset-4 hover:underline" href="<?= e($aboutHref) ?>">Our Story</a>
         <?php endif; ?>
-        <?php if ($footerCareersLink !== '' && site_is_valid_nav_href($footerCareersLink)): ?>
-        <a class="text-slate-400 hover:text-white transition-colors text-sm underline-offset-4 hover:underline" href="<?= e($footerCareersLink) ?>">Careers</a>
-        <?php endif; ?>
       </div>
       <div class="flex flex-col gap-3">
         <span class="text-white font-bold text-xs uppercase tracking-widest">Connect</span>
@@ -150,9 +143,6 @@ $footerCareersLink = $footerCareersHref !== '' ? site_href($footerCareersHref) :
         <span class="text-white font-bold text-xs uppercase tracking-widest">Legal</span>
         <?php if (site_is_valid_nav_href($footerPrivacyLink)): ?>
         <a class="text-slate-400 hover:text-white transition-colors text-sm underline-offset-4 hover:underline" href="<?= e($footerPrivacyLink) ?>">Privacy</a>
-        <?php endif; ?>
-        <?php if ($footerSustainLink !== '' && site_is_valid_nav_href($footerSustainLink)): ?>
-        <a class="text-slate-400 hover:text-white transition-colors text-sm underline-offset-4 hover:underline" href="<?= e($footerSustainLink) ?>">Sustainability</a>
         <?php endif; ?>
         <?php if (site_is_valid_nav_href($footerTermsLink)): ?>
         <a class="text-slate-400 hover:text-white transition-colors text-sm underline-offset-4 hover:underline" href="<?= e($footerTermsLink) ?>">Terms</a>

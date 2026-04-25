@@ -324,17 +324,6 @@ $themeHexPickerValue = static function (string $key) use ($settings, $defaultSet
                 <label for="footer_line_2">Footer tagline line 2 (optional)</label>
                 <input type="text" id="footer_line_2" name="footer_line_2" value="<?= sanitize($settings['footer_line_2'] ?? $defaultSettings['footer_line_2']) ?>" placeholder="<?= sanitize($defaultSettings['footer_line_2']) ?>">
             </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="footer_careers_href">Careers URL (optional)</label>
-                    <input type="text" id="footer_careers_href" name="footer_careers_href" value="<?= sanitize($settings['footer_careers_href'] ?? '') ?>" placeholder="/careers">
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="footer_sustainability_href">Sustainability URL (optional)</label>
-                <input type="text" id="footer_sustainability_href" name="footer_sustainability_href" value="<?= sanitize($settings['footer_sustainability_href'] ?? '') ?>" placeholder="/sustainability">
-            </div>
-            
             <div class="form-group">
                 <label for="footer_address">Address</label>
                 <textarea id="footer_address" name="footer_address" rows="2"><?= sanitize($settings['footer_address'] ?? $defaultSettings['footer_address']) ?></textarea>
