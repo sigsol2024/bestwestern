@@ -72,10 +72,18 @@ $twEncTextMainSvg = rawurlencode(site_theme_color('theme_text_main_color', '#363
           "sand-darker": "<?= htmlspecialchars($twSandDarker, ENT_QUOTES, 'UTF-8') ?>",
           "brand-gold": "<?= htmlspecialchars($twPrimary, ENT_QUOTES, 'UTF-8') ?>",
           "brand-red": "#E31837",
+          /* Aliases used by the BW Plus "Story" (About) redesign */
+          "secondary": "<?= htmlspecialchars($twPrimary, ENT_QUOTES, 'UTF-8') ?>",
+          "on-secondary": "#ffffff",
+          "gold-standard": "<?= htmlspecialchars($twPrimary, ENT_QUOTES, 'UTF-8') ?>",
+          "primary-container": "<?= htmlspecialchars($twSurfaceInk, ENT_QUOTES, 'UTF-8') ?>",
+          "on-primary-container": "<?= htmlspecialchars($twPrimaryLight, ENT_QUOTES, 'UTF-8') ?>",
           "surface": "<?= htmlspecialchars($twBgLight, ENT_QUOTES, 'UTF-8') ?>",
           "on-surface": "<?= htmlspecialchars($twTextMain, ENT_QUOTES, 'UTF-8') ?>",
           "on-surface-variant": "<?= htmlspecialchars($twTextMuted, ENT_QUOTES, 'UTF-8') ?>",
           "surface-container-low": "<?= htmlspecialchars($twChampagne, ENT_QUOTES, 'UTF-8') ?>",
+          "surface-container-lowest": "#ffffff",
+          "surface-container-high": "<?= htmlspecialchars($twSandDarker, ENT_QUOTES, 'UTF-8') ?>",
           "surface-container-highest": "<?= htmlspecialchars($twSandDarker, ENT_QUOTES, 'UTF-8') ?>",
           "outline-variant": "<?= htmlspecialchars($twSandDarker, ENT_QUOTES, 'UTF-8') ?>",
           "outline": "<?= htmlspecialchars($twTextMuted, ENT_QUOTES, 'UTF-8') ?>",
@@ -165,6 +173,7 @@ $twEncTextMainSvg = rawurlencode(site_theme_color('theme_text_main_color', '#363
   .font-inter {
     font-family: Inter, ui-sans-serif, system-ui, "Segoe UI", Roboto, Arial, sans-serif;
   }
+  .notoSerif,
   .noto-serif,
   .font-noto-serif {
     font-family: "Noto Serif", ui-serif, Georgia, "Times New Roman", serif;
@@ -210,83 +219,78 @@ $twEncTextMainSvg = rawurlencode(site_theme_color('theme_text_main_color', '#363
     opacity: 1;
     transform: scale(1) translateY(0);
   }
-
-  /* Homepage booking bridge: tames common embeds (e.g. StayEazi-style #booking-widget / #booking-form) */
-  <?= $bookingWrapperSelector ?> {
-    width: 100% !important;
-  }
-  <?= $bookingWrapperSelector ?> * {
-    box-sizing: border-box;
-  }
-  <?= $bookingWrapperSelector ?> #booking-widget {
-    margin: 0 !important;
-    padding: 0 !important;
-    border: 0 !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    background: transparent !important;
-    max-width: none !important;
-    width: 100% !important;
-  }
-  <?= $bookingWrapperSelector ?> #booking-form {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 8px !important;
-    align-items: flex-end !important;
-    justify-content: space-between !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 100% !important;
-  }
-  <?= $bookingWrapperSelector ?> #booking-form > div {
-    width: auto !important;
-    min-width: 160px !important;
-    flex: 1 1 160px !important;
-    margin: 0 !important;
-  }
-  <?= $bookingWrapperSelector ?> #booking-form label {
-    font-size: 11px !important;
-    font-weight: 700 !important;
-    letter-spacing: 0.08em !important;
-    text-transform: uppercase !important;
-    margin-bottom: 6px !important;
-    color: #363636 !important;
-  }
-  <?= $bookingWrapperSelector ?> #booking-form input,
-  <?= $bookingWrapperSelector ?> #booking-form select {
-    width: 100% !important;
-    height: 44px !important;
-    padding: 10px 12px !important;
-    border: 1px solid #d8d0bc !important;
-    border-radius: 10px !important;
-    background: #fff !important;
-    color: #363636 !important;
-  }
-  <?= $bookingWrapperSelector ?> #booking-form button {
-    width: 100% !important;
-    height: 44px !important;
-    margin-top: 0 !important;
-    border: 0 !important;
-    border-radius: 10px !important;
-    background: #C8A96A !important;
-    color: #261a00 !important;
-    font-weight: 700 !important;
-    cursor: pointer !important;
-  }
-  <?= $bookingWrapperSelector ?> #booking-form button:hover {
-    filter: brightness(1.08) !important;
-  }
-  @media (max-width: 1024px) {
-    <?= $bookingWrapperSelector ?> #booking-form {
-      flex-direction: column !important;
-      align-items: stretch !important;
-    }
-    <?= $bookingWrapperSelector ?> #booking-form > div {
-      min-width: 100% !important;
-      flex: 1 1 100% !important;
-    }
-  }
 </style>
+<?php
+// Homepage booking bridge: tames common embeds (e.g. StayEazi-style #booking-widget / #booking-form)
+// Emit as a separate <style> block to keep the static CSS valid for editors/linters.
+if (isset($bookingWrapperSelector) && is_string($bookingWrapperSelector) && $bookingWrapperSelector !== '') {
+    $bwSel = $bookingWrapperSelector;
+    echo "<style>\n";
+    echo $bwSel . " { width: 100% !important; }\n";
+    echo $bwSel . " * { box-sizing: border-box; }\n";
+    echo $bwSel . " #booking-widget {\n";
+    echo "  margin: 0 !important;\n";
+    echo "  padding: 0 !important;\n";
+    echo "  border: 0 !important;\n";
+    echo "  box-shadow: none !important;\n";
+    echo "  border-radius: 0 !important;\n";
+    echo "  background: transparent !important;\n";
+    echo "  max-width: none !important;\n";
+    echo "  width: 100% !important;\n";
+    echo "}\n";
+    echo $bwSel . " #booking-form {\n";
+    echo "  display: flex !important;\n";
+    echo "  flex-wrap: wrap !important;\n";
+    echo "  gap: 8px !important;\n";
+    echo "  align-items: flex-end !important;\n";
+    echo "  justify-content: space-between !important;\n";
+    echo "  padding: 0 !important;\n";
+    echo "  margin: 0 !important;\n";
+    echo "  width: 100% !important;\n";
+    echo "}\n";
+    echo $bwSel . " #booking-form > div {\n";
+    echo "  width: auto !important;\n";
+    echo "  min-width: 160px !important;\n";
+    echo "  flex: 1 1 160px !important;\n";
+    echo "  margin: 0 !important;\n";
+    echo "}\n";
+    echo $bwSel . " #booking-form label {\n";
+    echo "  font-size: 11px !important;\n";
+    echo "  font-weight: 700 !important;\n";
+    echo "  letter-spacing: 0.08em !important;\n";
+    echo "  text-transform: uppercase !important;\n";
+    echo "  margin-bottom: 6px !important;\n";
+    echo "  color: #363636 !important;\n";
+    echo "}\n";
+    echo $bwSel . " #booking-form input,\n";
+    echo $bwSel . " #booking-form select {\n";
+    echo "  width: 100% !important;\n";
+    echo "  height: 44px !important;\n";
+    echo "  padding: 10px 12px !important;\n";
+    echo "  border: 1px solid #d8d0bc !important;\n";
+    echo "  border-radius: 10px !important;\n";
+    echo "  background: #fff !important;\n";
+    echo "  color: #363636 !important;\n";
+    echo "}\n";
+    echo $bwSel . " #booking-form button {\n";
+    echo "  width: 100% !important;\n";
+    echo "  height: 44px !important;\n";
+    echo "  margin-top: 0 !important;\n";
+    echo "  border: 0 !important;\n";
+    echo "  border-radius: 10px !important;\n";
+    echo "  background: #C8A96A !important;\n";
+    echo "  color: #261a00 !important;\n";
+    echo "  font-weight: 700 !important;\n";
+    echo "  cursor: pointer !important;\n";
+    echo "}\n";
+    echo $bwSel . " #booking-form button:hover { filter: brightness(1.08) !important; }\n";
+    echo "@media (max-width: 1024px) {\n";
+    echo "  " . $bwSel . " #booking-form { flex-direction: column !important; align-items: stretch !important; }\n";
+    echo "  " . $bwSel . " #booking-form > div { min-width: 100% !important; flex: 1 1 100% !important; }\n";
+    echo "}\n";
+    echo "</style>\n";
+}
+?>
 <?php
 // Optional: site-wide injected header scripts (analytics etc)
 if (function_exists('getSiteSetting')) {

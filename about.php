@@ -1,81 +1,85 @@
 <?php
+$GLOBALS['site_header_overlaps_hero'] = true;
 require_once __DIR__ . '/includes/content-loader.php';
 
 $cmsDefaults = require __DIR__ . '/includes/cms-defaults.php';
 $heroPlaceholder = cms_default_setting('placeholder_hero_image');
 $detailPlaceholder = cms_default_setting('placeholder_detail_image');
 $galleryPlaceholder = cms_default_setting('placeholder_gallery_image');
-$pageTitle = getPageSection('about', 'page_title', 'About Our Hotel');
+$pageTitle = getPageSection('about', 'page_title', 'Our Story');
 
-$hero_established = getPageSection('about', 'hero_established', 'Established 2024');
-$hero_title_html = getPageSection('about', 'hero_title_html', 'Lorem Ipsum <br/><span class="font-bold italic text-primary/90 site-hero-accent-text">Dolor Sit</span>');
-$hero_subtitle = getPageSection('about', 'hero_subtitle', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.');
-$hero_bg = getPageSection('about', 'hero_bg', $heroPlaceholder);
+// Hero (intentional asymmetry)
+$hero_title_html = (string) getPageSection('about', 'hero_title_html', 'Our Story');
+$hero_property_line = (string) getPageSection('about', 'hero_property_line', 'A Best Western Plus Property');
+$hero_intro = (string) getPageSection(
+    'about',
+    'hero_intro',
+    "In the heart of the Niger Delta, where the river meets the soul of Nigeria, stands an exhibition of luxury—a sanctuary crafted for the stately traveler."
+);
+$hero_bg = (string) getPageSection('about', 'hero_bg', $heroPlaceholder);
+$hero_bg_url = site_media_url($hero_bg);
+$hero_bg_alt = (string) getPageSection('about', 'hero_bg_alt', 'Luxury hotel exterior with modernist architecture');
 
-$story_title_html = getPageSection('about', 'story_title_html', 'Lorem Ipsum <br/><span class="font-semibold text-primary">Dolor Sit</span>');
-$story_p1 = getPageSection('about', 'story_p1', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.');
-$story_p2 = getPageSection('about', 'story_p2', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.');
-$story_image = getPageSection('about', 'story_image', $detailPlaceholder);
-
-$values_kicker = getPageSection('about', 'values_kicker', 'Lorem Ipsum');
-$values_title = getPageSection('about', 'values_title', 'Dolor Sit Amet');
-$values_image = getPageSection('about', 'values_image', $galleryPlaceholder);
-$values_card_icon = getPageSection('about', 'values_card_icon', 'spa');
-$values_card_title = getPageSection('about', 'values_card_title', 'Lorem Ipsum Dolor');
-$values_card_body = getPageSection('about', 'values_card_body', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.');
-$values_card_link = getPageSection('about', 'values_card_link', 'Learn More');
-$values_card_link_href = getPageSection('about', 'values_card_link_href', '/amenities');
-
-$timelineRaw = (string)getPageSection('about', 'timeline_json', '');
-$timeline = json_decode($timelineRaw, true);
-// Only fall back to defaults when the section is missing/invalid.
-// If admin intentionally saves an empty list ([]), keep it empty on the public page.
-if (trim($timelineRaw) === '' || !is_array($timeline)) {
-    $timeline = $cmsDefaults['about_timeline'];
+// Philosophy (tonal layering)
+$philosophy_kicker = (string) getPageSection('about', 'philosophy_kicker', 'Philosophy');
+$philosophy_title = (string) getPageSection('about', 'philosophy_title', 'The Art of Living Intentionally');
+$philosophy_p1 = (string) getPageSection(
+    'about',
+    'philosophy_p1',
+    'We believe that true luxury is not defined by excess, but by the quiet confidence of quality. Every curve of our architecture and every texture in our suites has been curated to provide a sense of calm authority.'
+);
+$philosophy_p2 = (string) getPageSection(
+    'about',
+    'philosophy_p2',
+    'BW Plus Yenagoa is more than a destination; it is a stately home for those who appreciate the finer nuances of hospitality.'
+);
+$philosophy_image_1 = trim((string) getPageSection('about', 'philosophy_image_1', ''));
+if ($philosophy_image_1 === '') {
+    $philosophy_image_1 = (string) getPageSection('about', 'story_image', $detailPlaceholder);
 }
-
-$journey_title_html = getPageSection('about', 'journey_title_html', 'Lorem <span class="font-bold italic text-primary">Ipsum</span>');
-$journey_subtitle = getPageSection('about', 'journey_subtitle', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.');
-
-$team_kicker = getPageSection('about', 'team_kicker', 'Gallery');
-$team_heading = getPageSection('about', 'team_heading', 'Lorem Ipsum');
-$team_intro = getPageSection('about', 'team_intro', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.');
-$teamRaw = (string)getPageSection('about', 'team_json', '');
-$team = json_decode($teamRaw, true);
-// Only fall back to defaults when the section is missing/invalid.
-// If admin intentionally saves an empty list ([]), keep it empty on the public page.
-if (trim($teamRaw) === '' || !is_array($team)) {
-    $team = $cmsDefaults['about_team'];
+$philosophy_image_2 = trim((string) getPageSection('about', 'philosophy_image_2', ''));
+if ($philosophy_image_2 === '') {
+    $philosophy_image_2 = (string) getPageSection('about', 'values_image', $galleryPlaceholder);
 }
+$philosophy_image_1_url = site_media_url($philosophy_image_1);
+$philosophy_image_2_url = site_media_url($philosophy_image_2);
+$philosophy_image_1_alt = (string) getPageSection('about', 'philosophy_image_1_alt', 'Hotel lobby details');
+$philosophy_image_2_alt = (string) getPageSection('about', 'philosophy_image_2_alt', 'Luxury spa environment');
 
-// Normalize team_json to an images-only gallery array.
-// Supports:
-// - New format: ["path1","path2",...]
-// - Legacy format: [{image:"..."}, ...]
-$teamImages = [];
-if (is_array($team) && isset($team[0]) && is_string($team[0])) {
-    $teamImages = array_values(array_filter(array_map(static function ($src) {
-        $src = is_string($src) ? trim($src) : '';
-        return $src !== '' ? $src : null;
-    }, $team)));
-} elseif (is_array($team)) {
-    $teamImages = array_values(array_filter(array_map(static function ($row) {
-        if (!is_array($row)) return null;
-        $src = (string)($row['image'] ?? ($row['src'] ?? ''));
-        $src = trim($src);
-        return $src !== '' ? $src : null;
-    }, $team)));
+// Rooted in the Delta (culture integration)
+$culture_title = (string) getPageSection('about', 'culture_title', 'Rooted in the Delta');
+$culture_feature_1_title = (string) getPageSection('about', 'culture_feature_1_title', 'Indigenous Soul');
+$culture_feature_1_body = (string) getPageSection('about', 'culture_feature_1_body', 'Our interior palettes are inspired by the rich silt and golden sunsets of the Nun River, honoring the land we stand upon.');
+$culture_feature_2_title = (string) getPageSection('about', 'culture_feature_2_title', 'Local Artistry');
+$culture_feature_2_body = (string) getPageSection('about', 'culture_feature_2_body', 'Collaborating with Bayelsan artisans, we showcase traditional motifs reimagined for a modern global audience.');
+$culture_image = (string) getPageSection('about', 'culture_image', $galleryPlaceholder);
+$culture_image_url = site_media_url($culture_image);
+$culture_image_alt = (string) getPageSection('about', 'culture_image_alt', 'Aerial cinematic view of a winding river');
+
+// Heritage (editorial layout)
+$heritage_title = (string) getPageSection('about', 'heritage_title', 'Our Heritage');
+$heritage_body = (string) getPageSection('about', 'heritage_body', "Established as a beacon of Yenagoa's rising prominence, Best Western Plus Yenagoa has evolved into the city's premier destination for diplomatic and corporate excellence.");
+$heritage_link_label = (string) getPageSection('about', 'heritage_link_label', 'EXPLORE OUR TIMELINE');
+$heritage_link_href = (string) getPageSection('about', 'heritage_link_href', '#');
+$heritage_image_1 = (string) getPageSection('about', 'heritage_image_1', $detailPlaceholder);
+$heritage_image_2 = (string) getPageSection('about', 'heritage_image_2', $galleryPlaceholder);
+$heritage_image_1_url = site_media_url($heritage_image_1);
+$heritage_image_2_url = site_media_url($heritage_image_2);
+$heritage_image_1_alt = (string) getPageSection('about', 'heritage_image_1_alt', 'Professional hotel staff');
+$heritage_image_2_alt = (string) getPageSection('about', 'heritage_image_2_alt', 'Sophisticated hotel bar area');
+$heritage_quote = (string) getPageSection('about', 'heritage_quote', '"To serve is a privilege; to curate is an art."');
+$heritage_quote_byline = (string) getPageSection('about', 'heritage_quote_byline', '— Our Founding Philosophy');
+
+// Call to experience
+$experience_bg = trim((string) getPageSection('about', 'experience_bg', ''));
+if ($experience_bg === '') {
+    $experience_bg = (string) getPageSection('about', 'parallax_bg', $heroPlaceholder);
 }
-
-$parallax_bg = getPageSection('about', 'parallax_bg', $heroPlaceholder);
-$parallax_quote = getPageSection('about', 'parallax_quote', '"Lorem ipsum dolor sit amet."');
-
-$cta_title = getPageSection('about', 'cta_title', 'Lorem Ipsum Dolor');
-$cta_body = getPageSection('about', 'cta_body', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.');
-$cta_btn1 = getPageSection('about', 'cta_btn1', 'Explore Rooms');
-$cta_btn1_href = getPageSection('about', 'cta_btn1_href', '/rooms');
-$cta_btn2 = getPageSection('about', 'cta_btn2', 'Contact Us');
-$cta_btn2_href = getPageSection('about', 'cta_btn2_href', '/contact');
+$experience_bg_url = site_media_url($experience_bg);
+$experience_bg_alt = (string) getPageSection('about', 'experience_bg_alt', 'Luxury hotel swimming pool at twilight');
+$experience_title = (string) getPageSection('about', 'experience_title', 'Write Your Own Story');
+$experience_button_label = (string) getPageSection('about', 'experience_button_label', 'Begin Your Stay');
+$experience_button_href = (string) getPageSection('about', 'experience_button_href', '/rooms');
 ?>
 <!DOCTYPE html>
 <html class="light" lang="en">
@@ -84,168 +88,121 @@ $cta_btn2_href = getPageSection('about', 'cta_btn2_href', '/contact');
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title><?= e($pageTitle) ?></title>
   <?php require_once __DIR__ . '/includes/head-header.php'; ?>
+  <style>
+        .notoSerif { font-family: 'Noto Serif', serif; }
+        .inter { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .scrim-bottom {
+            background: linear-gradient(to top, rgba(11, 31, 58, 0.9) 0%, rgba(11, 31, 58, 0) 100%);
+        }
+  </style>
 </head>
-<body class="bg-background-light dark:bg-background-dark text-text-main dark:text-background-light font-display antialiased overflow-x-hidden selection:bg-primary selection:text-white">
+<body class="bg-surface text-on-surface selection:bg-secondary-container selection:text-on-secondary-container overflow-x-hidden">
 <?php require_once __DIR__ . '/includes/header.php'; ?>
 
-<section class="relative min-h-screen w-full flex items-center justify-center overflow-hidden">
-  <div class="absolute inset-0 z-0">
-    <div class="absolute inset-0 z-10" style="background: rgba(107, 51, 39, 0.72);"></div>
-    <div class="w-full h-full bg-cover bg-center bg-no-repeat scale-105" style='background-image: url("<?= e($hero_bg) ?>");'>
+<main class="pt-32">
+  <!-- Hero Section: Intentional Asymmetry -->
+  <section class="px-12 mb-32 grid grid-cols-12 gap-8 items-end flex flex-col md:grid">
+    <div class="col-span-12 md:col-span-7 h-[500px] md:h-[819px] relative overflow-hidden group order-2 md:order-1">
+      <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="<?= e($hero_bg_alt) ?>" src="<?= e($hero_bg_url) ?>"/>
+      <div class="absolute inset-0 bg-primary/10"></div>
     </div>
-  </div>
-  <div class="relative z-20 container mx-auto px-6 lg:px-12 flex flex-col items-center text-center pt-20">
-    <span class="text-white/90 text-sm uppercase tracking-[0.2em] font-bold mb-4 animate-[fadeIn_1s_ease-out]"><?= e($hero_established) ?></span>
-    <h1 class="text-white text-5xl md:text-7xl lg:text-8xl font-light tracking-tight leading-[1.1] mb-8 max-w-4xl drop-shadow-2xl">
-      <?= $hero_title_html ?>
-    </h1>
-    <p class="text-gray-200 text-lg md:text-xl font-light max-w-xl leading-relaxed mb-10 opacity-90">
-      <?= e($hero_subtitle) ?>
-    </p>
-    <div class="h-16 w-[1px] bg-gradient-to-b from-primary to-transparent"></div>
-  </div>
-</section>
+    <div class="col-span-12 md:col-span-4 md:col-start-9 pb-12 order-1 md:order-2">
+      <h1 class="notoSerif text-6xl md:text-8xl leading-none mb-2 text-primary italic"><?= $hero_title_html ?></h1>
+      <p class="inter text-[10px] uppercase tracking-[0.3em] text-gold-standard font-semibold mb-8"><?= e($hero_property_line) ?></p>
+      <p class="inter text-lg text-on-surface-variant font-light leading-relaxed"><?= e($hero_intro) ?></p>
+      <div class="mt-12 h-px w-24 bg-secondary"></div>
+    </div>
+  </section>
 
-<section class="py-[26px] relative bg-background-light dark:bg-background-dark">
-  <div class="container mx-auto px-6 lg:px-12">
-    <div class="flex flex-col lg:flex-row items-stretch lg:items-center gap-12 lg:gap-24">
-      <div class="w-full lg:w-1/2 flex flex-col gap-8 min-w-0">
-        <h2 class="text-4xl md:text-5xl font-light text-text-main dark:text-white leading-tight">
-          <?= $story_title_html ?>
-        </h2>
-        <div class="w-20 h-[2px] bg-primary/30"></div>
-        <p class="text-lg text-gray-600 dark:text-gray-300 leading-loose font-light"><?= e($story_p1) ?></p>
-        <p class="text-lg text-gray-600 dark:text-gray-300 leading-loose font-light"><?= e($story_p2) ?></p>
+  <!-- Section: Hotel Philosophy (Tonal Layering) -->
+  <section class="bg-surface-container-low py-32 px-12">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
+      <div class="order-2 md:order-1">
+        <span class="inter text-xs uppercase tracking-[0.3em] text-secondary font-bold mb-6 block"><?= e($philosophy_kicker) ?></span>
+        <h2 class="notoSerif text-5xl mb-8 leading-tight text-primary-container"><?= e($philosophy_title) ?></h2>
+        <p class="inter text-lg text-on-surface-variant leading-relaxed mb-8"><?= e($philosophy_p1) ?></p>
+        <p class="inter text-lg text-on-surface-variant leading-relaxed"><?= e($philosophy_p2) ?></p>
       </div>
-      <div class="w-full lg:w-1/2 relative min-w-0">
-        <div class="aspect-[4/5] rounded-lg overflow-hidden relative shadow-2xl w-full">
-          <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style='background-image: url("<?= e($story_image) ?>");'></div>
+      <div class="order-1 md:order-2 grid grid-cols-2 gap-4">
+        <div class="aspect-[3/4] bg-surface-container-highest overflow-hidden">
+          <img class="w-full h-full object-cover" data-alt="<?= e($philosophy_image_1_alt) ?>" src="<?= e($philosophy_image_1_url) ?>"/>
+        </div>
+        <div class="aspect-[3/4] bg-surface-container-highest overflow-hidden mt-12">
+          <img class="w-full h-full object-cover" data-alt="<?= e($philosophy_image_2_alt) ?>" src="<?= e($philosophy_image_2_url) ?>"/>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="py-[25px] relative bg-texture-pattern bg-fixed">
-  <div class="container mx-auto px-6 lg:px-12 relative">
-    <div class="text-center py-0 mb-7">
-      <span class="text-primary text-xs font-bold tracking-widest uppercase mb-3 block"><?= e($values_kicker) ?></span>
-      <h3 class="text-3xl md:text-4xl font-bold text-text-main dark:text-white"><?= e($values_title) ?></h3>
-    </div>
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-      <div class="relative z-10 min-w-0">
-        <div class="relative aspect-[16/9] w-full rounded-lg overflow-hidden shadow-2xl">
-          <div class="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-700 hover:scale-105" style='background-image: url("<?= e($values_image) ?>");'></div>
+  <!-- Section: Bayelsa Culture Integration (Full Bleed/Editorial) -->
+  <section class="py-32 bg-primary-container text-white overflow-hidden">
+    <div class="px-12 grid grid-cols-12 gap-8 items-center">
+      <div class="col-span-12 md:col-span-5 z-10">
+        <h2 class="notoSerif text-6xl italic mb-12"><?= e($culture_title) ?></h2>
+        <div class="space-y-12 max-w-md">
+          <div class="group">
+            <div class="w-12 h-[1px] bg-gold-standard mb-6 transition-all group-hover:w-24"></div>
+            <h4 class="inter font-bold uppercase tracking-widest text-sm mb-3 text-gold-standard"><?= e($culture_feature_1_title) ?></h4>
+            <p class="inter text-on-primary-container leading-relaxed"><?= e($culture_feature_1_body) ?></p>
+          </div>
+          <div class="group">
+            <div class="w-12 h-[1px] bg-gold-standard mb-6 transition-all group-hover:w-24"></div>
+            <h4 class="inter font-bold uppercase tracking-widest text-sm mb-3 text-gold-standard"><?= e($culture_feature_2_title) ?></h4>
+            <p class="inter text-on-primary-container leading-relaxed"><?= e($culture_feature_2_body) ?></p>
+          </div>
         </div>
       </div>
-      <div class="relative z-20 min-w-0">
-        <div class="bg-white dark:bg-surface-dark p-10 md:p-14 rounded-lg shadow-2xl border border-gray-100 dark:border-white/5">
-          <span class="material-symbols-outlined text-primary text-4xl mb-6"><?= e($values_card_icon) ?></span>
-          <h4 class="text-2xl font-bold mb-4 text-text-main dark:text-white"><?= e($values_card_title) ?></h4>
-          <p class="text-gray-600 dark:text-gray-300 leading-relaxed mb-6 font-light"><?= e($values_card_body) ?></p>
-          <a class="inline-flex items-center gap-2 text-primary font-semibold text-sm hover:underline" href="<?= e(site_href((string)$values_card_link_href)) ?>">
-            <?= e($values_card_link) ?>
-            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+      <div class="col-span-12 md:col-span-7 relative">
+        <div class="aspect-video bg-slate-800 rounded-lg overflow-hidden shadow-2xl">
+          <img class="w-full h-full object-cover opacity-80" data-alt="<?= e($culture_image_alt) ?>" src="<?= e($culture_image_url) ?>"/>
+        </div>
+        <div class="absolute -bottom-12 -right-12 w-64 h-64 bg-secondary/20 blur-3xl rounded-full"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section: Heritage & The Stately Curator (Editorial Layout) -->
+  <section class="py-48 px-12 max-w-7xl mx-auto">
+    <div class="flex flex-col md:flex-row gap-24">
+      <div class="md:w-1/3">
+        <h3 class="notoSerif text-4xl mb-6"><?= e($heritage_title) ?></h3>
+        <p class="inter text-on-surface-variant font-light mb-12"><?= e($heritage_body) ?></p>
+        <div class="flex flex-col gap-2">
+          <div class="w-full h-[1px] bg-gold-standard/30"></div>
+          <a class="inline-flex items-center gap-4 text-secondary uppercase tracking-[0.2em] text-xs font-bold group py-2" href="<?= e(site_href($heritage_link_href)) ?>">
+            <?= e($heritage_link_label) ?>
+            <span class="material-symbols-outlined transition-transform group-hover:translate-x-2">trending_flat</span>
           </a>
         </div>
       </div>
-    </div>
-  </div>
-</section>
-
-<section class="py-[37px] bg-white dark:bg-surface-dark relative overflow-hidden">
-  <div class="absolute top-0 right-0 w-1/3 h-full bg-primary/5 -skew-x-12 z-0"></div>
-  <div class="container mx-auto px-6 lg:px-12 relative z-10">
-    <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
-      <div class="max-w-xl">
-        <h2 class="text-4xl md:text-5xl font-light text-text-main dark:text-white mb-6"><?= $journey_title_html ?></h2>
-        <p class="text-gray-600 dark:text-gray-300 text-lg font-light"><?= e($journey_subtitle) ?></p>
-      </div>
-    </div>
-    <div class="relative mt-20">
-      <div class="absolute top-[28px] left-0 w-full h-[1px] bg-gray-200 dark:bg-white/10"></div>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        <?php foreach ($timeline as $item):
-          $year = (string)($item['year'] ?? '');
-          $kind = (string)($item['kind'] ?? 'dot');
-          $t = (string)($item['title'] ?? '');
-          $b = (string)($item['body'] ?? '');
-          if ($kind === 'circle'): ?>
-        <div class="relative group">
-          <div class="size-14 rounded-full bg-background-light dark:bg-background-dark border-2 border-primary flex items-center justify-center relative z-10 mb-6 group-hover:scale-110 transition-transform duration-300">
-            <span class="text-sm font-bold"><?= e($year) ?></span>
+      <div class="md:w-2/3">
+        <div class="grid grid-cols-12 gap-4">
+          <div class="col-span-7 h-96 bg-surface-container overflow-hidden">
+            <img class="w-full h-full object-cover" data-alt="<?= e($heritage_image_1_alt) ?>" src="<?= e($heritage_image_1_url) ?>"/>
           </div>
-          <h4 class="text-xl font-bold mb-2 dark:text-white"><?= e($t) ?></h4>
-          <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed"><?= e($b) ?></p>
-        </div>
-          <?php elseif ($kind === 'dot_primary'): ?>
-        <div class="relative group">
-          <div class="size-4 rounded-full bg-primary mb-11 mt-[20px] relative z-10 shadow-[0_0_18px_rgba(65,29,19,0.45)]"></div>
-          <div class="border-l border-gray-200 dark:border-white/10 pl-4 md:pl-0 md:border-l-0">
-            <span class="text-xs font-bold text-primary mb-2 block"><?= e($year) ?></span>
-            <h4 class="text-xl font-bold mb-2 dark:text-white"><?= e($t) ?></h4>
-            <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed"><?= e($b) ?></p>
+          <div class="col-span-5 h-96 bg-surface-container-high overflow-hidden">
+            <img class="w-full h-full object-cover" data-alt="<?= e($heritage_image_2_alt) ?>" src="<?= e($heritage_image_2_url) ?>"/>
+          </div>
+          <div class="col-span-12 py-16 flex flex-col items-center justify-center text-center">
+            <p class="italic notoSerif text-3xl text-primary/80 mb-4 max-w-xl"><?= e($heritage_quote) ?></p>
+            <p class="inter text-[10px] uppercase tracking-[0.3em] text-gold-standard font-bold"><?= e($heritage_quote_byline) ?></p>
           </div>
         </div>
-          <?php else: /* dot */ ?>
-        <div class="relative group">
-          <div class="size-4 rounded-full bg-gray-300 dark:bg-gray-600 mb-11 mt-[20px] relative z-10 group-hover:bg-primary transition-colors"></div>
-          <div class="border-l border-gray-200 dark:border-white/10 pl-4 md:pl-0 md:border-l-0">
-            <span class="text-xs font-bold text-gray-400 mb-2 block"><?= e($year) ?></span>
-            <h4 class="text-xl font-bold mb-2 dark:text-white"><?= e($t) ?></h4>
-            <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed"><?= e($b) ?></p>
-          </div>
-        </div>
-          <?php endif;
-        endforeach; ?>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<?php if (!empty($teamImages)): ?>
-<section class="py-24 lg:py-32 bg-background-light dark:bg-background-dark">
-  <div class="container mx-auto px-6 lg:px-12">
-    <div class="flex flex-col items-center text-center mb-16">
-      <span class="text-primary text-xs font-bold tracking-widest uppercase mb-3"><?= e($team_kicker) ?></span>
-      <h2 class="text-4xl font-light text-text-main dark:text-white"><?= e($team_heading) ?></h2>
-      <p class="text-gray-500 dark:text-gray-400 mt-4 max-w-2xl font-light"><?= e($team_intro) ?></p>
+  <!-- Section: Call to Experience -->
+  <section class="relative h-[614px] flex items-center justify-center text-center overflow-hidden">
+    <img class="absolute inset-0 w-full h-full object-cover" data-alt="<?= e($experience_bg_alt) ?>" src="<?= e($experience_bg_url) ?>"/>
+    <div class="absolute inset-0 bg-primary/40 backdrop-blur-[2px]"></div>
+    <div class="relative z-10 px-6">
+      <h2 class="notoSerif text-5xl md:text-7xl text-white mb-8"><?= e($experience_title) ?></h2>
+      <button type="button" class="bg-secondary text-on-secondary px-12 py-5 rounded-lg inter uppercase tracking-[0.3em] text-sm font-bold hover:opacity-90 transition-all shadow-xl" onclick="window.location.href='<?= e(site_href($experience_button_href)) ?>'"><?= e($experience_button_label) ?></button>
     </div>
-
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-      <?php foreach ($teamImages as $src):
-        $url = site_media_url((string)$src);
-        ?>
-      <div class="group">
-        <div class="aspect-square w-full overflow-hidden rounded-lg relative border border-black/[0.06] bg-gray-100">
-          <img src="<?= e($url) ?>" alt="" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" loading="lazy" decoding="async">
-          <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-        </div>
-      </div>
-      <?php endforeach; ?>
-    </div>
-  </div>
-</section>
-<?php endif; ?>
-
-<section class="w-full h-[400px] md:h-[601px] relative bg-fixed bg-center bg-cover" style='background-image: url("<?= e($parallax_bg) ?>");'>
-  <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
-    <h2 class="text-white text-3xl md:text-5xl font-light italic tracking-tight"><?= e($parallax_quote) ?></h2>
-  </div>
-</section>
-
-<section class="py-10 bg-surface-ink text-white">
-  <div class="container mx-auto px-6 lg:px-12 text-center">
-    <div class="max-w-3xl mx-auto flex flex-col items-center gap-8">
-      <span class="material-symbols-outlined text-champagne text-5xl">diamond</span>
-      <h2 class="text-4xl md:text-5xl font-light leading-tight"><?= e($cta_title) ?></h2>
-      <p class="text-gray-400 text-lg leading-relaxed"><?= e($cta_body) ?></p>
-      <div class="flex flex-row flex-nowrap gap-2 sm:gap-4 w-full max-w-xl mx-auto justify-center pt-4 min-w-0">
-        <a href="<?= e(site_href((string)$cta_btn1_href)) ?>" class="flex-1 min-w-0 h-12 sm:h-14 px-4 sm:px-10 bg-primary text-white font-bold text-sm sm:text-base rounded-lg hover:bg-primary-light transition-all duration-300 inline-flex items-center justify-center text-center leading-tight shadow-lg shadow-primary/30"><?= e($cta_btn1) ?></a>
-        <a href="<?= e(site_href((string)$cta_btn2_href)) ?>" class="flex-1 min-w-0 h-12 sm:h-14 px-4 sm:px-10 bg-transparent border border-white/20 text-white font-bold text-sm sm:text-base rounded-lg hover:bg-white/10 transition-all duration-300 inline-flex items-center justify-center text-center leading-tight"><?= e($cta_btn2) ?></a>
-      </div>
-    </div>
-  </div>
-</section>
-
+  </section>
+</main>
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
