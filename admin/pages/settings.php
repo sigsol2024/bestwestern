@@ -325,39 +325,9 @@ $themeHexPickerValue = static function (string $key) use ($settings, $defaultSet
                 <input type="text" id="footer_line_2" name="footer_line_2" value="<?= sanitize($settings['footer_line_2'] ?? $defaultSettings['footer_line_2']) ?>" placeholder="<?= sanitize($defaultSettings['footer_line_2']) ?>">
             </div>
             <div class="form-group">
-                <label for="footer_address">Address</label>
-                <textarea id="footer_address" name="footer_address" rows="2"><?= sanitize($settings['footer_address'] ?? $defaultSettings['footer_address']) ?></textarea>
-                <p class="form-help">Physical address displayed in the footer contact section</p>
-            </div>
-            
-            <div class="form-group">
-                <label for="footer_phone">Phone Number(s)</label>
-                <input type="text" id="footer_phone" name="footer_phone" value="<?= sanitize($settings['footer_phone'] ?? $defaultSettings['footer_phone']) ?>">
-                <p class="form-help">Enter phone number(s) to display in the footer (e.g., +234 813 480 7718 | +234 907 676 0923)</p>
-            </div>
-            
-            <div class="form-group">
                 <label for="footer_email">Email Address</label>
                 <input type="email" id="footer_email" name="footer_email" value="<?= sanitize($settings['footer_email'] ?? $defaultSettings['footer_email']) ?>">
                 <p class="form-help">Email address displayed in the footer contact section</p>
-            </div>
-            
-            <div class="form-group">
-                <label for="contact_email">General inquiries email</label>
-                <input type="email" id="contact_email" name="contact_email" value="<?= sanitize($settings['contact_email'] ?? $settings['footer_email'] ?? $defaultSettings['contact_email']) ?>">
-                <p class="form-help">Default email used as a fallback in contact-related content and outgoing mail branding.</p>
-            </div>
-            
-            <div class="form-group">
-                <label for="whatsapp_number">WhatsApp Number</label>
-                <input type="text" id="whatsapp_number" name="whatsapp_number" value="<?= sanitize($settings['whatsapp_number'] ?? $defaultSettings['whatsapp_number']) ?>" placeholder="+2341234567890">
-                <p class="form-help">Raw WhatsApp number with country code. If no direct link is set below, room booking falls back to this number automatically.</p>
-            </div>
-
-            <div class="form-group">
-                <label for="whatsapp_link">WhatsApp Link</label>
-                <input type="text" id="whatsapp_link" name="whatsapp_link" value="<?= sanitize($settings['whatsapp_link'] ?? $defaultSettings['whatsapp_link']) ?>" placeholder="https://wa.me/15550000000?text=Hello">
-                <p class="form-help">Optional full WhatsApp URL for booking/contact buttons. Leave blank to build one from the number.</p>
             </div>
 
             <div class="form-row">

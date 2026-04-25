@@ -113,12 +113,6 @@ if (function_exists('site_public_page_exists') && site_public_page_exists('hotel
         <?php endif; ?>
         <?php endif; ?>
       </div>
-      <?php if (trim($footerEmail) !== ''): ?>
-      <div class="space-y-1">
-        <p class="font-light tracking-wide text-[11px] text-slate-500 uppercase">Enquiries</p>
-        <a class="text-base text-white hover:text-brand-gold transition-colors break-all" href="mailto:<?= e($footerEmail) ?>"><?= e($footerEmail) ?></a>
-      </div>
-      <?php endif; ?>
     </div>
 
     <div class="w-full lg:w-auto lg:flex-1 flex flex-col gap-6 lg:items-end">
@@ -133,7 +127,12 @@ if (function_exists('site_public_page_exists') && site_public_page_exists('hotel
         <?php endforeach; ?>
       </div>
 
-      <div class="flex items-center gap-3">
+      <div class="flex flex-wrap items-center gap-3">
+        <?php if (trim($footerEmail) !== ''): ?>
+        <span class="text-slate-500 text-[11px] uppercase tracking-[0.14em]">Enquiries</span>
+        <a class="text-sm text-white hover:text-brand-gold transition-colors break-all" href="mailto:<?= e($footerEmail) ?>"><?= e($footerEmail) ?></a>
+        <span class="mx-1 inline-block h-3 w-px bg-white/20" aria-hidden="true"></span>
+        <?php endif; ?>
         <?php foreach ($socialMediaList as $social):
             $url = trim((string)($social['url'] ?? ''));
             if ($url === '') {
@@ -158,9 +157,15 @@ if (function_exists('site_public_page_exists') && site_public_page_exists('hotel
   </div>
   <div class="w-full px-6 md:px-12 py-8 md:py-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] tracking-[0.2em] uppercase text-slate-500">
     <p class="text-center md:text-left"><?= e($footerCopyright) ?></p>
-    <?php if (trim($footerLine2) !== ''): ?>
-    <p class="text-center md:text-right"><?= e($footerLine2) ?></p>
-    <?php endif; ?>
+    <div class="text-center md:text-right flex flex-col md:flex-row items-center gap-2 md:gap-4">
+      <?php if (trim($footerLine2) !== ''): ?>
+      <p><?= e($footerLine2) ?></p>
+      <?php endif; ?>
+      <a class="text-slate-400 hover:text-white transition-colors normal-case tracking-normal text-xs"
+         href="https://signature-solutions.com/" target="_blank" rel="noopener noreferrer">
+        Designed By Signature Solutions
+      </a>
+    </div>
   </div>
 </footer>
 
