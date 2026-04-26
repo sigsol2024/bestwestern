@@ -86,12 +86,12 @@ if ($directionsUrl === '' || $directionsUrl === '#') {
 <body data-page="contact" class="bg-surface text-on-surface font-body selection:bg-secondary-container selection:text-on-secondary-container overflow-x-hidden">
 <?php require_once __DIR__ . '/includes/header.php'; ?>
 
-<main class="pt-24">
-  <header class="px-12 mb-12 max-w-screen-2xl mx-auto">
+<main class="pt-24 min-w-0 overflow-x-hidden">
+  <header class="px-4 sm:px-6 md:px-12 mb-12 max-w-screen-2xl mx-auto">
     <div class="grid grid-cols-12 gap-8 items-end">
       <div class="col-span-12 md:col-span-7">
         <span class="inter uppercase tracking-[0.3em] text-[10px] font-bold text-secondary mb-4 block"><?= e($hero_kicker) ?></span>
-        <h1 class="noto-serif text-5xl md:text-7xl font-light text-primary leading-tight"><?= e($hero_title) ?></h1>
+        <h1 class="noto-serif text-4xl sm:text-5xl md:text-7xl font-light text-primary leading-tight break-words"><?= e($hero_title) ?></h1>
       </div>
       <div class="col-span-12 md:col-span-5 pb-4">
         <p class="inter text-sm text-on-surface-variant max-w-xs leading-relaxed opacity-80">
@@ -101,15 +101,15 @@ if ($directionsUrl === '' || $directionsUrl === '#') {
     </div>
   </header>
 
-  <section class="max-w-screen-2xl mx-auto px-12 pb-24">
+  <section class="max-w-screen-2xl mx-auto px-4 sm:px-6 md:px-12 pb-24">
     <div class="flex flex-col lg:flex-row gap-0 bg-surface-container-low rounded-lg overflow-hidden border border-outline-variant/10 min-h-[700px]">
-      <div class="w-full lg:w-[45%] p-12 md:p-20 bg-surface-container-lowest flex flex-col justify-between">
+      <div class="w-full lg:w-[45%] p-6 sm:p-8 md:p-12 lg:p-16 bg-surface-container-lowest flex flex-col justify-between min-w-0">
         <div>
           <h2 class="noto-serif italic text-3xl text-primary mb-12"><?= e($directory_title) ?></h2>
 
           <div class="mb-12">
             <p class="inter text-[10px] uppercase tracking-widest text-on-surface-variant/60 font-semibold mb-4"><?= e($estate_label) ?></p>
-            <div class="inter text-lg text-primary leading-relaxed">
+            <div class="inter text-base sm:text-lg text-primary leading-relaxed break-words">
               <?= $address_html ?>
             </div>
           </div>
@@ -117,13 +117,13 @@ if ($directionsUrl === '' || $directionsUrl === '#') {
           <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-12">
             <div>
               <p class="inter text-[10px] uppercase tracking-widest text-on-surface-variant/60 font-semibold mb-4"><?= e($reservations_label) ?></p>
-              <a class="inter text-sm text-primary font-semibold hover:text-secondary transition-colors" href="tel:<?= e(preg_replace('/[^0-9+]/', '', (string) $reservations_phone)) ?>">
+              <a class="inter text-sm text-primary font-semibold hover:text-secondary transition-colors break-words" href="tel:<?= e(preg_replace('/[^0-9+]/', '', (string) $reservations_phone)) ?>">
                 <?= e($reservations_phone) ?>
               </a>
             </div>
             <div>
               <p class="inter text-[10px] uppercase tracking-widest text-on-surface-variant/60 font-semibold mb-4"><?= e($front_desk_label) ?></p>
-              <a class="inter text-sm text-primary font-semibold hover:text-secondary transition-colors" href="tel:<?= e(preg_replace('/[^0-9+]/', '', (string) $front_desk_phone)) ?>">
+              <a class="inter text-sm text-primary font-semibold hover:text-secondary transition-colors break-words" href="tel:<?= e(preg_replace('/[^0-9+]/', '', (string) $front_desk_phone)) ?>">
                 <?= e($front_desk_phone) ?>
               </a>
             </div>
@@ -132,15 +132,15 @@ if ($directionsUrl === '' || $directionsUrl === '#') {
           <div class="space-y-8">
             <div>
               <p class="inter text-[10px] uppercase tracking-widest text-on-surface-variant/60 font-semibold mb-2"><?= e($email_1_label) ?></p>
-              <a class="inter text-sm text-secondary hover:underline underline-offset-4 decoration-1 font-medium" href="mailto:<?= e($email_1_value) ?>"><?= e($email_1_value) ?></a>
+              <a class="inter text-sm text-secondary hover:underline underline-offset-4 decoration-1 font-medium break-all" href="mailto:<?= e($email_1_value) ?>"><?= e($email_1_value) ?></a>
             </div>
             <div>
               <p class="inter text-[10px] uppercase tracking-widest text-on-surface-variant/60 font-semibold mb-2"><?= e($email_2_label) ?></p>
-              <a class="inter text-sm text-secondary hover:underline underline-offset-4 decoration-1 font-medium" href="mailto:<?= e($email_2_value) ?>"><?= e($email_2_value) ?></a>
+              <a class="inter text-sm text-secondary hover:underline underline-offset-4 decoration-1 font-medium break-all" href="mailto:<?= e($email_2_value) ?>"><?= e($email_2_value) ?></a>
             </div>
             <div>
               <p class="inter text-[10px] uppercase tracking-widest text-on-surface-variant/60 font-semibold mb-2"><?= e($email_3_label) ?></p>
-              <a class="inter text-sm text-secondary hover:underline underline-offset-4 decoration-1 font-medium" href="mailto:<?= e($email_3_value) ?>"><?= e($email_3_value) ?></a>
+              <a class="inter text-sm text-secondary hover:underline underline-offset-4 decoration-1 font-medium break-all" href="mailto:<?= e($email_3_value) ?>"><?= e($email_3_value) ?></a>
             </div>
           </div>
         </div>
@@ -153,7 +153,7 @@ if ($directionsUrl === '' || $directionsUrl === '#') {
         </div>
       </div>
 
-      <div class="w-full lg:w-[55%] relative overflow-hidden bg-primary-container min-h-[340px]">
+      <div class="w-full lg:w-[55%] relative overflow-hidden bg-primary-container min-h-[340px] min-w-0">
         <?php if ($mapUrl !== ''): ?>
           <iframe
             class="absolute inset-0 w-full h-full border-0"
@@ -170,13 +170,13 @@ if ($directionsUrl === '' || $directionsUrl === '#') {
 
         <div class="absolute inset-0 bg-gradient-to-t from-primary-container/80 via-transparent to-transparent pointer-events-none"></div>
 
-        <div class="absolute bottom-12 left-12 right-12">
-          <div class="p-10 bg-surface-container-lowest/5 backdrop-blur-2xl border border-white/10 rounded-lg">
-            <div class="flex items-start gap-6">
+        <div class="absolute bottom-4 sm:bottom-6 md:bottom-12 left-4 sm:left-6 md:left-12 right-4 sm:right-6 md:right-12">
+          <div class="p-4 sm:p-6 md:p-10 bg-surface-container-lowest/5 backdrop-blur-2xl border border-white/10 rounded-lg">
+            <div class="flex items-start gap-4 sm:gap-6 min-w-0">
               <span class="material-symbols-outlined text-secondary text-4xl mt-1">location_on</span>
-              <div>
-                <h3 class="noto-serif text-3xl text-white mb-2"><?= e($location_title) ?></h3>
-                <p class="inter text-sm text-slate-300 leading-relaxed mb-8 max-w-sm"><?= e($location_body) ?></p>
+              <div class="min-w-0">
+                <h3 class="noto-serif text-2xl sm:text-3xl text-white mb-2 break-words"><?= e($location_title) ?></h3>
+                <p class="inter text-sm text-slate-300 leading-relaxed mb-5 sm:mb-8 max-w-sm break-words"><?= e($location_body) ?></p>
                 <?php if ($directionsUrl !== '#'): ?>
                 <a class="inline-flex items-center gap-2 inter text-[11px] uppercase tracking-[0.2em] font-bold text-secondary hover:text-white transition-colors bg-white/5 py-3 px-6 rounded border border-white/10"
                    href="<?= e($directionsUrl) ?>" target="_blank" rel="noopener noreferrer">
