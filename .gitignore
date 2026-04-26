@@ -17,3 +17,6 @@ vendor/
 
 # Design originals / source HTML
 /html-originals/
+
+# Local/deploy-only config bundle
+/config/
