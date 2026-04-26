@@ -86,12 +86,12 @@ if ($directionsUrl === '' || $directionsUrl === '#') {
 <body data-page="contact" class="bg-surface text-on-surface font-body selection:bg-secondary-container selection:text-on-secondary-container overflow-x-hidden">
 <?php require_once __DIR__ . '/includes/header.php'; ?>
 
-<main class="pt-32">
-  <header class="px-12 mb-16 max-w-screen-2xl mx-auto">
+<main class="pt-24">
+  <header class="px-12 mb-12 max-w-screen-2xl mx-auto">
     <div class="grid grid-cols-12 gap-8 items-end">
       <div class="col-span-12 md:col-span-7">
         <span class="inter uppercase tracking-[0.3em] text-[10px] font-bold text-secondary mb-4 block"><?= e($hero_kicker) ?></span>
-        <h1 class="noto-serif text-6xl md:text-8xl font-light text-primary leading-tight"><?= e($hero_title) ?></h1>
+        <h1 class="noto-serif text-5xl md:text-7xl font-light text-primary leading-tight"><?= e($hero_title) ?></h1>
       </div>
       <div class="col-span-12 md:col-span-5 pb-4">
         <p class="inter text-sm text-on-surface-variant max-w-xs leading-relaxed opacity-80">
@@ -153,7 +153,7 @@ if ($directionsUrl === '' || $directionsUrl === '#') {
         </div>
       </div>
 
-      <div class="w-full lg:w-3/5 relative overflow-hidden bg-primary-container min-h-[420px]">
+      <div class="w-full lg:w-3/5 relative overflow-hidden bg-primary-container min-h-[340px]">
         <?php if ($mapUrl !== ''): ?>
           <iframe
             class="absolute inset-0 w-full h-full border-0"
