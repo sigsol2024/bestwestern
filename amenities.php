@@ -118,31 +118,36 @@ $hasRenderableLink = static function (string $label, string $href): bool {
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title><?= e($pageTitle) ?></title>
   <?php require_once __DIR__ . '/includes/head-header.php'; ?>
-  <style>.editorial-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:3rem;}</style>
+  <style>
+    .editorial-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:1.25rem;}
+    @media (min-width:640px){.editorial-grid{gap:1.75rem;}}
+    @media (min-width:768px){.editorial-grid{gap:2.25rem;}}
+    @media (min-width:1024px){.editorial-grid{gap:3rem;}}
+  </style>
 </head>
-<body class="bg-surface text-on-surface font-body selection:bg-secondary-fixed selection:text-on-secondary-fixed">
+<body class="bg-surface text-on-surface font-body selection:bg-secondary-fixed selection:text-on-secondary-fixed overflow-x-hidden">
 <?php require_once __DIR__ . '/includes/header.php'; ?>
-<main>
-  <section class="relative h-[85vh] flex items-center overflow-hidden">
+<main class="min-w-0 overflow-x-hidden">
+  <section class="relative min-h-[320px] h-[min(85vh,820px)] flex items-center overflow-hidden">
     <div class="absolute inset-0 z-0">
       <img class="w-full h-full object-cover brightness-[0.85]" src="<?= e($sectionImage($hero)) ?>" alt="<?= e((string)($hero['kicker'] ?? 'Amenities')) ?>">
       <div class="absolute inset-0 bg-gradient-to-t from-[#0B1F3A]/30 to-transparent"></div>
     </div>
-    <div class="relative z-10 w-full px-6 md:px-12 lg:px-24 max-w-screen-2xl mx-auto py-24">
+    <div class="relative z-10 w-full min-w-0 px-4 sm:px-6 md:px-12 lg:px-24 max-w-screen-2xl mx-auto py-16 sm:py-24">
       <div class="max-w-4xl">
         <span class="text-secondary uppercase tracking-[0.4em] text-[10px] mb-8 block"><?= e((string)($hero['kicker'] ?? 'The Sovereign Experience')) ?></span>
-        <h1 class="text-white font-headline text-6xl md:text-8xl font-light leading-tight mb-10"><?= (string)($hero['title_html'] ?? 'Facilities & Amenities') ?></h1>
+        <h1 class="text-white font-headline text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-light leading-tight mb-10 break-words"><?= (string)($hero['title_html'] ?? 'Facilities & Amenities') ?></h1>
         <p class="text-white/90 text-xl max-w-xl leading-relaxed font-light"><?= e((string)($hero['body'] ?? 'Everything you need for business, leisure, and wellness.')) ?></p>
       </div>
     </div>
   </section>
 
-  <section class="py-28 px-12 max-w-screen-2xl mx-auto" id="dining">
-    <div class="editorial-grid mb-24 gap-20">
-      <div class="col-span-12 lg:col-span-7"><img class="w-full aspect-[4/3] object-cover" src="<?= e($sectionImage($dining1)) ?>" alt="<?= e((string)($dining1['kicker'] ?? 'Dining')) ?>"></div>
-      <div class="col-span-12 lg:col-span-5 flex flex-col justify-center md:px-8">
+  <section class="py-16 sm:py-24 md:py-28 px-4 sm:px-6 md:px-10 lg:px-12 max-w-screen-2xl mx-auto w-full min-w-0" id="dining">
+    <div class="editorial-grid mb-16 md:mb-24 min-w-0">
+      <div class="col-span-12 lg:col-span-7 min-w-0"><img class="w-full aspect-[4/3] object-cover" src="<?= e($sectionImage($dining1)) ?>" alt="<?= e((string)($dining1['kicker'] ?? 'Dining')) ?>"></div>
+      <div class="col-span-12 lg:col-span-5 flex flex-col justify-center min-w-0 md:px-8">
         <span class="text-secondary text-[10px] tracking-[0.3em] uppercase mb-6"><?= e((string)($dining1['kicker'] ?? 'Native Flavors')) ?></span>
-        <h2 class="font-headline text-5xl mb-8 font-light leading-tight"><?= (string)($dining1['title_html'] ?? 'Dining Experience') ?></h2>
+        <h2 class="font-headline text-3xl sm:text-4xl md:text-5xl mb-8 font-light leading-tight break-words"><?= (string)($dining1['title_html'] ?? 'Dining Experience') ?></h2>
         <p class="text-on-surface-variant text-lg leading-relaxed mb-10"><?= e((string)($dining1['body'] ?? '')) ?></p>
         <div class="mb-12 p-8 bg-surface-container-low border-l border-secondary/40">
           <div class="flex justify-between mb-4 border-b border-outline-variant/20 pb-4">
@@ -160,10 +165,10 @@ $hasRenderableLink = static function (string $label, string $href): bool {
       </div>
     </div>
 
-    <div class="editorial-grid items-center mb-24 gap-20">
-      <div class="col-span-12 lg:col-span-5 flex flex-col md:px-8">
+    <div class="editorial-grid items-center mb-16 md:mb-24 min-w-0">
+      <div class="col-span-12 lg:col-span-5 flex flex-col min-w-0 md:px-8">
         <span class="text-secondary text-[10px] tracking-[0.3em] uppercase mb-6"><?= e((string)($dining2['kicker'] ?? 'Oriental Mastery')) ?></span>
-        <h2 class="font-headline text-5xl mb-8 font-light"><?= (string)($dining2['title_html'] ?? 'Red Lotus') ?></h2>
+        <h2 class="font-headline text-3xl sm:text-4xl md:text-5xl mb-8 font-light break-words"><?= (string)($dining2['title_html'] ?? 'Red Lotus') ?></h2>
         <p class="text-on-surface-variant text-lg leading-relaxed mb-10"><?= e((string)($dining2['body'] ?? '')) ?></p>
         <div class="mb-10">
           <span class="text-[10px] uppercase tracking-widest font-bold block mb-2 opacity-50"><?= e($dining2ServiceNote) ?></span>
@@ -173,14 +178,14 @@ $hasRenderableLink = static function (string $label, string $href): bool {
         <a class="inline-block bg-[#0B1F3A] text-white px-10 py-5 uppercase tracking-[0.3em] text-[10px] hover:opacity-90 transition-all self-start" href="<?= e(site_href($dining2CtaHref)) ?>"><?= e($dining2CtaLabel) ?></a>
         <?php endif; ?>
       </div>
-      <div class="col-span-12 lg:col-span-7"><img class="w-full aspect-[16/9] object-cover" src="<?= e($sectionImage($dining2)) ?>" alt="<?= e((string)($dining2['kicker'] ?? 'Dining')) ?>"></div>
+      <div class="col-span-12 lg:col-span-7 min-w-0"><img class="w-full aspect-[16/9] object-cover" src="<?= e($sectionImage($dining2)) ?>" alt="<?= e((string)($dining2['kicker'] ?? 'Dining')) ?>"></div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-      <div><img class="w-full h-[600px] object-cover" src="<?= e($loungeImage) ?>" alt="<?= e($loungeKicker !== '' ? $loungeKicker : 'Lounge') ?>"></div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 lg:gap-20 items-center min-w-0">
+      <div class="min-w-0"><img class="w-full h-[280px] sm:h-[380px] md:h-[480px] lg:h-[600px] object-cover" src="<?= e($loungeImage) ?>" alt="<?= e($loungeKicker !== '' ? $loungeKicker : 'Lounge') ?>"></div>
       <div class="md:px-8 lg:px-16">
         <span class="text-secondary text-[10px] tracking-[0.3em] uppercase mb-6 block"><?= e($loungeKicker) ?></span>
-        <h3 class="font-headline text-5xl mb-8 font-light"><?= (string)$loungeTitleHtml ?></h3>
+        <h3 class="font-headline text-3xl sm:text-4xl md:text-5xl mb-8 font-light break-words"><?= (string)$loungeTitleHtml ?></h3>
         <p class="text-on-surface-variant text-lg leading-relaxed mb-12"><?= e($loungeBody) ?></p>
         <div class="flex flex-col gap-2">
           <span class="text-[10px] uppercase tracking-[0.3em] font-bold opacity-50"><?= e($loungeHoursLabel) ?></span>
@@ -191,24 +196,24 @@ $hasRenderableLink = static function (string $label, string $href): bool {
   </section>
 
   <section class="bg-[#0B1F3A] text-white py-28 overflow-hidden" id="wellness">
-    <div class="max-w-screen-2xl mx-auto px-12">
-      <div class="mb-20 text-center">
+    <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 md:px-10 lg:px-12 w-full min-w-0">
+      <div class="mb-12 md:mb-20 text-center px-1">
         <span class="text-secondary uppercase tracking-[0.4em] text-[10px] mb-6 block"><?= e($wellnessIntroKicker) ?></span>
-        <h2 class="font-headline text-6xl md:text-7xl font-light italic"><?= (string)$wellnessIntroTitleHtml ?></h2>
+        <h2 class="font-headline text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-light italic break-words"><?= (string)$wellnessIntroTitleHtml ?></h2>
       </div>
-      <div class="space-y-24">
+      <div class="space-y-14 md:space-y-24">
         <?php foreach ($wellnessRows as $wi => $sec):
           $rowId = $wellnessRowIds[$wi] ?? '';
         ?>
-        <div class="editorial-grid items-center"<?= $rowId !== '' ? ' id="' . e($rowId) . '"' : '' ?>>
-          <div class="col-span-12 lg:col-span-7 <?= $wi % 2 ? 'lg:order-2' : '' ?>">
+        <div class="editorial-grid items-center min-w-0"<?= $rowId !== '' ? ' id="' . e($rowId) . '"' : '' ?>>
+          <div class="col-span-12 lg:col-span-7 min-w-0 <?= $wi % 2 ? 'lg:order-2' : '' ?>">
             <img class="w-full aspect-video object-cover" src="<?= e($sectionImage($sec)) ?>" alt="<?= e((string)($sec['kicker'] ?? 'Wellness')) ?>">
           </div>
-          <div class="col-span-12 lg:col-span-5 <?= $wi % 2 ? 'lg:order-1' : 'lg:pl-12' ?>">
-            <h3 class="font-headline text-4xl mb-6 font-light"><?= (string)($sec['title_html'] ?? 'Feature') ?></h3>
+          <div class="col-span-12 lg:col-span-5 min-w-0 <?= $wi % 2 ? 'lg:order-1' : 'lg:pl-12' ?>">
+            <h3 class="font-headline text-2xl sm:text-3xl md:text-4xl mb-6 font-light break-words"><?= (string)($sec['title_html'] ?? 'Feature') ?></h3>
             <p class="text-white/70 font-light text-lg leading-relaxed mb-10"><?= e((string)($sec['body'] ?? '')) ?></p>
             <?php if (($wellnessRowMeta[$wi]['meta_type'] ?? '') === 'split'): ?>
-            <div class="flex gap-12 border-t border-white/10 pt-8">
+            <div class="flex flex-col sm:flex-row gap-6 sm:gap-12 border-t border-white/10 pt-8 min-w-0">
               <div>
                 <span class="text-[10px] opacity-40 uppercase block mb-2 tracking-widest"><?= e((string)($wellnessRowMeta[$wi]['left_label'] ?? '')) ?></span>
                 <span class="text-secondary font-medium text-lg"><?= e((string)($wellnessRowMeta[$wi]['left_value'] ?? '')) ?></span>
@@ -223,8 +228,8 @@ $hasRenderableLink = static function (string $label, string $href): bool {
               <span class="text-white text-xs font-bold tracking-[0.3em] uppercase"><?= e((string)($wellnessRowMeta[$wi]['badge_text'] ?? '')) ?></span>
             </div>
             <?php elseif (($wellnessRowMeta[$wi]['meta_type'] ?? '') === 'footer'): ?>
-            <div class="flex items-center justify-between border-t border-white/10 pt-8">
-              <span class="text-xs uppercase tracking-[0.2em] opacity-50"><?= e((string)($wellnessRowMeta[$wi]['footer_note'] ?? '')) ?></span>
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-t border-white/10 pt-8 min-w-0">
+              <span class="text-xs uppercase tracking-[0.2em] opacity-50 break-words"><?= e((string)($wellnessRowMeta[$wi]['footer_note'] ?? '')) ?></span>
               <?php
                 $footerLinkLabel = trim((string)($wellnessRowMeta[$wi]['footer_link_label'] ?? ''));
                 $footerLinkHref = trim((string)($wellnessRowMeta[$wi]['footer_link_href'] ?? ''));
@@ -242,16 +247,16 @@ $hasRenderableLink = static function (string $label, string $href): bool {
   </section>
 
   <section class="py-40 bg-surface" id="business">
-    <div class="max-w-screen-2xl mx-auto px-12">
-      <div class="flex flex-col md:flex-row justify-between items-end mb-32 gap-12">
-        <div class="max-w-xl">
+    <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 md:px-10 lg:px-12 w-full min-w-0">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 md:mb-32 gap-8 md:gap-12">
+        <div class="max-w-xl min-w-0">
           <span class="text-secondary uppercase tracking-[0.4em] text-[10px] mb-6 block"><?= e((string)($business['kicker'] ?? 'Corporate Excellence')) ?></span>
-          <h2 class="font-headline text-6xl font-light"><?= (string)($business['title_html'] ?? 'Meetings & Events') ?></h2>
+          <h2 class="font-headline text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light break-words"><?= (string)($business['title_html'] ?? 'Meetings & Events') ?></h2>
         </div>
-        <p class="text-on-surface-variant max-w-sm text-lg leading-relaxed font-light"><?= e((string)($business['body'] ?? 'Host with confidence in our versatile meeting spaces.')) ?></p>
+        <p class="text-on-surface-variant w-full md:max-w-sm min-w-0 text-lg leading-relaxed font-light"><?= e((string)($business['body'] ?? 'Host with confidence in our versatile meeting spaces.')) ?></p>
       </div>
       <div class="space-y-20">
-        <div class="editorial-grid items-start gap-12 border-b border-outline-variant/10 pb-20">
+        <div class="editorial-grid items-start border-b border-outline-variant/10 pb-12 md:pb-20">
           <div class="col-span-12 lg:col-span-8">
             <img class="w-full aspect-[21/9] object-cover" src="<?= e($sectionImage($business)) ?>" alt="<?= e((string)($business['kicker'] ?? 'Business')) ?>">
           </div>
@@ -267,14 +272,14 @@ $hasRenderableLink = static function (string $label, string $href): bool {
             <?php endif; ?>
           </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-16 mt-10">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 lg:gap-16 mt-10">
           <?php foreach ($chambers as $ch):
             $chTitle = trim((string)($ch['title'] ?? ''));
             if ($chTitle === '') { continue; }
             $chBody = trim((string)($ch['body'] ?? ''));
             $chBadge = trim((string)($ch['badge'] ?? ''));
           ?>
-          <div class="p-10 border-l border-outline-variant/20 hover:bg-surface-container-low transition-all">
+          <div class="py-8 pl-5 pr-4 sm:p-10 border-l border-outline-variant/20 hover:bg-surface-container-low transition-all min-w-0">
             <h4 class="font-headline text-2xl mb-4"><?= e($chTitle) ?></h4>
             <p class="text-sm text-on-surface-variant mb-10 leading-relaxed"><?= e($chBody) ?></p>
             <span class="text-secondary text-[10px] font-bold tracking-[0.2em] uppercase"><?= e($chBadge) ?></span>
@@ -286,12 +291,12 @@ $hasRenderableLink = static function (string $label, string $href): bool {
   </section>
 
   <section class="py-[66px] bg-surface-container-low" id="services">
-    <div class="max-w-screen-2xl mx-auto px-12">
-      <div class="text-center mb-32">
+    <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 md:px-10 lg:px-12 w-full min-w-0">
+      <div class="text-center mb-16 md:mb-32">
         <span class="text-secondary uppercase tracking-[0.4em] text-[10px] mb-6 block"><?= e($servicesKicker) ?></span>
-        <h2 class="font-headline text-5xl font-light italic"><?= e($servicesTitle) ?></h2>
+        <h2 class="font-headline text-3xl sm:text-4xl md:text-5xl font-light italic break-words px-1"><?= e($servicesTitle) ?></h2>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-x-24 gap-y-24">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-12 md:gap-x-16 lg:gap-x-24 md:gap-y-20">
         <?php foreach ($servicesItems as $srv):
           $st = trim((string)($srv['title'] ?? ''));
           if ($st === '') { continue; }

@@ -125,14 +125,14 @@ $experience_button_href = (string) getPageSection('about', 'experience_button_hr
 <body data-page="about" class="bg-surface text-on-surface selection:bg-secondary-container selection:text-on-secondary-container overflow-x-hidden">
 <?php require_once __DIR__ . '/includes/header.php'; ?>
 
-<main class="pt-32">
+<main class="pt-32 min-w-0 overflow-x-hidden">
   <!-- Hero Section: Intentional Asymmetry -->
-  <section class="px-12 mb-32 grid grid-cols-12 gap-8 items-end flex flex-col md:grid">
-    <div class="col-span-12 md:col-span-7 h-[430px] md:h-[660px] relative overflow-hidden group order-2 md:order-1">
+  <section class="px-4 sm:px-6 md:px-10 lg:px-12 mb-32 flex flex-col gap-8 items-end md:grid md:grid-cols-12">
+    <div class="col-span-12 md:col-span-7 w-full min-w-0 h-[min(52vh,430px)] md:h-[660px] relative overflow-hidden group order-2 md:order-1">
       <img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Luxury hotel exterior with modernist architecture" src="<?= e($hero_bg_url) ?>"/>
     </div>
-    <div class="col-span-12 md:col-span-4 md:col-start-9 pb-12 order-1 md:order-2">
-      <h1 class="notoSerif text-6xl md:text-8xl leading-none mb-2 text-primary italic"><?= $hero_title_html ?></h1>
+    <div class="col-span-12 md:col-span-4 md:col-start-9 w-full min-w-0 pb-12 order-1 md:order-2">
+      <h1 class="notoSerif text-4xl sm:text-5xl md:text-6xl lg:text-8xl leading-[1.05] mb-2 text-primary italic break-words"><?= $hero_title_html ?></h1>
       <p class="inter text-[10px] uppercase tracking-[0.3em] text-gold-standard font-semibold mb-8"><?= e($hero_property_line) ?></p>
       <p class="inter text-lg text-on-surface-variant font-light leading-relaxed"><?= e($hero_intro) ?></p>
       <div class="mt-12 h-px w-24 bg-secondary"></div>
@@ -140,11 +140,11 @@ $experience_button_href = (string) getPageSection('about', 'experience_button_hr
   </section>
 
   <!-- Section: Hotel Philosophy (Tonal Layering) -->
-  <section class="bg-surface-container-low py-[59px] px-12">
-    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
+  <section class="bg-surface-container-low py-[59px] px-4 sm:px-6 md:px-10 lg:px-12">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-24 items-center">
       <div class="order-2 md:order-1">
         <span class="inter text-xs uppercase tracking-[0.3em] text-secondary font-bold mb-6 block"><?= e($philosophy_kicker) ?></span>
-        <h2 class="notoSerif text-5xl mb-8 leading-tight text-primary-container"><?= e($philosophy_title) ?></h2>
+        <h2 class="notoSerif text-3xl sm:text-4xl md:text-5xl mb-8 leading-tight text-primary-container break-words"><?= e($philosophy_title) ?></h2>
         <p class="inter text-lg text-on-surface-variant leading-relaxed mb-8"><?= e($philosophy_p1) ?></p>
         <p class="inter text-lg text-on-surface-variant leading-relaxed"><?= e($philosophy_p2) ?></p>
       </div>
@@ -152,7 +152,7 @@ $experience_button_href = (string) getPageSection('about', 'experience_button_hr
         <div class="aspect-[3/4] bg-surface-container-highest overflow-hidden">
           <img class="w-full h-full object-cover" data-alt="Hotel lobby details" src="<?= e($philosophy_image_1_url) ?>"/>
         </div>
-        <div class="aspect-[3/4] bg-surface-container-highest overflow-hidden mt-12">
+        <div class="aspect-[3/4] bg-surface-container-highest overflow-hidden mt-6 md:mt-12">
           <img class="w-full h-full object-cover" data-alt="Luxury spa environment" src="<?= e($philosophy_image_2_url) ?>"/>
         </div>
       </div>
@@ -161,9 +161,9 @@ $experience_button_href = (string) getPageSection('about', 'experience_button_hr
 
   <!-- Section: Bayelsa Culture Integration (Full Bleed/Editorial) -->
   <section class="py-[61px] bg-primary-container text-white overflow-hidden">
-    <div class="px-12 grid grid-cols-12 gap-8 items-center">
-      <div class="col-span-12 md:col-span-5 z-10">
-        <h2 class="notoSerif text-6xl italic mb-12"><?= e($culture_title) ?></h2>
+    <div class="px-4 sm:px-6 md:px-10 lg:px-12 grid grid-cols-12 gap-8 items-center">
+      <div class="col-span-12 md:col-span-5 z-10 min-w-0">
+        <h2 class="notoSerif text-4xl sm:text-5xl md:text-6xl italic mb-8 md:mb-12 break-words"><?= e($culture_title) ?></h2>
         <div class="space-y-12 max-w-md">
           <div class="group">
             <div class="w-12 h-[1px] bg-gold-standard mb-6 transition-all group-hover:w-24"></div>
@@ -177,20 +177,20 @@ $experience_button_href = (string) getPageSection('about', 'experience_button_hr
           </div>
         </div>
       </div>
-      <div class="col-span-12 md:col-span-7 relative">
+      <div class="col-span-12 md:col-span-7 relative min-w-0">
         <div class="aspect-video bg-slate-800 rounded-lg overflow-hidden shadow-2xl">
           <img class="w-full h-full object-cover opacity-80" data-alt="Aerial cinematic view of a winding river" src="<?= e($culture_image_url) ?>"/>
         </div>
-        <div class="absolute -bottom-12 -right-12 w-64 h-64 bg-secondary/20 blur-3xl rounded-full"></div>
+        <div class="absolute -bottom-6 -right-4 md:-bottom-12 md:-right-12 w-48 h-48 md:w-64 md:h-64 bg-secondary/20 blur-3xl rounded-full pointer-events-none" aria-hidden="true"></div>
       </div>
     </div>
   </section>
 
   <!-- Section: Heritage & The Stately Curator (Editorial Layout) -->
-  <section class="py-[72px] px-12 max-w-7xl mx-auto">
-    <div class="flex flex-col md:flex-row gap-24">
+  <section class="py-[72px] px-4 sm:px-6 md:px-10 lg:px-12 max-w-7xl mx-auto">
+    <div class="flex flex-col md:flex-row gap-12 md:gap-24 min-w-0">
       <div class="md:w-1/3">
-        <h3 class="notoSerif text-4xl mb-6"><?= e($heritage_title) ?></h3>
+        <h3 class="notoSerif text-3xl sm:text-4xl mb-6 break-words"><?= e($heritage_title) ?></h3>
         <p class="inter text-on-surface-variant font-light mb-12"><?= e($heritage_body) ?></p>
         <div class="flex flex-col gap-2">
           <div class="w-full h-[1px] bg-gold-standard/30"></div>
@@ -200,12 +200,12 @@ $experience_button_href = (string) getPageSection('about', 'experience_button_hr
           </a>
         </div>
       </div>
-      <div class="md:w-2/3">
-        <div class="grid grid-cols-12 gap-4">
-          <div class="col-span-7 h-96 bg-surface-container overflow-hidden">
+      <div class="md:w-2/3 min-w-0 w-full">
+        <div class="grid grid-cols-12 gap-3 sm:gap-4">
+          <div class="col-span-12 md:col-span-7 h-64 sm:h-80 md:h-96 bg-surface-container overflow-hidden">
             <img class="w-full h-full object-cover" data-alt="Professional hotel staff" src="<?= e($heritage_image_1_url) ?>"/>
           </div>
-          <div class="col-span-5 h-96 bg-surface-container-high overflow-hidden">
+          <div class="col-span-12 md:col-span-5 h-64 sm:h-80 md:h-96 bg-surface-container-high overflow-hidden">
             <img class="w-full h-full object-cover" data-alt="Sophisticated hotel bar area" src="<?= e($heritage_image_2_url) ?>"/>
           </div>
         </div>
@@ -214,11 +214,11 @@ $experience_button_href = (string) getPageSection('about', 'experience_button_hr
   </section>
 
   <!-- Section: Call to Experience -->
-  <section class="relative h-[614px] flex items-center justify-center text-center overflow-hidden">
+  <section class="relative min-h-[380px] h-[clamp(380px,58vh,614px)] md:h-[614px] flex items-center justify-center text-center overflow-hidden">
     <img class="absolute inset-0 w-full h-full object-cover" data-alt="Luxury hotel swimming pool at twilight" src="<?= e($experience_bg_url) ?>"/>
     <div class="absolute inset-0 bg-primary/40 backdrop-blur-[2px] mt-[-2px] mb-[-2px] p-0"></div>
     <div class="relative z-10 px-6">
-      <h2 class="notoSerif text-5xl md:text-7xl text-white mb-8"><?= e($experience_title) ?></h2>
+      <h2 class="notoSerif text-3xl sm:text-4xl md:text-5xl lg:text-7xl text-white mb-8 break-words px-1"><?= e($experience_title) ?></h2>
       <button type="button" class="bg-secondary text-on-secondary px-12 py-5 rounded-lg inter uppercase tracking-[0.3em] text-sm font-bold hover:opacity-90 transition-all shadow-xl" onclick="window.location.href='<?= e(site_href($experience_button_href)) ?>'"><?= e($experience_button_label) ?></button>
     </div>
   </section>
