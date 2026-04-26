@@ -220,7 +220,7 @@ $hasRenderableLink = static function (string $label, string $href): bool {
             </div>
             <?php elseif (($wellnessRowMeta[$wi]['meta_type'] ?? '') === 'badge'): ?>
             <div class="bg-white/5 p-8 inline-block">
-              <span class="text-secondary text-xs font-bold tracking-[0.3em] uppercase"><?= e((string)($wellnessRowMeta[$wi]['badge_text'] ?? '')) ?></span>
+              <span class="text-white text-xs font-bold tracking-[0.3em] uppercase"><?= e((string)($wellnessRowMeta[$wi]['badge_text'] ?? '')) ?></span>
             </div>
             <?php elseif (($wellnessRowMeta[$wi]['meta_type'] ?? '') === 'footer'): ?>
             <div class="flex items-center justify-between border-t border-white/10 pt-8">

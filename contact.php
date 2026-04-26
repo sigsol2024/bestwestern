@@ -103,7 +103,7 @@ if ($directionsUrl === '' || $directionsUrl === '#') {
 
   <section class="max-w-screen-2xl mx-auto px-12 pb-24">
     <div class="flex flex-col lg:flex-row gap-0 bg-surface-container-low rounded-lg overflow-hidden border border-outline-variant/10 min-h-[700px]">
-      <div class="w-full lg:w-2/5 p-12 md:p-20 bg-surface-container-lowest flex flex-col justify-between">
+      <div class="w-full lg:w-[45%] p-12 md:p-20 bg-surface-container-lowest flex flex-col justify-between">
         <div>
           <h2 class="noto-serif italic text-3xl text-primary mb-12"><?= e($directory_title) ?></h2>
 
@@ -153,7 +153,7 @@ if ($directionsUrl === '' || $directionsUrl === '#') {
         </div>
       </div>
 
-      <div class="w-full lg:w-3/5 relative overflow-hidden bg-primary-container min-h-[340px]">
+      <div class="w-full lg:w-[55%] relative overflow-hidden bg-primary-container min-h-[340px]">
         <?php if ($mapUrl !== ''): ?>
           <iframe
             class="absolute inset-0 w-full h-full border-0"

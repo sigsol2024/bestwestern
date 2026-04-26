@@ -105,11 +105,7 @@ $headerOverlapsHero = !empty($GLOBALS['site_header_overlaps_hero']);
         if ($navPath === '') {
             $navPath = '/';
         }
-        $isActive = ($requestPath === $navPath || ($navPath !== '/' && strpos($requestPath, $navPath) === 0));
-        $linkClass = 'site-header-desktop-link font-body uppercase tracking-[0.2em] text-xs font-semibold transition-colors pb-1 border-b-2 ';
-        $linkClass .= $isActive
-            ? 'site-header-desktop-link--active text-brand-gold border-brand-red/30'
-            : 'site-header-desktop-link--inactive border-transparent';
+        $linkClass = 'site-header-desktop-link site-header-desktop-link--inactive font-body uppercase tracking-[0.2em] text-xs font-semibold transition-colors pb-1 border-b-2 border-transparent';
         ?>
     <a class="<?= e($linkClass) ?>" href="<?= e(site_href((string) $navHref)) ?>"><?= e((string) $navLabel) ?></a>
     <?php endforeach; ?>

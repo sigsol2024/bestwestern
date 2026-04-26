@@ -177,6 +177,12 @@ $home_room_subtitle = static function (array $room): string {
 </head>
 <body class="bg-surface text-on-surface font-body font-light selection:bg-secondary-container selection:text-on-secondary-container antialiased max-w-[100vw] overflow-x-clip">
 <?php require_once __DIR__ . '/includes/header.php'; ?>
+<style>
+  @keyframes dining-fade-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
 
 <!-- Hero (full-bleed gallery slider) -->
 <header id="home-hero" class="relative h-screen min-h-[600px] w-full overflow-hidden" data-hero-autoplay-ms="6000">
@@ -211,6 +217,10 @@ $home_room_subtitle = static function (array $room): string {
     <p class="font-body text-sm sm:text-base text-surface/90 font-light max-w-[min(26rem,90vw)] leading-relaxed normal-case tracking-normal">
       <?= e($hero_subtitle) ?>
     </p>
+    <a class="mt-7 inline-flex w-fit items-center gap-2 rounded-md bg-brand-gold px-8 py-3 font-body text-xs font-bold uppercase tracking-[0.2em] text-white transition hover:brightness-110"
+       href="<?= e(site_url('rooms')) ?>">
+      Book Now
+    </a>
   </div>
 
   <?php if ($heroSliderMultiple): ?>
@@ -425,10 +435,14 @@ $home_room_subtitle = static function (array $room): string {
     </div>
     <div class="lg:w-1/2 w-full grid grid-cols-2 gap-4 md:gap-6 min-h-[400px] md:h-[700px]">
       <div class="pt-8 md:pt-12 min-h-0">
-        <img class="w-full h-full min-h-[200px] object-cover rounded-sm" src="<?= e($dining_img_top) ?>" alt="" width="400" height="500"/>
+        <img class="w-full h-full min-h-[200px] object-cover rounded-sm opacity-0"
+             style="animation:dining-fade-up 850ms ease-out 120ms forwards"
+             src="<?= e($dining_img_top) ?>" alt="" width="400" height="500"/>
       </div>
       <div class="pb-8 md:pb-12 min-h-0">
-        <img class="w-full h-full min-h-[200px] object-cover rounded-sm" src="<?= e($dining_img_bottom) ?>" alt="" width="400" height="500"/>
+        <img class="w-full h-full min-h-[200px] object-cover rounded-sm opacity-0"
+             style="animation:dining-fade-up 680ms ease-out 70ms forwards"
+             src="<?= e($dining_img_bottom) ?>" alt="" width="400" height="500"/>
       </div>
     </div>
   </div>
