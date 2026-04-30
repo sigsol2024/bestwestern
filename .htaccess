@@ -3,6 +3,10 @@
   RewriteEngine On
   RewriteBase /
 
+  # Force legacy /menu routes to the WordPress menu subdomain.
+  # Keep this above file/dir and pretty-URL rules so it always wins.
+  RewriteRule ^menu(?:/.*)?$ https://menu.bestwesternplusyenagoa.com/ [R=301,L,NC]
+
   # Existing files and directories (assets, admin, etc.)
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
