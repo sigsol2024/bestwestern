@@ -482,7 +482,7 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
         </div>
         <div class="form-group" style="flex:1;">
           <label for="cta_btn_href">Button URL</label>
-          <input type="text" id="cta_btn_href" name="cta_btn_href" value="<?= sanitize($sections['cta_btn_href'] ?? '/contact') ?>">
+          <input type="text" id="cta_btn_href" name="cta_btn_href" value="<?= sanitize($sections['cta_btn_href'] ?? 'https://www.bestwestern.com/en_US/book/hotel-rooms.75424.html?ssob=IN7542443G') ?>">
         </div>
       </div>
     </div>

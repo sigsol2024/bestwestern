@@ -70,7 +70,7 @@ if ($experience_bg === '') {
 $experience_bg_url = site_media_url($experience_bg);
 $experience_title = (string) getPageSection('about', 'experience_title', 'Write Your Own Story');
 $experience_button_label = (string) getPageSection('about', 'experience_button_label', 'Begin Your Stay');
-$experience_button_href = (string) getPageSection('about', 'experience_button_href', '/rooms');
+$experience_button_href = (string) getPageSection('about', 'experience_button_href', site_bw_booking_url());
 ?>
 <!DOCTYPE html>
 <html class="light" lang="en">

@@ -55,7 +55,21 @@ $homeNavLabel = 'Home';
 $homeNavHref = site_url('index');
 
 $ctaLabel = getSiteSetting('nav_cta_label', cms_default_setting('nav_cta_label'));
-$ctaHref = site_href(getSiteSetting('nav_cta_href', cms_default_setting('nav_cta_href')));
+$ctaHrefRaw = getSiteSetting('nav_cta_href', cms_default_setting('nav_cta_href'));
+$ctaHrefRaw = trim((string) $ctaHrefRaw);
+/** Legacy installs: Reserve still pointed at /rooms — send primary book action to BW deep link instead */
+if (function_exists('site_bw_booking_url')) {
+    $resolved = site_href($ctaHrefRaw);
+    $path = parse_url((string) $resolved, PHP_URL_PATH);
+    if (!is_string($path) || $path === '') {
+        $path = (string) $resolved;
+    }
+    $path = '/' . trim($path, '/');
+    if ($path === '/rooms') {
+        $ctaHrefRaw = site_bw_booking_url();
+    }
+}
+$ctaHref = site_href($ctaHrefRaw);
 
 $headerNavLinks = [
     [$homeNavLabel, $homeNavHref],

@@ -127,6 +127,8 @@ function getSiteSetting($key, $default = '') {
     }
 }
 
+require_once BASE_PATH . '/includes/bw-booking-url.php';
+
 /**
  * Normalized #rrggbb from site_settings for Tailwind / CSS (invalid values fall back).
  */

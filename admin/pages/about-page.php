@@ -196,7 +196,7 @@ $pageIsActive = ((string) getSetting($pageActiveSettingKey, cms_default_setting(
     </div>
     <div class="form-group">
       <label for="experience_button_href">Button URL</label>
-      <input type="text" id="experience_button_href" name="experience_button_href" value="<?= sanitize($sections['experience_button_href'] ?? '/rooms') ?>">
+      <input type="text" id="experience_button_href" name="experience_button_href" value="<?= sanitize($sections['experience_button_href'] ?? 'https://www.bestwestern.com/en_US/book/hotel-rooms.75424.html?ssob=IN7542443G') ?>">
     </div>
   </div></div>
 

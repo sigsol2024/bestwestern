@@ -309,6 +309,31 @@ $themeHexPickerValue = static function (string $key) use ($settings, $defaultSet
             </div>
         </div>
     </div>
+
+    <!-- Best Western booking (deep links) -->
+    <div class="card">
+        <div class="card-header">
+            <h2>Best Western booking</h2>
+        </div>
+        <div class="card-body card-body--stack">
+            <p class="text-muted">Official Best Western booking URLs with <strong>SSOB</strong> for attribution. Homepage “Book Now”, header Reserve (if set to this link), and room fallbacks use these values.</p>
+            <div class="form-group">
+                <label for="bw_booking_base_url">Booking page URL (no query string)</label>
+                <input type="url" id="bw_booking_base_url" name="bw_booking_base_url" value="<?= sanitize($settings['bw_booking_base_url'] ?? $defaultSettings['bw_booking_base_url']) ?>" placeholder="<?= sanitize($defaultSettings['bw_booking_base_url']) ?>">
+                <p class="form-help">Use the exact path BW gave you — typically <code>…/book/hotel-rooms.PROPERTY.html</code> for the rooms/booking funnel and <code>…/book/hotel-details.PROPERTY.html</code> for the property overview (some BW PDFs swap the labels; match the URL pattern they specify). Confirm property ID (e.g. <code>75424</code>).</p>
+            </div>
+            <div class="form-group">
+                <label for="bw_booking_ssob">SSOB code (required)</label>
+                <input type="text" id="bw_booking_ssob" name="bw_booking_ssob" value="<?= sanitize($settings['bw_booking_ssob'] ?? $defaultSettings['bw_booking_ssob']) ?>" placeholder="<?= sanitize($defaultSettings['bw_booking_ssob']) ?>" maxlength="32" autocomplete="off">
+                <p class="form-help">Issued by BW eCommerce; always sent as the first query parameter.</p>
+            </div>
+            <div class="form-group">
+                <label for="bw_booking_extra_query">Extra query parameters (optional)</label>
+                <input type="text" id="bw_booking_extra_query" name="bw_booking_extra_query" value="<?= sanitize($settings['bw_booking_extra_query'] ?? $defaultSettings['bw_booking_extra_query']) ?>" placeholder="currency=USD&amp;length=1" autocomplete="off">
+                <p class="form-help">Use <code>&amp;</code>-separated pairs only (no <code>?</code>), e.g. <code>checkIn=2027-06-01&amp;length=2&amp;currency=USD</code>. Do not repeat <code>ssob</code> here. For closest match to BW’s guide, list parameters in their documented order (<code>iata</code>, dates, <code>rooms</code>/<code>adults</code>/<code>children</code>, multi-room <code>rm*</code>, <code>roomType</code>, rate codes, etc.) — the site will reorder known keys automatically.</p>
+            </div>
+        </div>
+    </div>
     
     <!-- Footer Settings -->
     <div class="card">

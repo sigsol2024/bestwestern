@@ -142,6 +142,13 @@ foreach ($amenitiesRaw as $a) {
 
 $bookUrl = htmlspecialchars_decode((string)($room['book_url'] ?? ''), ENT_QUOTES);
 $bookUrl = trim($bookUrl);
+
+$bwRoomCategory = preg_replace('/\D/', '', (string)($gk['bw_room_category_code'] ?? ''));
+$bwRoomExtras = [];
+if ($bwRoomCategory !== '' && strlen($bwRoomCategory) === 7) {
+    $bwRoomExtras['roomType'] = $bwRoomCategory;
+}
+
 if ($bookUrl === '') {
     $bookUrl = htmlspecialchars_decode((string)$whatsappLink, ENT_QUOTES);
     $bookUrl = trim($bookUrl);
@@ -150,7 +157,7 @@ if ($bookUrl === '' && $whatsappNumber !== '') {
     $bookUrl = 'https://wa.me/' . $whatsappNumber;
 }
 if ($bookUrl === '') {
-    $bookUrl = site_url('contact');
+    $bookUrl = function_exists('site_bw_booking_url') ? site_bw_booking_url($bwRoomExtras) : site_url('contact');
 }
 
 $occupancyLabel = $maxGuests > 0

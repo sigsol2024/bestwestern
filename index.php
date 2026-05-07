@@ -218,7 +218,7 @@ $home_room_subtitle = static function (array $room): string {
       <?= e($hero_subtitle) ?>
     </p>
     <a class="mt-7 inline-flex w-fit items-center gap-2 rounded-md bg-brand-gold px-8 py-3 font-body text-xs font-bold uppercase tracking-[0.2em] text-white transition hover:brightness-110"
-       href="<?= e(site_url('rooms')) ?>">
+       href="<?= e(site_bw_booking_url()) ?>" rel="noopener noreferrer" target="_blank">
       Book Now
     </a>
   </div>

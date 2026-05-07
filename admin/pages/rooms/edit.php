@@ -205,6 +205,11 @@ $roomPublicUrlBase = rtrim((string)(defined('SITE_URL') ? SITE_URL : ''), '/');
                 <input id="book_url" name="book_url" type="text" class="form-control" value="<?= sanitize($room['book_url']) ?>">
               </div>
               <div class="form-group">
+                <label for="gk_bw_room_category_code">BW room category code (optional)</label>
+                <input type="text" id="gk_bw_room_category_code" class="form-control" inputmode="numeric" pattern="[0-9]{7}" maxlength="12" value="<?= sanitize((string)($gk['bw_room_category_code'] ?? '')) ?>" placeholder="e.g. 2351152">
+                <p class="form-help">7-digit Best Western <code>roomType</code> code. Used when Book URL is empty and the guest uses <strong>Reserve Suite</strong> (falls back to site-wide BW booking + this code).</p>
+              </div>
+              <div class="form-group">
                 <label for="urgency_message">Urgency line (optional)</label>
                 <input id="urgency_message" name="urgency_message" type="text" class="form-control" value="<?= sanitize($room['urgency_message']) ?>" placeholder="Only 2 suites left for your dates">
               </div>
@@ -513,7 +518,8 @@ function collectGoodToKnow() {
     ['who_body', 'gk_who_body'],
     ['view_body', 'gk_view_body'],
     ['booking_badge', 'gk_booking_badge'],
-    ['rate_label', 'gk_rate_label']
+    ['rate_label', 'gk_rate_label'],
+    ['bw_room_category_code', 'gk_bw_room_category_code']
   ].forEach(function (pair) {
     var val = v(pair[1]);
     if (val) g[pair[0]] = val;
